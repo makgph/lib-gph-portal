@@ -1,0 +1,52 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{
+    Layout = "_InnerPagesLayout.cshtml";
+}
+@{ var list = Model.Value<IEnumerable<IPublishedElement>>("question");
+    var index = 0;
+}
+
+@* the fun starts here *@
+
+<section id="faq" class="faq section-bg">
+    <div class="container" data-aos="fade-up">
+
+        <div id="accordion">
+            @foreach (var item in list)
+            {
+                index++;
+                var title = item.Value<string>("title");
+                var description = item.Value<string>("description");
+                var _id = "heading" + @index;
+                var target = "#colapse" + @index;
+                var idTarget = "colapse" + @index;
+                var expand = "";
+                var classBtn = (index == 1) ? "btn btn-link" : "btn btn-link collapsed";
+                var classCollapse = (index == 1) ? "collapse show" : "collapse";
+                <div class="card">
+                    @if (index == 1) { expand = "true"; }
+                    else { expand = "false"; }
+
+                    <div class="card-header" id="@_id">
+                        <h5 class="mb-0">
+                            <button class="@classBtn" data-toggle="collapse" data-target="@target" aria-expanded="@expand" aria-controls="@idTarget">
+                                @title
+
+                                <i class="lni lni-chevron-up icon-close"></i> <i class="lni lni-chevron-down icon-show"></i>
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="@idTarget" class="@classCollapse" aria-labelledby="@_id" data-parent="#accordion">
+                        <div class="card-body">
+                            @description
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+
+
+
+    </div>
+</section><!-- End F.A.Q Section -->

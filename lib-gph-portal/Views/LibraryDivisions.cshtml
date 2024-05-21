@@ -1,0 +1,94 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using ContentModels = Umbraco.Web.PublishedModels;
+@{
+    Layout = "_InnerPagesLayout.cshtml";
+}
+@{
+    var Langauge = Umbraco.AssignedContentItem.GetCultureFromDomains();
+
+    var ReadMore = Langauge == "ar-SA" ? "مزيد من التفاصيل" : "More Details";
+
+    var Divisionlist = Umbraco.AssignedContentItem.Value<IEnumerable<IPublishedElement>>("libraryDivs");
+}
+
+<section class="goals lg-slider section-bg  section-target">
+    <div class="container">
+
+        <div class="row">
+            @if (Divisionlist != null)
+            {
+                int i = 0;
+                foreach (var item in Divisionlist.Where(x => x.IsVisible()))
+                {
+                    var image = item.Value<IPublishedContent>("image");
+                    var tittle = item.Value<string>("title");
+                    var desc = item.Value<string>("description");
+                    var Body = item.Value<string>("body");
+                    var classbody = item.Value<string>("class");
+
+
+
+                    if (image != null)
+                    {
+
+                        <div class="col-md-6 col-lg-4 d-flex align-items-stretch aos-init aos-animate"
+                             data-aos="zoom-in"
+                             data-aos-delay="300">
+                            <div class="icon-box">
+                                <div class="icon"><img src="@image.Url()" alt="@image.Name"></div>
+                                <h4 class="title"><a href="">@(tittle != null || tittle != "" ? tittle : "")</a></h4>
+                                <p class="description">
+                                    @(desc != "" || desc != null ? desc : "" )
+                                </p>
+
+                                <button type="button" class="btn model-button" data-toggle="modal"
+                                        data-target=".bd-example-modal-lg@(i)">
+                                    @ReadMore<i class="lni lni-chevron-left"></i>
+
+                                </button>
+
+
+                            </div>
+
+
+                            @*@Html.Raw(Body)*@
+
+
+
+
+                            <div class="modal fade bd-example-modal-lg@(i)" tabindex="-1" role="dialog"
+                                 aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg@(i)">
+                                    <div class="modal-content">
+
+                                        <div class="modal-header">
+                                            <h4 class="modal-title" id="myLargeModalLabel@(i)">
+                                                @(tittle != null || tittle != "" ? tittle : "")
+                                            </h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">x</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+
+                                            @Html.Raw(Body)
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        i++;
+                    }
+                }
+            }
+
+
+        </div>
+
+    </div>
+</section>
+
+

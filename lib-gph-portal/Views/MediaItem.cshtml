@@ -1,0 +1,179 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+
+@{ Layout = "_InnerPagesLayout.cshtml"; }
+
+@{ var NewsItem = Umbraco.AssignedContentItem;
+    var Title = NewsItem.Value<string>("title");
+    var Body = NewsItem.Value<string>("body");
+    var Image = ImageUrl(NewsItem);
+    //var Body = NewsItem.Value<IEnumerable<IPublishedElement>>("newsItemContentBody").ToArray();
+    var PublishingDate = GetDate(NewsItem, "date");
+
+    var LatestNews = NewsItem.Siblings().ToArray();
+
+
+    var CurrentLangauge = NewsItem.GetCultureFromDomains();
+    var LatestNewsTitle = CurrentLangauge == "ar-SA" ? $"أخر {NewsItem.Ancestor().Name}" : "Latest News";
+    var SearchAboutNews = CurrentLangauge == "ar-SA" ? $"بحث عن {NewsItem.Ancestor().Name}" : "Search About News";
+    var Search = CurrentLangauge == "ar-SA" ? "بحث ..." : "Search ..."; }
+
+<section id="blog" class="blog section-bg">
+    <div class="container" data-aos="fade-up">
+
+        <div class="row">
+
+            <div class="col-lg-8 entries">
+
+                <article class="entry entry-single">
+
+                    <div class="entry-img">
+                        <img src="@Image" alt="" class="img-fluid">
+                    </div>
+
+                    <h2 class="entry-title">
+                        <a href="">@Title</a>
+                    </h2>
+
+                    <div class="entry-meta">
+                        <ul>
+                            <li class="d-flex align-items-center"><i class="lni lni-alarm-clock"></i> <a href="#"><time datetime="2020-01-01">@PublishingDate</time></a></li>
+                        </ul>
+                    </div>
+
+                    @Html.Raw(Body)
+
+
+
+
+                </article> @*End blog entry*@
+
+
+
+
+
+            </div> @*End blog entries list*@
+
+            <div class="col-lg-4">
+                <div class="row">
+
+
+                    <!--<div class="col-12">
+                        <div class="sidebar">
+
+
+
+
+                            <h3 class="sidebar-title">@SearchAboutNews </h3>
+
+
+                            <div class="sidebar-item recent-posts">
+                                <div class="sidebar-item search-form">
+                                    <form action="">
+                                        <input type="text" placeholder="@Search">
+                                        <button type="submit"><i class="lni lni-search-alt"></i></button>
+                                    </form>
+                                </div>-->
+                    @*End sidebar search formn*@
+
+
+
+
+                    <!--</div>--> @*End sidebar recent posts*@
+
+
+
+                    <!--</div>--> @*End sidebar*@
+                    <!--</div>-->
+
+                    <div class="col-12">
+                        <div class="sidebar">
+
+
+                            @* Latest News *@
+                            <h3 class="sidebar-title">@LatestNewsTitle</h3>
+                            <div class="sidebar-item recent-posts">
+                                @for (int i = 0; i < LatestNews.Length; i++)
+                                {
+                                    <div class="post-item clearfix">
+                                        <img src="@ImageUrl(LatestNews[i])" alt="">
+                                        <h4><a href="@(LatestNews[i]?.Url())">@(LatestNews[i]?.Value<string>("title"))</a></h4>
+                                        <time datetime="2020-01-01">
+                                            @GetDate(LatestNews[i], "Date")
+                                        </time>
+                                    </div>}
+
+
+
+                            </div> @*End sidebar recent posts*@
+
+
+
+                        </div> @*End sidebar*@
+                    </div>
+                </div>
+
+
+            </div> @*End blog sidebar*@
+
+        </div>
+
+    </div>
+</section> @*End Blog Single Section*@
+
+
+
+
+
+@functions{ //Get Image
+    public string ImageUrl(IPublishedContent Element)
+    {
+        string ImageURL;
+        if (Element.HasValue("image"))
+
+        {
+            ImageURL = Element.Value<MediaWithCrops>("image").Url();
+
+        }
+        else
+        {
+            ImageURL = "#";
+
+        }
+
+
+        return ImageURL;
+    }
+
+
+    //Getting Date
+    public string GetDate(IPublishedContent Element, string DateAlias)
+    {
+        string Date;
+
+        if (Element.HasValue(DateAlias))
+
+        {
+            try
+            {
+                Date = Element.Value<DateTime>(DateAlias).ToLongDateString();
+
+            }
+            catch (Exception)
+            {
+                Date = new DateTime().AddYears(2000).ToLongDateString();
+
+            }
+
+        }
+        else
+        {
+            Date = new DateTime().AddYears(2000).ToLongDateString();
+
+
+
+        }
+
+
+        return Date;
+    } }

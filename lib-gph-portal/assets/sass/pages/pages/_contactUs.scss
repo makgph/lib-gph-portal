@@ -1,0 +1,176 @@
+/*--------------------------------------------------------------
+# Contact Us
+--------------------------------------------------------------*/
+
+.contact {
+	padding: 60px 0;
+	text-align: right;
+	background-color: var(--bk-div-color);
+	.info {
+		border-top: 3px solid #b19556;
+		border-bottom: 3px solid #b19556;
+		padding: 30px;
+		background: var(--basic-color);
+		width: 100%;
+		border-radius: 10px;
+		text-align: right;
+		box-shadow: 0 0 24px 0 rgba(0, 0, 0, 0.12);
+		i {
+			font-size: 20px;
+			color: #b19556;
+			float: right;
+			width: 44px;
+
+			height: 44px;
+			background: #f9f5ec;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			border-radius: 50px;
+			transition: all 0.3s ease-in-out;
+		}
+		h4 {
+			padding: 0 60px 0 0;
+			font-size: 22px;
+			font-weight: 600;
+			margin-bottom: 5px;
+			color: var( --contact-color);
+		}
+		p {
+			padding: 0 60px 10px 0px;
+			margin-bottom: 20px;
+			font-size: 14px;
+			color: var( --contact-color);
+		}
+		.email {
+			p {
+				padding-top: 5px;
+			}
+			&:hover {
+				i {
+					background: #b19556;
+					color: #fff;
+				}
+			}
+		}
+		.social-links {
+			padding-left: 60px;
+			a {
+				font-size: 18px;
+				display: inline-block;
+				background: #333;
+				color: #fff;
+				line-height: 1;
+				padding: 8px 0;
+				border-radius: 50%;
+				text-align: center;
+				width: 36px;
+				height: 36px;
+				transition: 0.3s;
+				margin-right: 10px;
+				&:hover {
+					background: #b19556;
+					color: #fff;
+				}
+			}
+		}
+		.address {
+			&:hover {
+				i {
+					background: #b19556;
+					color: #fff;
+				}
+			}
+		}
+		.phone {
+			&:hover {
+				i {
+					background: #b19556;
+					color: #fff;
+				}
+			}
+		}
+	}
+	.email-form {
+		width: 100%;
+		border-top: 3px solid #b19556;
+		border-bottom: 3px solid #b19556;
+		padding: 30px;
+		background: var(--basic-color);
+		border-radius: 10px;
+		box-shadow: 0 0 24px 0 rgba(0, 0, 0, 0.12);
+		label{
+			color: var(--basic-x-color);
+		}
+		.form-group {
+			padding-bottom: 8px;
+		}
+		.error-message {
+			display: none;
+			color: #fff;
+			background: #b19556;
+			text-align: left;
+			padding: 15px;
+			font-weight: 600;
+			br {
+				+ {
+					br {
+						margin-top: 25px;
+					}
+				}
+			}
+		}
+		.sent-message {
+			display: none;
+			color: #fff;
+			background: #18d26e;
+			text-align: center;
+			padding: 15px;
+			font-weight: 600;
+		}
+		.loading {
+			display: none;
+			background: #fff;
+			text-align: center;
+			padding: 15px;
+			&:before {
+				content: "";
+				display: inline-block;
+				border-radius: 50%;
+				width: 24px;
+				height: 24px;
+				margin: 0 10px -6px 0;
+				border: 3px solid #18d26e;
+				border-top-color: #eee;
+				-webkit-animation: animate-loading 1s linear infinite;
+				animation: animate-loading 1s linear infinite;
+			}
+		}
+		input {
+			border-radius: 0;
+			box-shadow: none;
+			font-size: 14px;
+			height: 44px;
+			border-radius: 5px;
+		}
+		textarea {
+			border-radius: 0;
+			box-shadow: none;
+			font-size: 14px;
+			padding: 10px 12px;
+			border-radius: 5px;
+		}
+		button[type=submit] {
+			background: #b19556;
+			border: 0;
+			padding: 10px 24px;
+			color: #fff;
+			transition: 0.4s;
+			border-radius: 4px;
+			width: -webkit-fill-available;
+			&:hover {
+				background: #a78d51;
+			}
+		}
+	}
+}

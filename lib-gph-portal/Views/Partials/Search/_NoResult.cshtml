@@ -1,0 +1,39 @@
+﻿@model sa.gov.libgph.Models.CurrentNewsPageViewModel
+
+@if (@Model.CurrentLanguage == "ar-SA")
+{
+    <div class="row" id="updatedContainer">
+        <div class="col-md-12 sidebar">
+            <div class="sidebar-item recent-posts">
+                <div class="sidebar-item search-form">
+                    <br />
+                    <h3 class="sidebar-title"> لا يوجد نتائج بحث لـ <em>  &nbsp;&nbsp; @Model.CurrentPageNumber </em> </h3>
+
+
+
+                </div>
+                <!-- End sidebar search form-->
+            </div>
+
+        </div>
+    </div>
+}
+else
+{
+
+    <div class="row" id="updatedContainer">
+        <div class="col-md-12 sidebar">
+            <div class="sidebar-item recent-posts">
+                <div class="sidebar-item search-form">
+                    <br />
+                    <h3 class="sidebar-title"> There is no Search Result for @Model.CurrentPageNumber  </h3>
+
+
+
+                </div>
+                <!-- End sidebar search form-->
+            </div>
+
+        </div>
+    </div>
+}

@@ -1,0 +1,362 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using sa.gov.libgph.Models;
+@using System.Web.Mvc.Html
+@using ClientDependency.Core.Mvc
+@using Umbraco.Web
+@using Umbraco.Web.Models
+@using Umbraco.Web.Controllers
+@{
+
+    HtmlHelper.UnobtrusiveJavaScriptEnabled = true;
+
+    IPublishedContent home = Umbraco.ContentQuery.Content(2518); //home id
+    string chatBotWelcome = home.HasValue("welcomeMessage") ? home.Value<string>("welcomeMessage") : "";
+    IEnumerable<IPublishedElement> chatBotTree = home.Value<IEnumerable<IPublishedElement>>("chatBotTree");
+    List<ChatBotModel> chatBotTreeList = (List<ChatBotModel>)Session["chatBotTreeList"];
+    var language = Umbraco.AssignedContentItem.GetCultureFromDomains();
+    string sendMessage = (language == "ar-SA") ? "اكتب الرسالة" : "Write Message";
+    string centerName = (language == "ar-SA") ? " مركز التدريب العدلي" : "The justice training center ";
+
+}
+<div class="live-chat">
+    <div class="chat">
+        <div class="background"></div>
+        <svg class="chat-bubble" width="100" height="100" viewBox="0 0 100 100">
+            <g class="bubble">
+                <path class="line line1" d="M 30.7873,85.113394 30.7873,46.556405 C 30.7873,41.101961
+            36.826342,35.342 40.898074,35.342 H 59.113981 C 63.73287,35.342
+            69.29995,40.103201 69.29995,46.784744" />
+                <path class="line line2" d="M 13.461999,65.039335 H 58.028684 C
+              63.483128,65.039335
+              69.243089,59.000293 69.243089,54.928561 V 45.605853 C
+              69.243089,40.986964 65.02087,35.419884 58.339327,35.419884" />
+            </g>
+            <circle class="circle circle1 c" r="1.9" cy="50.7" cx="42.5" />
+            <circle class="circle circle2 c" cx="49.9" cy="50.7" r="1.9" />
+            <circle class="circle circle3 c" r="1.9" cy="50.7" cx="57.3" />
+        </svg>
+    </div>
+    <section class="chatbox-popup">
+        <header class="chatbox-popup__header">
+            <aside style="flex:3">
+                <img alt="Chat" src="~/images/Chat.jpg">
+            </aside>
+            <aside style="flex:8">
+                <h1>@centerName</h1>
+            </aside>
+            <aside style="flex:1">
+                <button class="chat-box-close"> <i class="fa fa-close" aria-hidden="true"></i></button>
+            </aside>
+        </header>
+
+        @using (Ajax.BeginForm("SubmitChatbot", "Chat", new { }, new AjaxOptions()
+        {
+
+
+            UpdateTargetId = "chatBotDiv",
+            HttpMethod = "POST",
+
+            InsertionMode = InsertionMode.InsertAfter
+
+        }, new { id = "chatbot-form" }))
+        {
+
+            int idx = 1;
+            <main class="chatbox-popup__main" id="chatBotDiv">
+                <div class="chat_msg">
+                    <div class="chat_img">
+                        <img alt="Chat" src="~/images/Chat.jpg">
+                    </div>
+                    <div class="wrapper">
+                        <h3>@chatBotWelcome</h3>
+                        <ul class="sessions">
+                            @foreach (IPublishedElement chatNode in chatBotTree.Where(x => x.IsVisible()))
+                            {
+                                string title = chatNode.HasValue("title") ? chatNode.Value<string>("title") : "";
+                                var links = chatNode.Value<IEnumerable<Link>>("link");
+                                Link link = null;
+                                if (links != null)
+                                {
+                                    link = links.FirstOrDefault();
+                                }
+                                if (title != "")
+                                {
+                                    if (link == null)
+                                    {
+
+                                        @*<a class="btn btn-chat" onclick="setSelectItem('@title','C',2,@idx,@idx)"> <i class="fas fa-angle-down pull-left"></i> @title</a>*@
+
+                                        <li>
+                                            <a onclick="setSelectItem('@title','C',2,@idx,@idx)">@title</a>
+                                        </li>
+                                    }
+                                    else
+                                    {
+
+                                        string _target = link.Target;
+                                        @*<a class="btn btn-chat " href="@link.Link" target="@_target"> <i class="fas fa-link pull-left"></i> @title</a>*@
+                                        <li>
+                                            <a href="@link.Url" target="@_target">@title</a>
+                                        </li>
+                                    }
+                                }
+
+                                idx++;
+
+                            }
+                        </ul>
+
+                    </div>
+                </div>
+                <input type="hidden" id="selectedNode" name="selectedNode" />
+                <input type="hidden" id="selectedLevel" name="selectedLevel" />
+                <input type="hidden" id="selectedIndex" name="selectedIndex" />
+                <input type="hidden" id="nodeId" name="nodeId" />
+                <input type="hidden" id="chatType" name="chatType" />
+                @*<div class="chat_select">
+
+                        الدورات
+
+                    </div>*@
+                @*<div class="chat_msg">
+                        <div class="wrapper">
+                            <div class="chat_img">
+                                <img src="~/images/chat.png">
+                            </div>
+                            <p style="text-align:center">
+                                زائرنا العزيز إسمح لنا بتقديم المساعدة للوصول إلى ما تريد
+                                ...
+                            </p>
+                        </div>
+                    </div>*@
+                @*<div class="chat_user">
+
+                        <div class="user_img">
+                            <img src="~/images/avatar.png">
+                        </div>
+                        <p style="text-align:center">أريد الوصول إلي ما أريد</p>
+                    </div>*@
+                @*<div class="typing" >
+                        <span class="circle scaling"></span>
+                        <span class="circle scaling"></span>
+                        <span class="circle scaling"></span>
+                    </div>*@
+            </main>
+
+
+
+
+
+
+
+        }
+        <footer class="chatbox-popup__footer">
+            @*<aside style="flex:1;color:#888;text-align:center;">
+                    <i class="fa fa-camera" aria-hidden="true"></i>
+                </aside>*@
+            <aside style="flex:10">
+                <textarea type="text" placeholder="@sendMessage" autofocus id="chat_message" name="chat_message" onkeydown="search(this)"></textarea>
+            </aside>
+            <aside style="flex:1;color:#888;text-align:center;">
+                <i class="fa fa-paper-plane" aria-hidden="true" onclick="setSelectItem('','S',2,0,0)"></i>
+            </aside>
+        </footer>
+    </section>
+
+</div>
+
+
+<script src="~/js/jquery.min.js"></script>
+<script>
+
+    function search(ele) {
+        if (event.key === 'Enter') {
+            //alert(ele.value);
+            if (ele.value.trim().length > 0) {
+                setSelectItem('', 'S', 2, 0, 0);
+            }
+        }
+    }
+
+
+    function setSelectItem(selectedItem, type, level, idx, nodeId) {
+        // alert(type);
+        var element = document.getElementById('chatBotDiv');
+        let chatbotForm = document.getElementById('chatbot-form');
+
+        var chatSelectDiv = document.createElement("div");
+        chatSelectDiv.classList.add("chat_select");
+
+
+        //var msgDiv = document.createElement("div");
+        //var wrapperDiv = document.createElement("div");
+        //var imgDiv = document.createElement("div");
+        //var img = document.createElement("img");
+        //var paragraph = document.createElement("p");
+        //msgDiv.id = "msgDiv";
+        //msgDiv.name = "msgDiv";
+        //msgDiv.classList.add("chat_msg");
+        //wrapperDiv.classList.add("wrapper");
+        //imgDiv.classList.add("chat_img");
+        //img.src = "~/images/chat.png";
+        //paragraph.innerText = selectedItem;
+        ////msgDiv.classList.add("chat_user");
+        //msgDiv.appendChild(wrapperDiv);
+        //wrapperDiv.appendChild(imgDiv);
+        //wrapperDiv.appendChild(paragraph);
+        //imgDiv.appendChild(img);
+
+
+
+        if (type === 'S') {
+            var sentText = document.getElementById('chat_message');
+            if (sentText.value === 'القائمة الرئيسية') { selectedItem = 'MN'; }
+            else { selectedItem = sentText.value; }
+
+            if (sentText.value === 'القائمة السابقة') { selectedItem = 'PRVM'; }
+            else { selectedItem = sentText.value; }
+
+
+
+            if (selectedItem === 'MN') { chatSelectDiv.innerHTML = 'القائمة الرئيسية'; }
+            else if (selectedItem === 'PRVM') { chatSelectDiv.innerHTML = 'القائمة السابقة'; }
+            else { chatSelectDiv.innerHTML = selectedItem; }
+
+
+            //  else { msgDiv.innerHTML = selectedItem; }
+            //  alert(msgDiv.innerHTML);
+            if (selectedItem != '') {
+                element.appendChild(chatSelectDiv);
+                //element.appendChild(msgDiv);
+            }
+
+
+
+
+
+            var selectedLevel = document.getElementById('selectedLevel');
+            var selectedIdx = document.getElementById('selectedIndex');
+            var nodeIdInput = document.getElementById('nodeId');
+
+
+
+            selectedLevel.value = level;
+            selectedIdx.value = idx;
+            nodeIdInput.value = nodeId;
+
+
+            var selectedNode = document.getElementById('selectedNode');
+            var chatTypeInput = document.getElementById('chatType');
+            selectedNode.value = selectedItem;
+            chatTypeInput.value = 'Typing';
+
+            sentText.value = "";
+            /*  console.log(last_msg);
+              console.log(child);*/
+        }
+        else {
+
+            //var msgDiv = document.createElement("div");
+            //msgDiv.id = "msgDiv";
+            //msgDiv.name = "msgDiv";
+            //msgDiv.classList.add("chat_msg");
+            //msgDiv.classList.add("chat_msg_user");
+            if (selectedItem === 'MN') { chatSelectDiv.innerHTML = 'القائمة الرئيسية'; }
+            else if (selectedItem === 'PRVM') { chatSelectDiv.innerHTML = 'القائمة السابقة'; }
+            else { chatSelectDiv.innerHTML = selectedItem; }
+
+
+            //  else { msgDiv.innerHTML = selectedItem; }
+            //  alert(msgDiv.innerHTML);
+
+
+
+
+            var selectedNode = document.getElementById('selectedNode');
+            var selectedLevel = document.getElementById('selectedLevel');
+            var selectedIdx = document.getElementById('selectedIndex');
+            var nodeIdInput = document.getElementById('nodeId');
+            var chatTypeInput = document.getElementById('chatType');
+
+            selectedNode.value = selectedItem;
+            selectedLevel.value = level;
+            selectedIdx.value = idx;
+            nodeIdInput.value = nodeId;
+            chatTypeInput.value = 'Click';
+        }
+        if (selectedItem != '') {
+            element.appendChild(chatSelectDiv);
+            //element.appendChild(msgDiv);
+        }
+
+        var catBotTypingDiv = document.createElement("div");
+        var span1 = document.createElement("span");
+        var span2 = document.createElement("span");
+        var span3 = document.createElement("span");
+        catBotTypingDiv.id = "catBotTypingDiv";
+        catBotTypingDiv.name = "catBotTypingDiv";
+        catBotTypingDiv.classList.add("typing");
+
+        span1.classList.add("circle");
+        span1.classList.add("scaling");
+        span2.classList.add("circle");
+        span2.classList.add("scaling");
+        span3.classList.add("circle");
+        span3.classList.add("scaling");
+
+        catBotTypingDiv.appendChild(span1);
+        catBotTypingDiv.appendChild(span2);
+        catBotTypingDiv.appendChild(span3);
+
+
+
+
+
+        element.appendChild(catBotTypingDiv);
+        var getCatBotTypingDiv = document.getElementById('catBotTypingDiv');
+        getCatBotTypingDiv.scrollIntoView();
+        setTimeout(function () { submitChatBot(chatbotForm); }, 2000);
+
+
+    }
+
+    function submitChatBot(theForm) {
+        $.ajax({ // create an AJAX call...
+            data: $(theForm).serialize(), // get the form data
+            type: $(theForm).attr('method'), // GET or POST
+            url: $(theForm).attr('action'), // the file to call
+            success: function (response) { // on success..
+                //  $($(theForm).attr('data-ajax-update')).html(response); // update the DIV
+
+                var getCatBotTypingDiv = document.getElementById('catBotTypingDiv');
+
+                var element = document.getElementById('chatBotDiv');
+
+                element.removeChild(getCatBotTypingDiv);
+                /* var retDiv = document.createElement('div');
+                  retDiv.classList.add("chat_msg");
+         retDiv.classList.add("chat_msg_admin");
+                 retDiv.innerHTML = response;
+
+                 element.appendChild(retDiv);*/
+
+                element.innerHTML = element.innerHTML + response;
+                console.log(element.innerHTML);
+                //element.scrollIntoView();
+                //element.scrollDown = element.scrollHeight;
+
+                var chat_msg_user = element.getElementsByClassName('chat_msg');
+                var last_user_msg = chat_msg_user[chat_msg_user.length - 2];
+                last_user_msg.scrollIntoView();
+
+
+                //last_user_msg.scrollTop = last_user_msg.scrollHeight;
+                //element.scrollTop = element.scrollHeight;
+            }
+        });
+
+
+    }
+
+
+</script>

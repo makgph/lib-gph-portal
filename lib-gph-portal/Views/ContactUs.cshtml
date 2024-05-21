@@ -1,0 +1,89 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Web.Models
+@{
+    Layout = "_InnerPagesLayout.cshtml";
+
+}
+
+@{
+
+    var CurrentDocumentType = Umbraco.AssignedContentItem;
+    var CurrentLanguage = CurrentDocumentType.GetCultureFromDomains();
+
+    string LocationTitle = CurrentLanguage == "ar-SA" ? "الموقع" : "Location";
+    string EmailTitle = CurrentLanguage == "ar-SA" ? "البريد الالكتروني" : "Email Address";
+    string Contact = CurrentLanguage == "ar-SA" ? "الاتصال" : "Contact";
+
+    var Location = CurrentDocumentType.Value<string>("location");
+    var Email = CurrentDocumentType.Value<string>("email");
+    var PhoneNumber = CurrentDocumentType.Value<string>("phoneNumber");
+    var LocationOnMaps = GetLink(CurrentDocumentType);
+
+}
+
+<!-- ======= Contact Us Section ======= -->
+<section id="contact" class="contact ">
+    <div class="container" data-aos="fade-up">
+        <div class="row">
+            <div class="col-lg-5 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="100">
+                <div class="info">
+                    <div class="address">
+                        <i class="lni lni-map-marker"></i>
+                        <h4>@LocationTitle </h4>
+                        <p>
+                            @Location.StripHtml()
+                        </p>
+                    </div>
+                    <div class="email">
+                        <i class="lni lni-envelope"></i>
+                        <h4>@EmailTitle</h4>
+                        <p>@Email</p>
+                    </div>
+
+                    <div class="phone">
+                        <i class="lni lni-phone"></i>
+                        <h4>@Contact</h4>
+                        <p>@PhoneNumber</p>
+                    </div>
+                    <iframe src="@LocationOnMaps" frameborder="0" style="border:0; width: 100%; height: 290px;" allowfullscreen></iframe>
+                </div>
+            </div>
+            <div class="col-lg-7 mt-5 mt-lg-0 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="200">
+                @Html.Partial("Partials/ContactUs/_ContactUsForm", new sa.gov.libgph.Models.ContactUsModel())
+            </div>
+        </div>
+    </div>
+</section><!-- End Contact Us Section -->
+@functions{
+
+
+    //Get Link
+
+    public string GetLink(IPublishedElement Element)
+    {
+        string ElementURL = "";
+
+        if (Element.HasValue("locationOnMaps"))
+        {
+            try
+            {
+                ElementURL = Element.Value<Link>("locationOnMaps")?.Url;
+
+            }
+            catch (Exception)
+            {
+
+                ElementURL = "#";
+            }
+
+        }
+        else
+        {
+            ElementURL = "#";
+
+        }
+
+        return ElementURL;
+    }
+
+}

@@ -1,0 +1,162 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Web.Models
+@{
+    var Home = Umbraco.AssignedContentItem;
+    var Twitter = GetLink(Home);
+
+    var Root = Model.Root();
+    var ScientificResearchCenter = Root.ChildrenOfType("scientificResearchCenter").FirstOrDefault();
+    var TheGrandMosqueLibrary = Root.ChildrenOfType("about").FirstOrDefault().ChildrenOfType("theGrandMosqueLibrary").FirstOrDefault();
+
+
+    var CurrentLanguage = Home.GetCultureFromDomains();
+    var LibraryWorkingHours = CurrentLanguage == "ar-SA" ? "مواقيت عمل المكتبة" : "Library Working Hours";
+    var More = CurrentLanguage == "ar-SA" ? "للمزيد" : "More";
+    var TwitterTitle = CurrentLanguage == "ar-SA" ? "تويتر" : "Twitter";
+
+
+    var WorkingHoursArray = Home.Value<IEnumerable<IPublishedElement>>("workingHours").ToArray();
+
+}
+<section id="twitter-section" class="twitter-section">
+    <div class="container">
+
+        <div class="row justify-content-center">
+            <div class="col-lg-3 col-md-6 col-sm-9">
+                <div class="single-features mt-40">
+                    <div class="features-title-icon ">
+                        <h4 class="features-title"><a href="#">@LibraryWorkingHours</a></h4>
+
+                    </div>
+                    <div class="features-content mb-2">
+                        @for (int i = 0; i < WorkingHoursArray.Length; i++)
+                        {
+                            <div class="lib-work"> @WorkingHoursArray[i].Value("day") <span>@(WorkingHoursArray[i].Value<DateTime>("from").ToString("hh:mm tt"))&nbsp;&nbsp;@(WorkingHoursArray[i].Value<DateTime>("to").ToString("hh:mm tt")) </span> </div>
+
+                        }
+                        @*<div class="lib-work"> السبت <span> 09:00 : 22:00 </span> </div>
+                            <div class="lib-work"> السبت <span> 09:00 : 22:00 </span> </div>
+                            <div class="lib-work"> السبت <span> 09:00 : 22:00 </span> </div>
+                            <div class="lib-work"> السبت <span> 09:00 : 22:00 </span> </div>
+                            <div class="lib-work"> السبت <span> 09:00 : 22:00 </span> </div>*@
+
+                    </div>
+                </div> <!-- single features -->
+            </div>
+            <div class="col-lg-5 col-md-8 col-sm-9">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="single-features mt-40">
+                            <div class="features-title-icon ">
+                                <h4 class="features-title"><a href="@ScientificResearchCenter.Url()">@ScientificResearchCenter.Name </a></h4>
+
+                            </div>
+                            <div class="features-content">
+                                <p class="text">
+                                    @try
+                                    {
+                                        if (ScientificResearchCenter.HasValue("Researchcards"))
+                                        {
+                                            if (ScientificResearchCenter.Value<IEnumerable<IPublishedElement>>("Researchcards").ToArray()[0].HasValue("description"))
+                                            {
+                                                @(ScientificResearchCenter.Value<IEnumerable<IPublishedElement>>("Researchcards").ToArray()[0].Value<string>("description").StripHtml().Substring(0, 150) + "...")
+
+                                            }
+                                        }
+
+                                    }
+                                    catch (Exception)
+                                    {
+
+                                    }
+                                </p>
+                                <a class="features-btn" href="@ScientificResearchCenter.Url()">@More</a>
+                            </div>
+                        </div> <!-- single features -->
+                    </div>
+                    <div class="col-12">
+                        <div class="single-features mt-40">
+                            <div class="features-title-icon ">
+                                <h4 class="features-title"><a href="@TheGrandMosqueLibrary.Url()">@TheGrandMosqueLibrary.Name</a></h4>
+
+                            </div>
+                            <div class="features-content">
+                                <p class="text">
+                                    @*@(TheGrandMosqueLibrary.Value<string>("contentBody").StripHtml())*@
+                                    @try
+                                    {
+                                        if (TheGrandMosqueLibrary.HasValue("Mosquecards"))
+                                        {
+                                            if (TheGrandMosqueLibrary.Value<IEnumerable<IPublishedElement>>("Mosquecards").ToArray()[0].HasValue("description"))
+                                            {
+                                                @(TheGrandMosqueLibrary.Value<IEnumerable<IPublishedElement>>("Mosquecards").ToArray()[0].Value<string>("description").StripHtml().Substring(0,150) + "...")
+
+                                            }
+                                        }
+
+                                    }
+                                    catch (Exception)
+                                    {
+
+                                    }
+                                </p>
+                                <a class="features-btn" href="@TheGrandMosqueLibrary.Url()">@More</a>
+                            </div>
+                        </div> <!-- single features -->
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-7 col-sm-9">
+                <div class="single-features mt-40 bg-white">
+                    <div class="features-title-icon ">
+
+                        <h4 class="features-title"><a href="@Twitter" target="_blank"><i class="lni lni-twitter-filled"></i> @TwitterTitle</a></h4>
+
+                    </div>
+                    <div class="features-content">
+                        <a class="twitter-timeline" data-height="330"
+                           data-chrome="  nofooter noborders noheader "
+                           href="@Twitter">Tweets by @Root.Name
+                        <script async src="https://platform.twitter.com/widgets.js" ></script> </a>
+
+
+                    </div>
+                </div> <!-- single features -->
+            </div>
+        </div> <!-- row -->
+    </div> <!-- container -->
+</section>
+@functions {
+    //Get Image
+    public string ImageUrl(IPublishedContent Element)
+    {
+        string ImageURL;
+        if (Element.HasValue("footerLogo"))
+        {
+            ImageURL = Element.Value<MediaWithCrops>("footerLogo").Url();
+        }
+        else
+        {
+            ImageURL = "#";
+        }
+        return ImageURL;
+    }
+
+    //Get Link
+
+    public string GetLink(IPublishedContent Element)
+    {
+        string ElementURL;
+        if (Element.HasValue("twitterSection"))
+        {
+            ElementURL = Element.Value<Link>("twitterSection").Url;
+        }
+        else
+        {
+            ElementURL = "#";
+        }
+        return ElementURL;
+    }
+
+}

@@ -1,0 +1,380 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Web.Models
+@using sa.gov.libgph.MedadApi.Models.Request
+@using sa.gov.libgph.Services
+@using sa.gov.libgph.MedadApi.Services
+
+@{
+    //var ListAllLibraries = new ListAllLibrariesService();
+    //var Libraries = ListAllLibraries.GetListAllLibrariesResponse().locations.Where(x => !string.IsNullOrEmpty(x.discoveryDisplayName)).Select(x => new ListItemViewModel()
+    //{
+    //    Key = x.id,
+    //    Value = x.discoveryDisplayName
+    //});
+    //var MaterialContainersService = new ListMaterialContainersService();
+    //var MaterialContainers = MaterialContainersService.GetListMaterialContainersResponse().mtypes.Select(x => new ListItemViewModel()
+    //{
+    //    Key = x.id,
+    //    Value = x.name
+    //});
+    //var SortByListViewModel = new List<ListItemViewModel>();
+    //var SortByItem = new ListItemViewModel() { Key = "", Value = "مؤلف" };
+    //SortByListViewModel.Add(SortByItem);
+    //SortByItem = new ListItemViewModel() { Key = "title", Value = "عنوان" };
+    //SortByListViewModel.Add(SortByItem);
+    //SortByItem = new ListItemViewModel() { Key = "", Value = "موضوع" };
+    //SortByListViewModel.Add(SortByItem);
+    //SortByItem = new ListItemViewModel() { Key = "", Value = "قديم لجديد" };
+    //SortByListViewModel.Add(SortByItem);
+    //SortByItem = new ListItemViewModel() { Key = "", Value = "جديد لقديم" };
+    //SortByListViewModel.Add(SortByItem);
+
+    //var LibrariesListViewModel = ListAllLibraries;
+    //var ContainersListViewModel = new List<ListItemViewModel>();
+    //var MaterialTypeListViewModel = new List<ListItemViewModel>();
+    //var DueNumberListViewModel = new List<ListItemViewModel>();
+    var CurrentDocumentType = Umbraco.AssignedContentItem;
+    var PropertyExceptionHandler = new PropertyExceptionHandler();
+
+
+
+}
+<style>
+    input:-webkit-autofill {
+        -webkit-box-shadow: 0 0 0px 1000px #fff inset;
+    }
+    .library-catalog-area {
+        background-color: #ffffff;
+        padding-top: 50px;
+        padding-bottom: 50px;
+
+            }
+    .btn-fehras {
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 260px;
+        height: 240px;
+        border-radius: 8px;
+        padding: 10px;
+        color: #bea775 !important;
+        font-size: 22px;
+        background: #f7f7f7;
+        @*box-shadow: 0 1px 15px rgba(0, 0, 0, 0.04), 0 1px 6px rgba(0, 0, 0, 0.04);*@
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        position: relative;
+        background-image: url(../assets/images/sh.png);
+        background-repeat: no-repeat;
+        background-position: top center
+    }
+        .btn-fehras img {
+            margin:0 auto
+        }
+    .icon-s {
+        background-image: url(../assets/images/ser-icon-b.svg);
+        background-repeat: no-repeat;
+        height: 100px;
+        width: 100px;
+        background-size: contain;
+        margin: 40px auto 15px;
+        display: flex;
+        align-items: center;
+    }
+    .btn-fehras::before {
+        position: absolute;
+        content: "";
+        left: 0;
+        top: -3px;
+        height: 3px;
+        width: 0%;
+        background: #B19556;
+        right: 0;
+        margin: auto;
+        transition: .5s;
+    }
+    .btn-fehras:hover::before {
+        width: 80%;
+    }
+    .btn-fehras:after {
+        position: absolute;
+        content: "";
+        left: 0;
+        bottom: -3px;
+        height: 3px;
+        width: 0%;
+        background: #B19556;
+        right: 0;
+        margin: auto;
+        transition: .5s;
+    }
+
+    .btn-fehras:hover:after {
+        width: 80%;
+    }
+</style>
+@*
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+        @using (Html.BeginUmbracoForm("AdvancedSearch", "MedadApi", FormMethod.Get))
+        {
+            <div class="modal-dialog  modal-xl modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">  بحث متقدم</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <select class="form-select form-control" name="First.type" aria-label="Default select example">
+                                        <option selected value=""> اختر</option>
+                                        <option value="contributors.name">المؤلف</option>
+                                        <option value="title">عنوان</option>
+                                        <option value="subjects">موضوع</option>
+                                        <option value="series">سلسلة</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <input type="text" name="First.input" class="form-control" id="exampleFormControlInput1" placeholder="">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-select form-control" name="First.nextOperation" aria-label="Default select example">
+                                    <option value="and" selected>مع</option>
+                                    <option value="or">أو</option>
+                                    <option value="not"> بدون</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <select class="form-select form-control" name="Second.type" aria-label="Default select example">
+                                        <option selected value=""> اختر</option>
+                                        <option value="contributors.name">المؤلف</option>
+                                        <option value="title">عنوان</option>
+                                        <option value="subjects">موضوع</option>
+                                        <option value="series">سلسلة</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <input type="text" name="Second.input" class="form-control" id="exampleFormControlInput1" placeholder="">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-select form-control" name="Second.nextOperation" aria-label="Default select example">
+                                    <option value="and" selected>مع</option>
+                                    <option value="or">أو</option>
+                                    <option value="not"> بدون</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <select class="form-select form-control" name="Third.type" aria-label="Default select example">
+                                        <option selected value=""> اختر</option>
+                                        <option value="contributors.name">المؤلف</option>
+                                        <option value="title">عنوان</option>
+                                        <option value="subjects">موضوع</option>
+                                        <option value="series">سلسلة</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <input type="text" class="form-control" name="Third.input" id="exampleFormControlInput1" placeholder="">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-select form-control" name="Third.nextOperation" aria-label="Default select example">
+                                    <option value="and" selected>مع</option>
+                                    <option value="or">أو</option>
+                                    <option value="not"> بدون</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <select class="form-select form-control" name="Forth.type" aria-label="Default select example">
+                                        <option selected value=""> اختر</option>
+                                        <option value="contributors.name">المؤلف</option>
+                                        <option value="title">عنوان</option>
+                                        <option value="subjects">موضوع</option>
+                                        <option value="series">سلسلة</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <input type="text" class="form-control" name="Forth.input" id="exampleFormControlInput1" placeholder="">
+                                </div>
+                            </div>
+
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label>اسم المكتبة</label>
+                                    <select class="form-select form-control" name="LibraryName" aria-label="Default select example">
+                                        <option selected value=""> اختر</option>
+                                        @try
+                                        {
+                                            foreach (var Library in Libraries)
+                                            {
+                                                <option value="@Library.Key">@Library.Value</option>
+                                            }
+                                        }
+                                        catch (Exception) { }
+
+
+                                    </select>
+                                </div>
+                            </div>
+
+
+
+
+                            <div class="col-md-3">
+                                <label>نوع الوعاء</label>
+                                <select class="form-select form-control" name="BowlType" aria-label="Default select example">
+                                    <option selected value=""> اختر</option>
+                                    @foreach (var item in MaterialContainers)
+                                    {
+                                        <option value="@item.Key">@item.Value</option>
+
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label>حالة المادة</label>
+                                <select class="form-select form-control" name="SubjectStatus" aria-label="Default select example">
+                                    <option selected value=""> اختر</option>
+                                    @foreach (var item in ContainersListViewModel)
+                                    {
+                                        <option value="@item.Key">@item.Value</option>
+
+                                    }
+                                    <option value="1">2</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label>تاريخ النشر</label>
+                                <input type="date" class="form-control" name="PublicationDate" id="exampleFormControlInput1" placeholder="">
+                            </div>
+                            <div class="col-md-3">
+                                <label>الفرز ب</label>
+                                <select class="form-select form-control" name="SortBy" aria-label="Default select example">
+                                    <option selected value=""> اختر</option>
+                                    @foreach (var item in SortByListViewModel)
+                                    {
+                                        <option value="@item.Key">@item.Value</option>
+
+                                    }
+
+                                </select>
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="reset" class="btn btn-secondary">إعادة ضبط</button>
+                        <button type="submit" class="btn btn-primary"> البحث</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+*@
+<section id="library_catalog" class="library-catalog-area ">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-md-10">
+                <div class="section-title text-center pb-10">
+                    @* <h3 class="title">الفهرس الالى </h3>
+                        <p class="text">مرحبا بك .. في الفهرس الآلي لمكتبة الحرم المكي الشريف</p>*@
+                    <div class="d-flex">
+                        <a id="" href="@PropertyExceptionHandler.GetLink(CurrentDocumentType,"medadSearch")" target="_blank" class="btn-fehras">
+                            <div class="icon-s">
+                                <img src="~/assets/images/search.png" alt="..." class="card-img-top" style="width:60px">
+                            </div>
+                            الفهرس الالى
+                        </a>
+                        &nbsp;
+                        <a id="" href="@PropertyExceptionHandler.GetLink(CurrentDocumentType,"digitalRepository")" target="_blank" class="btn-fehras">
+                            <div class="icon-s">
+                                <img src="~/media/piqfkbwl/online-library.png" alt="..." class="card-img-top" style="width:60px">
+                            </div>
+                            المستودع الرقمي
+                        </a>
+                    </div>
+                    <div class="wrapper" style="padding:0">
+                        @*<div class="search_box">*@
+                        @*<div class="dropdown d-flex align-items-center">
+                                <div class="default_option">مكتبه المسجد الحرام</div>
+                                <ul class="ul-boxsearch">
+                                    <li>مكتبه المسجد الحرام</li>
+                                    <li>مكتبه الحرم المكى الشريف - قسم الرجال </li>
+                                    <li>مكتبه الحرم المكى الشريف - قسم النساء</li>
+                                </ul>
+                            </div>*@
+                        @*<div class="search_field">*@
+                        @using (Html.BeginUmbracoForm("SimpleSearch", "MedadApi", null, new { id = "simpleSearchForm" }, FormMethod.Get))
+                        {
+
+                            @* <input type="text" id="searchInput" style=" height: auto; line-height: 40px;" oninput="onSearchInput(event)" name="searchKeyWord" class="input"
+                                       placeholder="أدخل اسم الكتاب أو المؤلف أو الموضوع أو كلمات مفتاحية">
+                                <button type="submit" onclick="onClickSearch()" disabled id="searchBtn" class="btn-search-submit"> بحث </button>
+                            *@
+                        }
+                        <!--<input type="text" class="input"
+                        placeholder="أدخل اسم الكتاب أو المؤلف أو كلمات مفتاحية">-->
+                        <!-- <button type="submit" class="btn-search-submit"> بحث </button> -->
+                        <!--<a href="result-search.html" class="btn-search-submit"> بحث </a>-->
+                        @*</div>*@
+                        @*</div>*@
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        @* <div class="row ">
+                <div class="col-12 text-center ">
+                    <button type="button" class="anchor-search" data-toggle="modal" data-target="#exampleModal">بحث متقدم</button>
+                </div>
+            </div>*@
+    </div>
+</section>
+
+<script>
+    $('#searchBtn').attr('disabled', 'disabled');
+    $('#searchBtn').attr('style', 'cursor:not-allowed');
+
+    function onClickSearch() {
+        setTimeout(() => {
+            $('#simpleSearchForm')[0].reset();
+
+        }, 100)
+    }
+    function onSearchInput(event) {
+
+        if (event.target.value == '') {
+            $('#searchBtn').attr('disabled', 'disabled');
+            $('#searchBtn').attr('style', 'cursor:not-allowed');
+        }
+        else {
+            $('#searchBtn').attr('style', 'cursor:pointer');
+            $('#searchBtn').removeAttr('disabled');
+
+        }
+    }
+</script>

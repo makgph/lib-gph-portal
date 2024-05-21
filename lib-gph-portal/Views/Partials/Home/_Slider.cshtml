@@ -1,0 +1,258 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using sa.gov.libgph.Services
+@using sa.gov.libgph.Models
+@{
+    var CurrentDocumentType = Umbraco.AssignedContentItem;
+    var OnlineServices = CurrentDocumentType.Value<IEnumerable<IPublishedElement>>("slider2").ToArray();
+
+    var Active = "";
+    ServiceModel[] TopRankedServices = { };
+    string[] ServiceIDs = { };
+    List<IPublishedElement> Ranked = new List<IPublishedElement>();
+    var PropertyExceptionHandler = new PropertyExceptionHandler();
+    try
+    {
+        RankedOnlineServices RankedOnlineServices = new RankedOnlineServices();
+        TopRankedServices = RankedOnlineServices.GetRequest().Data.ToArray();
+    }
+    catch (Exception)
+    {
+        Ranked = OnlineServices.Take(3).ToList();
+    }
+
+    //var Root = Model.Root();
+    //var OnlineServices = Root.ChildrenOfType("eServices").FirstOrDefault().ChildrenOfType("service").ToArray();
+
+
+
+
+    try
+    {
+
+
+        for (int j = 0; j < TopRankedServices.Length; j++)
+        {
+            for (int i = 0; i < OnlineServices.Length; i++)
+            {
+
+                if (PropertyExceptionHandler.GetTextValue(OnlineServices[i], "serviceID") == TopRankedServices[j].Code.ToString())
+                {
+                    Ranked.Add(OnlineServices[i]);
+                }
+            }
+        }
+    }
+    catch (Exception)
+    {
+
+        Ranked = OnlineServices.Take(3).ToList();
+    }
+
+    var Top3 = Ranked.ToArray();
+    var AskService = PropertyExceptionHandler.GetTextValue(CurrentDocumentType, "askService");
+
+
+
+
+
+}
+
+
+<section id="home" class="slider_area">
+    <div id="carouselThree" class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators">
+            @for (int i = 0; i < Top3.Length; i++)
+            {
+                Active = i == 0 ? "active" : "";
+                <li data-target="#carouselThree" data-slide-to="@(i)" class="@Active">
+                    <p>@(PropertyExceptionHandler.GetTextValue(Top3[i], "title") )</p>
+                </li>
+            }
+        </ol>
+        <div class="carousel-inner">
+            @for (int i = 0; i < Top3.Length; i++)
+            {
+                Active = i == 0 ? "active" : "";
+                //var Description = PropertyExceptionHandler.GetElementsArray(Top3[i],"description");
+                <div class="carousel-item @Active" style="background-image: url('@PropertyExceptionHandler.GetImageURL(Top3[i],"theImage")');">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="slider-content">
+
+                                    <h1 class="title">@PropertyExceptionHandler.GetTextValue(Top3[i], "title").StripHtml()</h1>
+
+                                    <p class="text">@(PropertyExceptionHandler.GetTextValue(Top3[i], "description").StripHtml()) </p>
+                                    <div class="wrapper">
+                                        <a href="@(PropertyExceptionHandler.GetLink(Top3[i], "serviceURL"))">
+                                            @AskService
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> <!-- row -->
+                    </div> <!-- container -->
+                </div> <!-- carousel-item -->
+            }
+        </div> <!-- carousel-item -->
+    </div>
+
+</section>
+
+
+@* <section id="home" class="slider_area">
+        <div id="carouselThree" class="carousel slide" data-ride="carousel">
+            <ol class="carousel-indicators">
+                @for (int i = 0; i < Slider.Length; i++)
+                {
+                    Active = i == 0 ? "active" : "";
+                    <li data-target="#carouselThree" data-slide-to="@(i)" class="@Active">
+                        <p>@(Slider[i].Value("imageTitle"))</p>
+                    </li>
+                }
+            </ol>
+            <div class="carousel-inner">
+                @for (int i = 0; i < Slider.Length; i++)
+                {
+                    Active = i == 0 ? "active" : "";
+                    var Description = Slider[i].Value<IEnumerable<IPublishedElement>>("description").ToArray();
+                    <div class="carousel-item @Active" style="background-image: url('@ImageUrl(Slider[i],"theImage")');">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="slider-content">
+                                        @try
+                                        {
+
+                                            <h1 class="title">@GetStringValueOREmpty(Description[0], "textBody").StripHtml()</h1>
+
+                                            <p class="text">@GetStringValueOREmpty(Description[1], "textBody").StripHtml()</p>
+
+                                        }
+                                        catch (Exception)
+                                        {
+
+                                            <h1 class="title">Hello </h1>
+
+                                            <p class="text">in the Holy Mosque Library</p>
+
+                                        }
+                                    </div>
+                                </div>
+                            </div> <!-- row -->
+                        </div> <!-- container -->
+                    </div> <!-- carousel-item -->
+                }
+            </div> <!-- carousel-item -->
+        </div>
+
+    </section>
+
+*@
+
+
+@*
+
+    <section id="home" class="slider_area">
+
+        <div id="carouselThree" class="carousel slide" data-ride="carousel">
+            <ol class="carousel-indicators">
+
+
+                @for (int i = 0; i < Slider.Length; i++)
+                {
+                    Active = i == 0 ? "active" : "";
+                    <li data-target="#carouselThree" data-slide-to="@(i)" class="@Active">
+                        <p>@(Slider[i].Value("imageTitle"))</p>
+                    </li>
+                }
+
+            </ol>
+
+            <div class="carousel-inner">
+                @for (int i = 0; i < Slider.Length; i++)
+                {
+                    Active = i == 0 ? "active" : "";
+                    var Description = Slider[i].Value<IEnumerable<IPublishedElement>>("description").ToArray();
+                    <div class="carousel-item @Active" style="background-image: url('@ImageUrl(Slider[i],"theImage")');">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="slider-content">
+                                        @try
+                                        {
+
+                                            <h1 class="title">@Html.Raw(GetStringValueOREmpty(Description[0], "textBody"))</h1>
+
+                                            <p class="text">@Html.Raw(GetStringValueOREmpty(Description[1], "textBody"))</p>
+
+                                        }
+                                        catch (Exception)
+                                        {
+
+                                            <h1 class="title">Hello </h1>
+
+                                            <p class="text">in the Holy Mosque Library</p>
+
+                                        }
+                                    </div>
+                                </div>
+                            </div> <!-- row -->
+                        </div> <!-- container -->
+
+                    </div> <!-- carousel-item -->
+                }
+
+
+            </div>
+
+            <a class="carousel-control-prev" href="#carouselThree" role="button" data-slide="prev">
+                <i class="lni lni-arrow-left"></i>
+            </a>
+            <a class="carousel-control-next" href="#carouselThree" role="button" data-slide="next">
+                <i class="lni lni-arrow-right"></i>
+            </a>
+        </div>
+    </section>
+*@
+@*@functions {
+        //Get Image
+        public string ImageUrl(IPublishedElement Element, string Property)
+        {
+            string ImageURL;
+            if (Element.HasValue(Property))
+            {
+                ImageURL = Element.Value<MediaWithCrops>(Property).Url();
+
+            }
+            else
+            {
+                ImageURL = "#";
+
+            }
+
+
+            return ImageURL;
+        }
+
+        public string GetStringValueOREmpty(IPublishedElement Element, string Property)
+        {
+            string Value;
+            if (Element.HasValue(Property))
+
+            {
+                Value = Element.Value<string>(Property);
+
+            }
+            else
+            {
+                Value = "";
+
+            }
+
+
+            return Value;
+        }
+
+
+    }*@

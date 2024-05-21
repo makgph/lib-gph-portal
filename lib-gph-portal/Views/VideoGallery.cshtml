@@ -1,0 +1,132 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Web.Models;
+
+@{
+    Layout = "_InnerPagesLayout.cshtml";
+}
+@{ var list = Model.Value<IEnumerable<IPublishedElement>>("listVideo").Where(x => x.IsVisible());
+    ;
+    var pageSize = 0;
+    pageSize = (Model.HasValue("numberOfVideoInPage") ? Model.Value<int>("numberOfVideoInPage") : 3);
+
+    var page = 1;
+    int.TryParse(Request.QueryString["page"], out page);
+
+    var totalPages = (int)Math.Ceiling((double)list.Count() / pageSize);
+
+    if (page > totalPages)
+    {
+        page = totalPages;
+    }
+    else if (page < 1)
+    {
+        page = 1;
+    }
+
+}
+<section class="wrapper" id="portfolio">
+    <div class="container">
+
+        <div class="row">
+            @foreach (var item in list.Skip((page - 1) * pageSize).Take(pageSize))
+
+            {
+                var title = item.Value<string>("title");
+                var Date = item.Value<DateTime>("date").ToString("dd MMM yyyy");
+                var link = item.Value<Link>("linkVideo");
+                var image = item.Value<IPublishedContent>("bgImage").Url();
+
+                var _style = "background-image:url(" + @image + ");";
+
+
+                <div class="col-md-4">
+                    <div class="card text-white card-has-bg click-col"
+                         style="@_style">
+                        <div class="card-img-overlay d-flex flex-column">
+                            <div class="card-body">
+
+                                <h4 class="card-title mt-0 ">
+                                    <a class="text-white" herf="#">@title</a>
+                                </h4>
+                                <small><i class="far fa-clock"></i> @Date </small>
+
+                            </div>
+                            <div class="card-footer">
+                                <div class="">
+                                    <div class="video-gallery">
+
+                                        <div class="gallery-item ">
+
+                                            <div class="portfolio-overlay d-flex align-items-start justify-content-start">
+                                                <div class="portfolio-content">
+
+                                                    <div class="wrapper">
+                                                        <div class="circle pulse"></div>
+                                                        <div class="circle">
+                                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                                 viewBox="0 0 100 100">
+                                                                <polygon points="40,30 65,50 40,70"></polygon>
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="gallery-item-caption">
+
+                                                <a class="vimeo-popup" href="@link.Url"></a>
+                                            </div>
+
+                                        </div>
+
+
+
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            }
+
+
+
+        </div>
+
+        @if (totalPages > 1)
+        {
+            <nav class="page">
+
+                <ol class="pagination">
+                    @if (page > 1)
+                    {
+                        <li>
+                            <a aria-label="Previous" href="?page=@(page - 1)"><span aria-hidden="true">«</span></a>
+                        </li>
+                    }
+                    @for (int p = 1; p < totalPages + 1; p++)
+                    {
+                        <li class="@(p == page ? "active" : string.Empty)">
+                            <a href="?page=@p">@p </a>
+                        </li>
+
+
+                    }
+                    @if (page < totalPages)
+                    {
+                        <li>
+                            <a aria-label="Next" href="?page=@(page + 1)"><span aria-hidden="true">»</span></a>
+                        </li>
+                    }
+                </ol>
+            </nav>
+        }
+    </div>
+</section>
+
+

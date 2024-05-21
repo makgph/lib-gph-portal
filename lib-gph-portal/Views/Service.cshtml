@@ -1,0 +1,58 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using ContentModels = Umbraco.Web.PublishedModels;
+@using Umbraco.Web.Models
+@{
+    Layout = "_InnerPagesLayout.cshtml";
+
+
+
+    var image = Umbraco.AssignedContentItem.Value<IPublishedContent>("image");
+    var imageDescription = Umbraco.AssignedContentItem.Value("imageAlt");
+
+    var description = Umbraco.AssignedContentItem.Value<string>("description");
+    var textOfTitle = Umbraco.AssignedContentItem.Value<string>("title");
+
+    var link = Umbraco.AssignedContentItem.Value<Link>("linkTitle");
+
+
+
+    var language = Umbraco.AssignedContentItem.GetCultureFromDomains();
+    var getservice = (language == "ar-SA") ? "للحصول على الخدمة " : "To get service";
+
+}
+
+
+<section id="about" class="about service-details">
+    <div class="container">
+
+        <div class="row justify-content-between d-flex align-Umbraco.AssignedContentItems-center">
+            <div class="col-lg-5 d-flex align-Umbraco.AssignedContentItems-center justify-content-center about-img">
+                @if (image != null)
+                {
+                    <img src="@image.Url()" class="img-fluid" alt="@(imageDescription!= null ? imageDescription : image.Name)" data-aos="zoom-in">
+                }
+
+            </div>
+            <div class="col-lg-6 pt-5 pt-lg-0  ">
+                @if (textOfTitle != null && textOfTitle != "")
+                {
+                    <h3 data-aos="fade-up" class="line long-line">@textOfTitle</h3>
+                }
+
+                <div class="mt-40">
+                    @if (description != null)
+                    {
+                        <p>
+                            @Html.Raw(description)
+                        </p>
+                    }
+
+                    <a href="@(link !=null ? link.Url : " " )" target="@(link != null ? link.Target : " ")" class="more-details"> @getservice  <i class="lni lni-chevron-left"></i> </a>
+                </div>
+
+
+            </div>
+        </div>
+
+    </div>
+</section><!-- End About Section -->

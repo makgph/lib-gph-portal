@@ -1,0 +1,68 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using ContentModels = Umbraco.Web.PublishedModels;
+@using Umbraco.Web.Models
+
+@{
+    Layout = "_InnerPagesLayout.cshtml";
+
+
+
+    var Mosquecards = Umbraco.AssignedContentItem.Value<IEnumerable<IPublishedElement>>("Mosquecards");
+}
+
+<section id="goals" class="goals lg-slider  mosque-goals">
+    <div class="container" data-aos="fade-up">
+
+        <!-- <div class="section-title mt-20">
+
+          <h3 data-aos="fade-up" class="line line-center text-center">الهدف الاستراتيجي</h3>
+        </div> -->
+
+        @if (Mosquecards != null)
+        {
+            <div class="row mt-20">
+
+
+                @foreach (var item in Mosquecards.Where(x => x.IsVisible()))
+                {
+                    var image = item.Value<IPublishedContent>("image");
+                    var imageDescription = item.Value("imageAlt");
+
+                    var description = item.Value<string>("description");
+                    var textOfTitle = item.Value<string>("title");
+
+                    var link = item.Value<Link>("linkTitle");
+
+
+                    <div class="col-md-6 col-lg-6 d-flex align-items-stretch">
+                        <div class="icon-box">
+                            <div class="icon">
+                                @if (image != null)
+                                {
+                                    <img src="@image.Url()" alt="@(imageDescription!= null ? imageDescription : image.Name)">
+                                }
+                            </div>
+                            @if (textOfTitle != null && textOfTitle != "")
+                            {
+                                <h4 class="title"><a href="@(link !=null ? link.Url : " " )" target="@(link != null ? link.Target : " ")"> @textOfTitle </a></h4>
+                            }
+                            @if (description != null && description != "")
+                            {
+                                <p class="description">
+                                    @description.StripHtml()
+                                </p>
+                            }
+
+                        </div>
+                    </div>
+
+                }
+
+
+            </div>
+        }
+
+
+
+    </div>
+</section><!-- End About Section -->

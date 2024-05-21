@@ -1,0 +1,145 @@
+﻿<!--====== setting icons ======-->
+@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using sa.gov.libgph.Controllers
+@{
+    string cookieVal = Request.Cookies["lib_Vote"]?.Value;
+    string SelectedVoteValue = cookieVal?.Split('=')[1];
+    bool isExist = cookieVal != null ? true : false;
+
+    var VoteCounter = VoteController.GetVotesCount();
+    var GoodCounter = VoteCounter.GoodCount;
+    var ExcellentCounter = VoteCounter.ExcellentCount;
+    var BadCounter = VoteCounter.BadCount;
+    var sessionID = HttpContext.Current.Session.SessionID;
+
+}
+
+<style>
+    .vote {
+        background-color: #21927e;
+        pointer-events: initial;
+    }
+
+    .diabledVote {
+        opacity: 40%;
+        background-color: #000;
+        cursor: default;
+    }
+</style>
+<div id="hamburger">
+    <div id="wrapper">
+        <span class="icon-bar" id="one"></span>
+        <span class="icon-bar" id="two"></span>
+        <span class="icon-bar" id="thr"></span>
+    </div>
+</div>
+<div class="setting">
+    <div class="nav hamb" id="settings">
+
+        <div onclick={window.print()} class="toggle material-icons">
+            <a href="#collapse1" class="nav-toggle">
+                <img src="~/assets/images/printer.svg" alt="printer">
+            </a>
+        </div>
+    </div>
+    <div class="nav hamb switcher" id="thumb">
+
+
+
+        <div id="click-to-showw" class="zoom-toggle toggle material-icons">
+            <a href="#collapse2" class="nav-toggle">
+                <img src="~/assets/images/brightness.svg" alt="brightness">
+            </a>
+        </div>
+        <ul id="collapse2" class="switcher-icons color-switcher btn-group hide">
+            <li data-color="dark" class="btn color">
+                <span></span>
+            </li>
+            <li data-color="other" class="btn color1">
+                <span></span>
+            </li>
+            <li data-color="root" class="btn color2">
+                <span></span>
+            </li>
+        </ul>
+
+    </div>
+    <div class="nav hamb switcher" id="create">
+
+        <div id="click-to-show" class="toggle color-toggle material-icons">
+            <a href="#collapse1" class="nav-toggle">
+                <img src="~/assets/images/text.svg" alt="text">
+            </a>
+        </div>
+        <span id="collapse1" class="switcher-icons btn-group hide">
+            <a class="zoom-out btn rvfs-reset"><img src="~/assets/images/zoom-out.png" alt="zoom-out" width="18"></a>
+            <a class="zoom btn rvfs-increase"><img src="~/assets/images/zoom-in.png" alt="zoom-in" width="18"> </a>
+        </span>
+    </div>
+    <div class="nav hamb switcher" id="share">
+
+        <div id="click-to-shows" class="img-toggle toggle material-icons">
+            <a href="#collapse3" class="nav-toggle">
+                <img src="~/assets/images/good.svg" alt="good">
+            </a>
+        </div>
+        <span id="collapse3" class="switcher-icons btn-group hide">
+            <a href="#" id="Excellent" onclick="submitVote('Excellent', @isExist)" class="btn">
+                <img src="~/assets/images/smiling-face.png" alt="img-fluid" class="img-fluid" width="18">
+                <span>@ExcellentCounter</span>
+            </a>
+            <a href="#" id="Good" onclick="submitVote('Good', @isExist)" class="btn">
+                <img src="~/assets/images/meh.png" class="img-fluid" alt="img-fluid" width="18">
+
+                <span>@GoodCounter</span>
+            </a>
+            <a href="#" id="Bad" onclick="submitVote('Bad', @isExist)" class="btn">
+                <img src="~/assets/images/sad.png" class="img-fluid" alt="img-fluid" width="18">
+
+                <span>@BadCounter</span>
+            </a>
+        </span>
+
+    </div>
+
+</div>
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+
+
+        if ("@SelectedVoteValue" == "") {
+
+        } else {
+        $('.btn-group .btn').removeClass("vote");
+        $('.btn-group .btn').addClass("diabledVote");
+        $('.btn-group .btn').attr('href', 'javascript:function myFunction() {return false;}');
+        $('#@SelectedVoteValue').attr('href', '#');
+        $('#@SelectedVoteValue').removeClass("diabledVote");
+        $('#@SelectedVoteValue').addClass("vote");
+        }
+    });
+    function submitVote(voteVal, isExist) {
+        if (!isExist && !($('#Good').hasClass('diabledVote') || $('#Good').hasClass('vote'))) {
+            var sessionID =@sessionID
+                conso.log(sessionID)
+            $.ajax({
+                type: "POST",
+                url: '/umbraco/Surface/Vote/SubmitVote',
+                contentType: "application/json",
+                data: JSON.stringify({ vote: voteVal, sessionID:sessionID }),
+
+                success: function (recData) {
+                    $('.btn-group .btn').removeClass("vote");
+                    $('.btn-group .btn').addClass("diabledVote");
+                    $('#' + voteVal).removeClass("diabledVote");
+                    $('#' + voteVal).addClass("vote");
+
+                },
+                error: function (jqXHR, error, errorThrown) { console.log(error); }
+            });
+        }
+
+    }
+</script>

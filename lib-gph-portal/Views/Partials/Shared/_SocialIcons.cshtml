@@ -1,0 +1,133 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Web.Models
+@using sa.gov.libgph.Services
+@{
+    var Root = Model.Root();
+    var SocialIcons = Root.Value<IEnumerable<IPublishedElement>>("socialIcons").ToArray();
+
+    var pageUrl = Request.Url.Host.ToString() + Request.RawUrl.ToString();
+    var PropertyExceptionHandler = new PropertyExceptionHandler();
+
+}
+
+<div class="social-share" id="floating-social">
+    <div class="social-links" style="left: -77px;">
+        <ul>
+
+            @*@for (int i = 0; i < SocialIcons.Length; i++)
+                {
+
+                    <li><a href="@(GetLink(SocialIcons[i]))"><img src="@(ImageUrl(SocialIcons[i]))" /></a></li>
+                }*@
+            @try
+            {
+                for (int i = 0; i < SocialIcons.Length; i++)
+                {
+                    <li><a href="@(PropertyExceptionHandler.GetLink(SocialIcons[i],"imageLink"))" target="@PropertyExceptionHandler.Target"><img src="@PropertyExceptionHandler.GetImageURL(SocialIcons[i],"thetargetedimage")" alt="Social" /></a></li>
+
+                }
+
+                @*<li><a href="javascript:twitterShare('@pageUrl',520,360)"><img src="@(ImageUrl(SocialIcons[0]))" /></a></li>
+                    <li><a href="javascript:fbShare('@pageUrl',520,360)"><img src="@(ImageUrl(SocialIcons[1]))" /></a></li>
+                    <li><a href="javascript:linkedinShare('@pageUrl',520,360)"><img src="@(ImageUrl(SocialIcons[2]))" /></a></li>*@
+
+            }
+            catch (Exception)
+            {
+                @*<li><a href="javascript:twitterShare('@pageUrl',520,360)"><img src="#" /></a></li>
+                    <li><a href="javascript:fbShare('@pageUrl',520,360)"><img src="#" /></a></li>
+                    <li><a href="javascript:linkedinShare('@pageUrl',520,360)"><img src="#" /></a></li>*@
+            }
+
+        </ul>
+    </div>
+    <button class="share-btn hide-links "><i class="lni lni-link" aria-hidden="true"></i></button>
+</div>
+
+@*<script>
+    function fbShare(url, title, descr, winWidth, winHeight) {
+        var winTop = (screen.height / 2) - (winHeight / 2);
+        var winLeft = (screen.width / 2) - (winWidth / 2);
+        window.open('http://www.instagram.com/sharer.php?s=100&p[title]=' + title + '&p[summary]=' + descr + '&p[url]=' + url, 'sharer', 'top=' + winTop + ',left=' + winLeft + ',toolbar=0,status=0,width=' + winWidth + ',height=' + winHeight);
+    }
+    function twitterShare(url, winWidth, winHeight) {
+        var winTop = (screen.height / 2) - (winHeight / 2);
+        var winLeft = (screen.width / 2) - (winWidth / 2);
+
+        window.open('https://twitter.com/share?url=' + url, 'sharer', 'top=' + winTop + ',left=' + winLeft + ',toolbar=0,status=0,width=' + winWidth + ',height=' + winHeight);
+    }
+    function linkedinShare(url, winWidth, winHeight) {
+        var winTop = (screen.height / 2) - (winHeight / 2);
+        var winLeft = (screen.width / 2) - (winWidth / 2);
+
+        window.open(' https://www.linkedin.com/shareArticle?url=' + url, 'sharer', 'top=' + winTop + ',left=' + winLeft + ',toolbar=0,status=0,width=' + winWidth + ',height=' + winHeight);
+    }
+    function instagram(url, winWidth, winHeight) {
+        var winTop = (screen.height / 2) - (winHeight / 2);
+        var winLeft = (screen.width / 2) - (winWidth / 2);
+
+        window.open(' https://www.linkedin.com/shareArticle?url=' + url, 'sharer', 'top=' + winTop + ',left=' + winLeft + ',toolbar=0,status=0,width=' + winWidth + ',height=' + winHeight);
+    }
+
+    function copy(copyText) {
+        var input = document.createElement('textarea');
+        input.innerHTML = copyText;
+        document.body.appendChild(input);
+        input.select();
+        var result = document.execCommand('copy');
+        document.body.removeChild(input);
+        return result;
+    }
+
+    /**/</script>*@
+@*@functions {
+        //Get Image
+        public string ImageUrl(IPublishedElement Element)
+        {
+            string ImageURL;
+            if (Element.HasValue("thetargetedimage"))
+            {
+                try
+                {
+                    ImageURL = Element.Value<MediaWithCrops>("thetargetedimage").Url();
+
+                }
+                catch (Exception)
+                {
+
+                    ImageURL = "#";
+                }
+            }
+            else
+            {
+                ImageURL = "#";
+            }
+            return ImageURL;
+        }
+
+        //Get Link
+
+        public string GetLink(IPublishedElement Element)
+        {
+            string ElementURL;
+            if (Element.HasValue("imageLink"))
+            {
+                try
+                {
+                    ElementURL = Element.Value<Link>("imageLink").Url;
+
+                }
+                catch (Exception)
+                {
+
+                    ElementURL = "#";
+                }
+            }
+            else
+            {
+                ElementURL = "#";
+            }
+            return ElementURL;
+        }
+
+    }*@ 

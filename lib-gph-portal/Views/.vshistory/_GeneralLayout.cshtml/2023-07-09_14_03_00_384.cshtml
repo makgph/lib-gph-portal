@@ -1,0 +1,160 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{
+    var CurrentPage = Umbraco.AssignedContentItem;
+    var CurrentLanguage = CurrentPage.GetCultureFromDomains();
+    var Direction = CurrentLanguage == "ar-SA" ? "rtl" : "ltr";
+}
+<!doctype html>
+<html class="no-js" lang="@CurrentLanguage">
+
+
+<head>
+
+    <!--====== Meta Data ======-->
+    @Html.Partial("Partials/Shared/_MetaData")
+
+    <!--====== Favicon Icon ======-->
+    <link rel="icon" type="image/x-icon" href="~/assets/images/Group 3350.png">
+    @*
+
+        <!--====== Magnific Popup CSS ======-->
+        <link rel="stylesheet" href="~/assets/css/magnific-popup.css">
+
+        <!--====== Slick CSS ======-->
+        <link rel="stylesheet" href="~/assets/css/slick.css">
+        <link rel="stylesheet" type="text/css" href="~/assets/css/slick-theme.css">
+
+        <!--====== Line Icons CSS ======-->
+        <link rel="stylesheet" href="~/assets/css/LineIcons.css">
+
+        <!--====== Bootstrap CSS ======-->
+        <link rel="stylesheet" href="~/assets/css/bootstrap.min.css">
+
+        <!--====== Default CSS ======-->
+        <link rel="stylesheet" href="~/assets/css/default.css">
+
+        <!--====== Style CSS ======-->
+        <link rel="stylesheet" href="~/assets/css/style.css">
+        <link rel="stylesheet" href="~/assets/css/rvfs.css">
+        <link rel="stylesheet" href="~/assets/sass/style.css">
+    *@
+
+
+    <!--====== Magnific Popup CSS ======-->
+    <link rel="stylesheet" href="~/assets/css/magnific-popup.css">
+
+    <!--====== Slick CSS ======-->
+    <link rel="stylesheet" href="~/assets/css/slick.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/slick-theme.css">
+
+    <!--====== Line Icons CSS ======-->
+    <link rel="stylesheet" href="~/assets/css/LineIcons.css">
+
+    <!--====== Bootstrap CSS ======-->
+    <link rel="stylesheet" href="~/assets/css/bootstrap.min.css">
+
+    <!--====== Default CSS ======-->
+    <link rel="stylesheet" href="~/assets/css/default.css">
+
+    <!--====== Style CSS ======-->
+    <link rel="stylesheet" href="~/assets/sass/style.css">
+
+    <link rel="stylesheet" href="~/assets/css/rvfs.css">
+
+
+
+</head>
+
+<body class="post">
+    <!--====== PreLoader ======-->
+    @*@Html.Partial("Partials/Shared/_PreLoader")*@
+
+    <!--====== ChatBot ======-->
+    @Html.Partial("Partials/Chat/_Bot")
+
+
+
+    <!--====== setting icons ======-->
+    @Html.Partial("Partials/Shared/_Settings")
+
+    <!--====== social icons ======-->
+    @Html.Partial("Partials/Shared/_SocialIcons")
+
+    <!--====== NAVBAR TWO PART START ======-->
+    @Html.Partial("Partials/Shared/_Header")
+
+    <!--====== NAVBAR TWO PART ENDS ======-->
+    @RenderBody()
+
+    <!-- ======= Footer ======= -->
+    @Html.Partial("Partials/Shared/_Footer")
+
+    <!-- End Footer -->
+    <!--====== BACK TO TOP PART START ======-->
+
+    <a href="#" class="back-to-top"><i class="lni lni-chevron-up"></i></a>
+
+    <!--====== BACK TO TOP PART ENDS ======-->
+    <!--====== Jquery js ======-->
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/Scripts/additional-methods.min.js"></script>
+
+
+    @*<script src="~/assets/js/vendor/jquery-2.2.0.min.js"></script>*@
+    <script type="text/javascript" src="~/assets/js/slick-news.js"></script>
+    @*<script src="~/assets/js/vendor/jquery-1.12.4.min.js"></script>*@
+    <script src="~/assets/js/vendor/modernizr-3.7.1.min.js"></script>
+    <script src="~/assets/js/rv-fontsize.js"></script>
+    <script src="~/assets/js/store.min.js"></script>
+
+    <!--====== Bootstrap js ======-->
+    <script src="~/assets/js/popper.min.js"></script>
+    <script src="~/assets/js/bootstrap.min.js"></script>
+    <script src="~/assets/js/setting.js"></script>
+
+
+    <script type="text/javascript">
+        clicked = true;
+        $(document).ready(function () {
+            $(".share-btn").click(function () {
+                if (clicked) {
+                    $("#floating-social .social-links").css('left', '0px');
+                    $(".share-btn").addClass("show-links");
+                    $(".share-btn").removeClass("hide-links");
+                    clicked = false;
+                } else {
+
+                    $("#floating-social .social-links").css('left', '-70px');
+                    $(".share-btn").addClass("hide-links");
+                    $(".share-btn").removeClass("show-links");
+                    clicked = true;
+                }
+            });
+        });
+    </script>
+    <!--====== Slick js ======-->
+    <script src="~/assets/js/slick.min.js"></script>
+
+    <!--====== Magnific Popup js ======-->
+    <script src="~/assets/js/jquery.magnific-popup.min.js"></script>
+
+    <!--====== Ajax Contact js ======-->
+    <script src="~/assets/js/ajax-contact.js"></script>
+
+    <!--====== Isotope js ======-->
+    <script src="~/assets/js/imagesloaded.pkgd.min.js"></script>
+    <script src="~/assets/js/isotope.pkgd.min.js"></script>
+
+    <!--====== Scrolling Nav js ======-->
+    <script src="~/assets/js/jquery.easing.min.js"></script>
+    <script src="~/assets/js/scrolling-nav.js"></script>
+
+    <!--====== Main js ======-->
+    <script src="~/assets/js/main.js"></script>
+
+</body>
+
+</html>

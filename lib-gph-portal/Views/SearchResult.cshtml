@@ -1,0 +1,229 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Web.Models
+@using Umbraco.Web.PublishedModels
+@*@using sa.gov.libgph.Services*@
+
+@{
+    Layout = "_InnerPagesLayout.cshtml";
+    var search = "";
+
+    try
+    {
+        search = Request.QueryString["SearchInput"];
+
+    }
+    catch (Exception)
+    {
+
+        search = "";
+    }
+    var CurrentSection = Umbraco.AssignedContentItem;
+    var SearchActionLink = CurrentSection.Url();
+    var ContentQuery = Umbraco.ContentQuery;
+    var Results = ContentQuery.Search(search).ToArray().Where(x => x.Content.GetTemplateAlias().IsNullOrWhiteSpace() == false && x.Content.IsVisible() && x.Content.Value<bool>("isSearchable"));
+    var logoImage = Model.Root().Value<MediaWithCrops>("libraryLogo").Url();
+    var language = CurrentSection.GetCultureFromDomains();
+
+    string EmptyQuery = (language == "ar-SA") ? "لا يوجد نتائج" : "No Result";
+    int CorrectCount = 0;
+
+    string SubContentBody = "";
+
+
+
+    var NewsItem = Model.Root().ChildrenOfType("news").FirstOrDefault().Children().FirstOrDefault().GetType();
+
+    var Media = Umbraco.Content("2204").Children().FirstOrDefault().GetType();
+
+
+
+
+}
+
+
+<section class="wrapper section-bg">
+    <div class="container">
+
+        <div class="row">
+            @foreach (var item in Results)
+            {
+                var CurrentItem = item?.Content;
+                var PageTitle = CurrentItem?.Value<string>("pageTitle");
+                var PageName = CurrentItem?.Name;
+                var date = CurrentItem.CreateDate;
+                CorrectCount++;
+
+                if (CurrentItem.GetType() == NewsItem)
+                {
+
+                    SubContentBody = CurrentItem?.Value<IEnumerable<IPublishedElement>>("newsItemContentBody").FirstOrDefault().Value<string>("textBody")?.StripHtml();
+                }
+
+                else if (CurrentItem.GetType() == Media)
+                {
+
+                    SubContentBody = CurrentItem?.Value<string>("body")?.StripHtml();
+
+
+                }
+                else
+                {
+                    SubContentBody = CurrentItem?.Value<string>("metaDescription")?.StripHtml();
+
+                }
+
+                <div class="col-12 search-box">
+                    <a href="@(item?.Content?.Url())">
+                        <div class="row">
+                            <div class="col-md-3 text-center mb-3">
+                                <img src="@ImageUrl(CurrentItem,"image")"
+                                     class="rounded float-start" alt="...">
+                            </div>
+                            <div class="col-md-9">
+                                <h4 class="title">
+                                    @PageName
+                                </h4>
+                                <p class="date">
+
+                                    <i class="lni lni-alarm-clock"></i><time datetime="2020-01-01">
+
+                                        @GetDate(CurrentItem, "publishingDate", date)
+                                    </time>
+
+                                </p>
+                                <p class="description">
+                                    @if (SubContentBody?.Length > 300)
+                                    {
+                                        SubContentBody = SubContentBody.Substring(0, 300) + "...";
+                                    }
+
+                                    @(SubContentBody)
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+
+                </div>
+            }
+
+            @if (CorrectCount == 0)
+            {
+                <h1>@EmptyQuery</h1>
+            }
+
+            else
+            {
+
+                if (string.IsNullOrWhiteSpace(search))
+                {
+
+                    <h1>@EmptyQuery</h1>
+                }
+
+            }
+            @*@if (Results.Count() == 0)
+                {
+                    <div class="col-12 search-box">
+                        <a href="">
+                            <div class="row">
+
+                                <div class="col-12">
+                                    <h1 class="title  text-center my-5 " style="font-size:30px">
+
+                            @EmptyQuery
+                                    </h1>
+
+                                </div>
+                            </div>
+                        </a>
+
+                    </div>
+
+                }*@
+        </div>
+
+    </div>
+</section>
+
+
+
+
+@*publishingDate*@
+@functions{
+
+    //Get Image
+    public string ImageUrl(IPublishedElement Element, string Property)
+    {
+        string ImageURL;
+        try
+        {
+
+            if (Element.HasValue(Property))
+
+            {
+
+                ImageURL = Element.Value<MediaWithCrops>(Property).Url();
+
+            }
+            else
+            {
+
+                if (Element.HasValue("metaImage"))
+                {
+
+                    ImageURL = Element.Value<MediaWithCrops>("metaImage").Url();
+                }
+                else
+                {
+                    ImageURL = Model.Root().Value<MediaWithCrops>("libraryLogo").Url();
+                }
+
+            }
+        }
+        catch (Exception)
+        {
+
+            ImageURL = "#";
+        }
+
+        return ImageURL;
+
+
+    }
+
+
+    public string GetDate(IPublishedElement Element, string Property, DateTime date)
+    {
+        var Date = "";
+        try
+        {
+
+            if (Element.HasValue(Property))
+
+            {
+                Date = Element.Value<DateTime>(Property).ToString("dd MMM yyyy");
+
+
+            }
+            else
+            {
+                if (Element.HasProperty("date"))
+                {
+                    Date = Element.Value<DateTime>("date").ToString("dd MMM yyyy");
+                }
+
+                else
+                {
+                    Date = date.ToLongDateString();
+                }
+
+            }
+
+        }
+        catch (Exception)
+        { Date = ""; }
+
+
+        return Date;
+    }
+}

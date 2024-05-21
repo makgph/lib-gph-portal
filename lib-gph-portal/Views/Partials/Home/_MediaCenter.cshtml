@@ -1,0 +1,216 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Web.Models
+@{
+    var Root = Model.Root();
+    var CurrentDocumentType = Umbraco.AssignedContentItem;
+    var CurrentLanguage = CurrentDocumentType.GetCultureFromDomains();
+
+    var MediaCenter = Root.ChildrenOfType("mediaCenter").FirstOrDefault();
+    var MediaCenterChildren = MediaCenter.Children().ToArray();
+    //var VedioGalary = MediaCenter.ChildrenOfType("videoGallery");
+    //var EventsandActivities = MediaCenter.ChildrenOfType("eventsAndActivities");
+    //var SeminarsandConferences = MediaCenter.ChildrenOfType("seminarsAndConferences");
+    //var visits = MediaCenter.ChildrenOfType("visits");
+    var ShowMore = CurrentLanguage == "ar-SA" ? "عرض المزيد" : "Show More ...";
+
+
+}
+<section id="portfolio" class="portfolio-area portfolio-four pb-100">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-10">
+                <div class="section-title text-center pb-10">
+                    <h3 class="title">@MediaCenter.Name</h3>
+                    <p class="underline"></p>
+                </div> <!-- section title -->
+            </div>
+        </div> <!-- row -->
+        <div class="row">
+            <div class="col-12">
+
+                <div class="portfolio-menu text-center mt-50 rtl">
+                    <ul class="nav   justify-content-center"
+                        id="pills-tab"
+                        role="tablist">
+                        @{
+                            string Active = "";
+                        }
+
+                        @for (int i = 0; i < MediaCenterChildren.Length; i++)
+                        {
+                            Active = i == 0 ? "active" : "";
+                            <li class="@Active">
+                                <a id="pills-pic-tab-@(i)"
+                                   data-toggle="pill"
+                                   href="#pills-@(i)"
+                                   role="tab"
+                                   aria-controls="pills-@(i)"
+                                   aria-selected="true">
+                                    @MediaCenterChildren[i].Name
+                                </a>
+                            </li>
+
+                        }
+
+                    </ul>
+                </div>
+                <div class="tab-content rtl" id="pills-tabContent">
+                    @{
+                        string Active0;
+                        string Show;
+                    }
+                    @for (int j = 0; j < MediaCenterChildren.Length; j++)
+                    {
+                        Active0 = j == 0 ? "active" : "";
+                        Show = j == 0 ? "show" : "";
+                        <div class="tab-pane fade @Show @Active0" id="pills-@(j)" role="tabpanel"
+                             aria-labelledby="pills-pic-tab-@(j)">
+
+                            <div class="row mt-40 b-white">
+                                @{
+                                    var MediaCenterItemChildren = MediaCenterChildren[j].Children().ToArray();
+
+
+                                }
+                                @if (MediaCenterChildren[j].ContentType.Alias == "picturesLibrary")
+                                {
+                                    var Pictures = MediaCenterChildren[j].Value<IEnumerable<IPublishedElement>>("imagesList").ToArray();
+
+                                    for (int k = 0; k < Pictures.Take(4).ToArray().Length; k++)
+                                    {
+                                        <div class="col-lg-3  col-md-6 mb-10">
+                                            <div class="single-portfolio">
+                                                <div class="portfolio-image">
+                                                    <img src="@(Pictures[k].Value<MediaWithCrops>("image").Url())"
+                                                         alt="MediaCenterItem">
+                                                    <div class="portfolio-overlay d-flex align-items-center justify-content-center">
+                                                        <div class="portfolio-content">
+                                                            <div class="portfolio-icon">
+                                                                <a class="image-popup"
+                                                                   href="@(Pictures[k].Value<MediaWithCrops>("image").Url())">
+                                                                    <i class="lni lni-zoom-in"></i>
+                                                                </a>
+
+                                                            </div>
+                                                            <div class="portfolio-icon">
+                                                                <a href="#"><i class="lni lni-link"></i></a>
+
+                                                            </div>
+                                                            <p>@(Pictures[k].Value<string>("title"))</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div> <!-- single portfolio -->
+                                        </div>
+                                    }
+                                }
+                                else if (MediaCenterChildren[j].ContentType.Alias == "videoGallery")
+                                {
+                                    var Videos = MediaCenterChildren[j].Value<IEnumerable<IPublishedElement>>("listVideo").ToArray();
+
+                                    for (int a = 0; a < Videos.Take(4).ToArray().Length; a++)
+                                    {
+                                        <div class="col-lg-3 col-md-6 mb-10">
+                                            <div class="single-portfolio">
+                                                <div class="portfolio-image">
+                                                    <div class="video-gallery">
+
+                                                        <div class="gallery-item ">
+                                                            <img src="@(Videos[a].Value<MediaWithCrops>("bgImage").Url())"
+                                                                 alt="Mount Rainier" />
+                                                            <div class="portfolio-overlay d-flex align-items-center justify-content-center">
+                                                                <div class="portfolio-content">
+
+                                                                    <div class="wrapper">
+                                                                        <div class="circle pulse"></div>
+                                                                        <div class="circle">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                                                 viewBox="0 0 100 100">
+                                                                                <polygon points="40,30 65,50 40,70"></polygon>
+                                                                            </svg>
+                                                                        </div>
+                                                                    </div>
+                                                                    <p>@(Videos[a].Value<string>("title"))</p>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="gallery-item-caption">
+
+                                                                <a class="vimeo-popup" href="@(Videos[a].Value<Link>("linkVideo").Url)"></a>
+                                                            </div>
+
+                                                        </div>
+
+
+                                                    </div>
+
+                                                </div>
+                                            </div> <!-- single portfolio -->
+                                        </div>
+
+                                    }
+
+                                }
+                                else
+                                {
+
+
+                                    for (int i = 0; i < MediaCenterItemChildren.Take(4).ToArray().Length; i++)
+                                    {
+
+                                        <div class="col-lg-3  col-md-6 mb-10">
+                                            <div class="single-portfolio">
+
+                                                <img src="@ImageUrl(MediaCenterItemChildren[i])" alt="MediaCenterItemChildImage" class="image">
+                                                <p class="overlay">  @(MediaCenterItemChildren[i].Value<string>("title"))  <a href="@MediaCenterItemChildren[i].Url()">@ShowMore </a></p>
+                                            </div> <!-- single portfolio -->
+                                        </div>
+
+                                    }
+                                }
+
+
+                                <div class="col-lg-12 text-center">
+
+                                    <a class="arrow" href="@MediaCenterChildren[j].Url()">@ShowMore</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+
+        </div> <!-- row -->
+    </div> <!-- container -->
+</section>
+
+<!--====== PORTFOLIO PART ENDS ======-->
+@functions{
+    public string ImageUrl(IPublishedContent Element)
+    {
+        string ImageURL;
+
+        if (Element.HasValue("image"))
+        {
+            try
+            {
+                ImageURL = Element.Value<MediaWithCrops>("image").Url();
+            }
+
+            catch (Exception)
+            {
+
+                ImageURL = "#";
+            }
+        }
+        else
+        {
+            ImageURL = "#";
+        }
+
+        return ImageURL;
+    }
+
+}

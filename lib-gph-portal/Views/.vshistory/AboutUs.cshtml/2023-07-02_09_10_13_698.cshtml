@@ -1,0 +1,173 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Web.Models
+@{
+    Layout = "_InnerPagesLayout.cshtml";
+}
+@{
+    var AboutPage = Umbraco.AssignedContentItem;
+    var CurrentLangauge = AboutPage.GetCultureFromDomains();
+
+    //Introduction
+    var IntroductionTitle = AboutPage.Value<string>("introductionTitle");
+    var IntroductionBody = AboutPage.Value<string>("introductionBody");
+    var IntroductionImage = "";
+    var BriefImage = "";
+    if (AboutPage.HasValue("introductionImage")) { IntroductionImage = AboutPage.Value<MediaWithCrops>("introductionImage").Url(); }
+    else { IntroductionImage = "#"; }
+    //Brief
+    var BriefTitle = AboutPage.Value<string>("briefTitle");
+    var BriefBody = AboutPage.Value<string>("briefBody");
+    if (AboutPage.HasValue("briefImage")) { BriefImage = AboutPage.Value<MediaWithCrops>("briefImage").Url(); }
+    else { BriefImage = "#"; }
+
+
+    //Location
+    var LocationTitle = AboutPage.Value<string>("locationTitle");
+    var Location = AboutPage.Value<string>("location");
+    var LocationOnMaps = GetLink(AboutPage);
+
+    //Goals of the Library
+    var GoalsTitle = AboutPage.Value<string>("goalsTitle");
+    var Goals = AboutPage.Value<IEnumerable<IPublishedElement>>("goals").ToArray();
+    var dd = HttpContext.Current.Request.UserHostAddress;
+
+}
+<h1>@dd</h1>
+<section id="about" class="about">
+    <div class="container">
+
+        <div class="row justify-content-between d-flex align-items-center">
+            <div class="col-lg-5 d-flex align-items-center justify-content-center about-img">
+                <img src="@IntroductionImage" class="img-fluid" alt="IntroductionImage" data-aos="zoom-in">
+            </div>
+            <div class="col-lg-6 pt-5 pt-lg-0  ">
+                <h3 data-aos="fade-up" class="line long-line">@IntroductionTitle</h3>
+                <div class="mt-40">
+                    <p>
+                        @IntroductionBody.StripHtml()
+
+                    </p>
+                </div>
+
+
+            </div>
+        </div>
+
+    </div>
+</section><!-- End About Section -->
+<section id="services" class="services section-bg ">
+    <div class="container" data-aos="fade-up">
+
+        <div class="row justify-content-between d-flex align-items-center">
+
+            <div class="col-lg-6 pt-5 pt-lg-0  ">
+                <div class="section-description">
+                    <h3 data-aos="fade-up" class="line  ">@BriefTitle</h3>
+                    <div class="mt-20">
+                        <p class="">
+                            @BriefBody.StripHtml()
+
+                        </p>
+                    </div>
+                </div>
+
+
+
+            </div>
+            <div class="col-lg-5 d-flex align-items-center justify-content-center about-img">
+                <img src="@BriefImage" class="img-fluid" alt="BriefImage" data-aos="zoom-in">
+            </div>
+
+
+        </div>
+    </div>
+
+</section><!-- End Services Section -->
+<section id="location" class="location">
+    <div class="container" data-aos="fade-up">
+        <div class="row justify-content-between d-flex align-items-center">
+            <div class="col-lg-5 d-flex align-items-center justify-content-center about-img">
+
+
+
+                <iframe src="@LocationOnMaps" frameborder="0" style="border:0; width: 100%; height: 290px;border-radius: 10px;" allowfullscreen></iframe>
+
+            </div>
+            <div class="col-lg-6 pt-5 pt-lg-0  ">
+                <div class="section-description">
+                    <h3 data-aos="fade-up" class="line ">@LocationTitle</h3>
+                    <div class="mt-20">
+                        <p class="">
+                            @Location.StripHtml()
+                        </p>
+                    </div>
+                </div>
+
+
+
+
+            </div>
+
+
+
+        </div>
+
+
+
+    </div>
+</section><!-- End Services Section -->
+
+<section id="goals" class="goals section-bg ">
+    <div class="container " data-aos="fade-up">
+        <div class="section-description">
+            <h3 data-aos="fade-up" class="line text-center">@GoalsTitle</h3>
+        </div>
+        <div class=" row  goals-slider slider-lr mt-40" dir="rtl">
+            @for (int i = 0; i < Goals.Length; i++)
+            {
+                <div class="col-md-6 col-lg-4 d-flex align-items-stretch">
+                    <div class="icon-box">
+                        <span class="number">@(Goals[i].Value<string>("textTitle"))</span>
+                        <p class="description">
+                            @(Goals[i].Value<string>("textBody").StripHtml())
+                        </p>
+                    </div>
+                </div>
+            }
+        </div> <!-- new-of-library content wrapper -->
+    </div>
+</section><!-- End Services Section -->
+<!-- End Services Section -->
+
+@functions  {
+
+
+    //Get Link
+
+    public string GetLink(IPublishedElement Element)
+    {
+        string ElementURL = "";
+
+        if (Element.HasValue("locationOnMaps"))
+        {
+            try
+            {
+                ElementURL = Element.Value<Link>("locationOnMaps").Url;
+
+            }
+            catch (Exception)
+            {
+
+                ElementURL = "#";
+            }
+        }
+        else
+        {
+            ElementURL = "#";
+
+        }
+        return ElementURL;
+    }
+
+
+}

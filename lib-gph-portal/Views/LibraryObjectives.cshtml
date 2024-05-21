@@ -1,0 +1,95 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using ContentModels = Umbraco.Web.PublishedModels;
+@{
+    Layout = "_InnerPagesLayout.cshtml";
+}
+@{
+    var Langauge = Umbraco.AssignedContentItem.GetCultureFromDomains();
+
+    var listgoals = Umbraco.AssignedContentItem.Value<IEnumerable<IPublishedElement>>("listText");
+
+
+    var imagetitle = Umbraco.AssignedContentItem.Value<IPublishedContent>("image");
+
+    var tittle = Umbraco.AssignedContentItem.Value<string>("title");
+
+    var desc = Umbraco.AssignedContentItem.Value<string>("descriptionOfTitle");
+
+    var titlegoal = Umbraco.AssignedContentItem.Value<string>("tittle");
+
+
+
+
+}
+
+
+
+    <section id="about" class="about">
+        <div class="container">
+
+            <div class="row justify-content-between d-flex align-items-center">
+                <div class="col-lg-5 d-flex align-items-center justify-content-center about-img">
+                    @if (imagetitle != null)
+                    {
+                        <img src="@imagetitle.Url()" class="img-fluid" alt="@imagetitle.Name" data-aos="zoom-in">
+                    }
+                </div>
+                <div class="col-lg-6 pt-5 pt-lg-0  ">
+                    <h3 data-aos="fade-up" class="line ">@tittle</h3>
+                    <div class="mt-40">
+                        <p>
+                            @desc
+                        </p>
+                    </div>
+
+
+                </div>
+            </div>
+
+        </div>
+    </section><!-- End About Section -->
+
+    <section id="goals" class="goals lg-slider section-bg ">
+        <div class="container " data-aos="fade-up">
+
+            <div class="section-description">
+                <h3 data-aos="fade-up" class="line text-center">@titlegoal</h3>
+
+            </div>
+
+            <div class=" row  goals-slider slider-lr mt-40" dir="rtl">
+
+
+
+
+                @if (listgoals != null)
+                {
+                    foreach (var item in listgoals.Where(x => x.IsVisible()))
+                    {
+                        var num = item.Value<int>("number");
+                        var listoftext = item.Value<string>("text");
+
+                        if (listoftext != null)
+                        {
+
+                            <div class="col-md-6 col-lg-4 d-flex align-items-stretch">
+                                <div class="icon-box">
+                                    <span class="number">@num</span>
+
+                                    <p class="description">@listoftext </p>
+                                </div>
+                            </div>
+                        }
+                    }
+                }
+
+
+
+
+            </div> <!-- new-of-library content wrapper -->
+
+
+        </div>
+    </section><!-- End Services Section -->
+
+

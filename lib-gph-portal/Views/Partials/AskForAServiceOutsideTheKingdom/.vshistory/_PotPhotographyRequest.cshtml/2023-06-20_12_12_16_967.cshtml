@@ -1,0 +1,312 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<sa.gov.libgph.Models.PotPhotographyRequestModel>
+@using sa.gov.libgph.Services
+
+@{
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+
+    var CurrentLanguage = System.Threading.Thread.CurrentThread.CurrentCulture.Name;
+
+    string reCAPTCHA = CurrentLanguage == "ar-SA" ? "مطلوب تأكيد كابتشا" : "reCAPTCHA is mandatory";
+    string OldCaptchResponse = CurrentLanguage == "ar-SA" ? " يرجي تأكيد كابتشا مرة أخري" : "For another reCaptcha ";
+    string ClickHere = CurrentLanguage == "ar-SA" ? "اضغط هنا" : "Click Here";
+    string SendMessage = CurrentLanguage == "ar-SA" ? "طلب خدمة" : "Ask for a Service";
+    string selectCountry = CurrentLanguage == "ar-SA" ? "البلد" : "Select Country";
+    string selectLibrary = CurrentLanguage == "ar-SA" ? "المكتبة" : "Select Library";
+    Model.GetCountries();
+    Model.GetLiberaries();
+
+}
+
+
+<style>
+/*loader*/
+    .field-validation-valid, .field-validation-error, #reCaptchamessageContainer {
+        height: 20px;
+    }
+    #preloader-container_PotPhotography {
+        height: 50px;
+    }
+    .underLined {
+        border-bottom: 1px solid #dc3545;
+        cursor: pointer;
+    }
+    #contact-us-preloader {
+        border: 16px solid #f3f3f3;
+        border-top: 16px solid #b19556;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        margin-left: auto;
+        margin-right: auto;
+        animation: spin 2s linear infinite;
+    }
+
+
+@("@")keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+    .agreementstyle {
+        line-height: 1.5;
+        font-size: 1rem;
+        text-align: right !important;
+    }
+
+
+    .error {
+        color: #dc3545 !important;
+    }
+    .requiredField:after {
+        content: " *";
+        color: #dc3545;
+    }
+
+</style>
+@using (Ajax.BeginForm("AskForAServicePotPhotography", "AskForAServiceOutsideTheKingdom", null, new AjaxOptions()
+{
+
+    UpdateTargetId = "preloader-container_PotPhotography",
+    HttpMethod = "POST",
+    InsertionMode = InsertionMode.Replace,
+
+
+}, new { id = "AskForAPotPhotographyService", @class = "email-form", enctype = "multipart/form-data" }))
+{
+
+    <div class="row">
+        <div class="form-group col-md-6 mt-1 mt-md-0">
+            @Html.LabelFor(model => model.BeneficiaryName, htmlAttributes: new { @class = "requiredField control-label col-md-10 requiredField" })
+            @Html.EditorFor(model => model.BeneficiaryName, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.BeneficiaryName) } })
+            @Html.ValidationMessageFor(model => model.BeneficiaryName, "", new { @class = "text-danger" })
+
+        </div>
+        <div class="form-group col-md-6 mt-1 mt-md-0">
+            @Html.LabelFor(model => model.BeneficiaryEmail, htmlAttributes: new { @class = "requiredField control-label col-md-10" })
+            @Html.EditorFor(model => model.BeneficiaryEmail, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.BeneficiaryEmail) } })
+            @Html.ValidationMessageFor(model => model.BeneficiaryEmail, "", new { @class = "text-danger" })
+
+        </div>
+        <div class="form-group col-md-6 mt-1 mt-md-0">
+            <label for="country" class="requiredField"> @selectCountry</label>
+            <select name="Country" id="country" class="form-control">
+                <option value="0" hidden disabled selected>@selectCountry</option>
+
+                @foreach (var Country in Model.Countries.data)
+                {
+                    var name = CurrentLanguage == "ar-SA" ? Country.nameAr : Country.nameEn;
+                    <option value="@Country.id">@name</option>
+                }
+
+            </select>
+
+        </div>
+        <div class="form-group col-md-6 mt-1 mt-md-0">
+            <label for="libraryIdString" class="requiredField"> @selectLibrary</label>
+            <select name="libraryIdString" id="libraryIdString" class="form-control">
+                <option value="0" hidden disabled selected>@selectLibrary</option>
+
+                @foreach (var Liberary in Model?.Liberaries?.data?.locations)
+                {
+                    var name = CurrentLanguage == "ar-SA" ? Liberary.discoveryDisplayName : Liberary.name;
+
+                    <option value="@Liberary.id">@name</option>
+                }
+                    
+            </select>
+
+        </div>
+
+        @*<div class="form-group col-md-6 mt-1 mt-md-0">
+                <label for="type"> @PropertyExceptionHandler.GetTextValue(AskLibraryEmployeesServiceDT, "title")</label>
+
+                <select name="type" class="form-control">
+                    @foreach (var item in EmployeesTypes)
+                    {
+
+                        <option value="@PropertyExceptionHandler.GetTextValue(item,"value")">@PropertyExceptionHandler.GetTextValue(item, "position")</option>
+                    }
+                </select>
+
+            </div>*@
+        <div class="form-group col-md-6 mt-1 mt-md-0">
+            @Html.LabelFor(model => model.BeneficiaryMobile, htmlAttributes: new { @class = "requiredField control-label col-md-10" })
+            @Html.EditorFor(model => model.BeneficiaryMobile, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.BeneficiaryMobile) } })
+            @Html.ValidationMessageFor(model => model.BeneficiaryMobile, "", new { @class = "text-danger" })
+
+        </div>
+        <div class="form-group col-md-6 mt-1 mt-md-0">
+            @Html.LabelFor(model => model.BeneficiaryQualification, htmlAttributes: new { @class = "requiredField control-label col-md-10" })
+            @Html.EditorFor(model => model.BeneficiaryQualification, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.BeneficiaryQualification) } })
+            @Html.ValidationMessageFor(model => model.BeneficiaryQualification, "", new { @class = "text-danger" })
+
+        </div>     <div class="form-group col-md-6 mt-1 mt-md-0">
+            @Html.LabelFor(model => model.Purpose, htmlAttributes: new { @class = "  control-label col-md-10" })
+            @Html.EditorFor(model => model.Purpose, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.Purpose) } })
+            @Html.ValidationMessageFor(model => model.Purpose, "", new { @class = "text-danger" })
+
+        </div>
+        <div class="form-group col-md-6 mt-1 mt-md-0">
+            @Html.LabelFor(model => model.BookTitle, htmlAttributes: new { @class = "requiredField control-label col-md-10" })
+            @Html.EditorFor(model => model.BookTitle, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.BookTitle) } })
+            @Html.ValidationMessageFor(model => model.BookTitle, "", new { @class = "text-danger" })
+
+        </div>
+        <div class="form-group col-md-6 mt-1 mt-md-0">
+            @Html.LabelFor(model => model.StartPage, htmlAttributes: new { @class = "requiredField control-label col-md-10" })
+            @Html.EditorFor(model => model.StartPage, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.StartPage), @min = 1 } })
+            @Html.ValidationMessageFor(model => model.StartPage, "", new { @class = "text-danger" })
+
+        </div>
+        <div class="form-group col-md-6 mt-1 mt-md-0">
+            @Html.LabelFor(model => model.EndPage, htmlAttributes: new { @class = "requiredField control-label col-md-10" })
+            @Html.EditorFor(model => model.EndPage, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.EndPage), @min = 1 } })
+            @Html.ValidationMessageFor(model => model.EndPage, "", new { @class = "text-danger" })
+
+        </div>
+
+    </div>
+
+
+    <div class="g-recaptcha"
+         id="re_cap_tcha_PotPhotography">
+
+    </div>
+    <div id="reCaptchamessageContainer">
+        <input type="hidden" name="reCap_valiadtion_PotPhotography" id="reCap_valiadtion_PotPhotography" value="" />
+        <input type="hidden" name="reCap_val_message_PotPhotography" id="reCap_val_message_PotPhotography" value="" />
+        <input type="hidden" name="CurrentLanguage" value="@CurrentLanguage" />
+        <input type="hidden" name="FormId" value="AskForAPotPhotographyService" />
+    </div>
+
+    <div id="preloader-container_PotPhotography">
+        <div id="contact-us-preloader" style="display:none"></div>
+    </div>
+
+    <div class="text-center"><button id="submitPotPhotographyForm" @*disabled*@ type="submit">@SendMessage</button></div>
+}
+
+
+
+@* <!--====== Validation JQ ======--> *@
+<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
+
+
+<script>
+
+    var response = 0;
+    var widgetIdPotPhotography;
+
+    $(document).ready(function () {
+        setTimeout(() => {
+        widgetIdPotPhotography = grecaptcha.render('re_cap_tcha_PotPhotography', {
+            'theme': 'light',
+            'expired-callback': expire_Captcha_PotPhotography,
+            'callback': valid_Captcha_PotPhotography,
+            'error-callback': error_Captcha_PotPhotography,
+            'sitekey': '6Lczn_cdAAAAAKp6niX8xoCQpkqmQy4swPK1--SZ',
+        });
+        }, 1000);
+
+    });
+
+
+    var language = "@CurrentLanguage";
+
+
+    $(document).ready(function () {
+
+    if (language === "ar-SA") {
+
+        $("#visitorName").attr("data-val-regex-pattern", "^[\u0621-\u064A ]+$");
+
+        }
+    });
+    var className = "input-validation-error";
+
+
+    var form = $("#AskForAPotPhotographyService");
+     var old_response = 0;
+    var isFormValid = false;
+    function CheckFormValidityPhotography() {
+         if ($("#BeneficiaryName").val() === "" || $("#BeneficiaryName").hasClass("input-validation-error") || $("#BeneficiaryEmail").val() === "" || $("#BeneficiaryEmail").hasClass("input-validation-error") || $("#BeneficiaryMobile").val() === "" || $("#BeneficiaryMobile").hasClass("input-validation-error") || $("#BookTitle").val() === "" || $("#BookTitle").hasClass("input-validation-error") || $("#StartPage").val() === "" || $("#StartPage").hasClass("input-validation-error") || $("#EndPage").val() === "" || $("#EndPage").hasClass("input-validation-error") || grecaptcha.getResponse(widgetIdPotPhotography) === "") {
+             isFormValid = false;
+
+        }
+        else {
+             isFormValid = true;
+
+        }
+    }
+    form.mouseover(() => { CheckFormValidityPhotography(); })
+    form.keydown(() => { CheckFormValidityPhotography(); })
+
+    $("#AskForAPotPhotographyService").submit(() => {
+        //reCaptcha Validation
+        //no response
+        if (grecaptcha.getResponse(widgetIdPotPhotography) == "") {
+            $("#re_cap_tcha_PotPhotography").addClass("agreementstyle");
+            $("#reCap_val_message_PotPhotography").replaceWith('<div id="reCap_val_message_PotPhotography"><span class="text-danger">@(reCAPTCHA)</span></div>');
+            $("#reCap_valiadtion_PotPhotography").val("");
+            return false;
+        }
+
+        //responded
+        else {
+            // old response
+            if (old_response === 0) {
+                //new response
+                //if (form.valid() == true) {
+                if (isFormValid == true) {
+                $("#preloader-container_PotPhotography").replaceWith('<div id="preloader-container_PotPhotography"><div id="contact-us-preloader" style="display:block"></div></div>');
+                }
+
+                $("#re_cap_tcha_PotPhotography").removeClass("agreementstyle");
+                $("#reCap_val_message_PotPhotography").replaceWith('<div id="reCap_val_message_PotPhotography"><span class="text-danger"></span></div>');
+                setTimeout(function () { $("#reCap_valiadtion_PotPhotography").val(""); }, 1500);
+                old_response++;
+
+            }
+            else {
+                @*$("#reCap_val_message_PotPhotography").replaceWith('<div id="reCap_val_message_PotPhotography" class="text-danger">@(OldCaptchResponse)<button type="button"class="btn btn-info" onclick="expire_Captcha_PotPhotography()"> @(ClickHere)</button></div>');*@
+                $("#reCap_val_message_PotPhotography").replaceWith('<div id="reCap_val_message_PotPhotography" class="text-danger">@(OldCaptchResponse)<a class="underLined" onclick="expire_Captcha_PotPhotography()">&nbsp;@(ClickHere)</a></div>');
+                return false;
+
+            }
+        }
+
+    });
+
+
+
+//Call back Function called if the captach is valid
+function valid_Captcha_PotPhotography() {
+    $("#reCap_valiadtion_PotPhotography").val("valid");
+    $("#re_cap_tcha_PotPhotography").removeClass("agreementstyle");
+    $("#reCap_val_message_PotPhotography").hide(1000, 'swing');
+}
+//Call back Function called if the captach is expired
+function expire_Captcha_PotPhotography() {
+    $("#reCap_valiadtion_PotPhotography").val("");
+    grecaptcha.reset(widgetIdPotPhotography);
+    old_response = 0;
+    $("#re_cap_tcha_PotPhotography").removeClass("agreementstyle");
+    $("#reCap_val_message_PotPhotography").hide(1000, 'swing');
+}
+//Call back Function called if the captach is something went wrong ==> it rests the captcha
+function error_Captcha_PotPhotography() {
+    grecaptcha.reset(widgetIdPotPhotography);
+    old_response = 0;
+    $("#reCap_val_message_PotPhotography").replaceWith('<div id="reCap_val_message_PotPhotography"><span class="text-danger"></span></div>');
+
+}
+    try {
+        $('#AskForAPotPhotographyService')[0].reset();
+    } catch (e) {
+
+    }
+
+</script>

@@ -1,0 +1,149 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using sa.gov.libgph.Services
+@using sa.gov.libgph.MedadApi.Services
+
+@{
+    Layout = "_InnerPagesLayout.cshtml";
+    var CurrentPage = Umbraco.AssignedContentItem;
+    var PXH = new PropertyExceptionHandler();
+
+    var CurrentTypeId = PXH.GetTextValue(CurrentPage, "filterBy");
+    var daysCounter = PXH.GetTextValue(CurrentPage, "daysCounter");
+    var CurrentQuery = string.Empty;
+    var _GetNewlyofLibraryService = new GetNewlyofLibraryService();
+    var NewlyofLibrary = _GetNewlyofLibraryService.GetNewlyofLibraryResponse(CurrentTypeId, daysCounter);
+    //try
+    //{
+    //    CurrentQuery = Request.QueryString.GetValues("searchkeyword")[0];
+
+    //}
+    //catch (Exception)
+    //{
+
+    //}
+    //var TestMedadSearch = new SimpleSearchService();
+    //var searchResult = TestMedadSearch.GetSimpleSearchResponse(CurrentQuery.ToString());
+    var SearchPageURL = Model.Root().ChildrenOfType("bookDetails").FirstOrDefault().Url();
+}
+
+<main id="main" class="rtl text-right">
+    <section class="wrapper section-bg">
+        <div class="container">
+
+            <div class="row">
+                @foreach (var item in NewlyofLibrary.instances.Take(10))
+                {
+                    <div class="col-12 search-box">
+
+                        <div class="row">
+                            <div class="col-md-2 text-center ">
+                                <img src="~/assets/images/portfolio/abstract-blur-defocused-bookshelf-library.png"
+                                     class="rounded float-start" alt="...">
+                            </div>
+                            <div class="col-md-10">
+
+                                <h4 class="title">
+                                    @item.title
+                                </h4>
+                                <div class="d-flex bd-highlight">
+                                    @try
+                                    {
+
+
+                                        foreach (var publication_item in item.publication)
+                                        {
+
+                                            <div class="p-2 flex-fill bd-highlight">
+                                                <div class="details">
+
+                                                    <i class="lni lni-alarm-clock"></i>
+                                                    <span class="title">التاريخ : </span>
+                                                    <span class="data"> @publication_item.dateOfPublication</span>
+
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                    catch (Exception)
+                                    {
+
+                                    }
+                                    @*<div class="p-2 flex-fill bd-highlight">
+                                        <div class="details">
+
+                                            <i class="lni lni-indent-decrease"></i>
+                                            <span class="title">رقم التصنيف : </span>
+                                            <span class="data"> 3245 ص هـ د</span>
+
+                                        </div>
+                                    </div>*@
+                                    <div class="p-2 flex-fill bd-highlight">
+                                        <div class="details">
+
+                                            <i class="lni lni-user"></i>
+                                            <span class="title">المؤلف : </span>
+                                            @try
+                                            {
+                                                foreach (var contributor in item.contributors)
+                                                {
+                                                    <span class="data">@contributor.name ,</span>
+                                                }
+
+
+                                            }
+                                            catch (Exception)
+                                            {
+
+                                            }
+
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                                <p class="description">
+
+                                </p>
+
+                                <hr>
+                                <div class="d-flex bd-highlight btn-div">
+
+                                    <div class="flex-fill"></div>
+                                    <div class="flex-fill"></div>
+                                    <div class=" flex-fill bd-highlight">
+                                        <a href="@(SearchPageURL+"?id="+item.id)" class="btn">
+                                            <i class="lni lni-exit"></i>
+                                            تفاصيل
+                                        </a>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+                }
+
+                @if (NewlyofLibrary.instances.Length == 0)
+                {
+                    <div>
+                        <p>
+                            لا يوجد نتائج 
+                        </p>
+                    </div>
+                }
+            </div>
+
+        </div>
+    </section>
+
+
+
+
+
+
+</main><!-- End #main -->

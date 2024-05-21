@@ -1,0 +1,245 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<sa.gov.libgph.Models.VPModel>
+@using System.Web.Mvc.Html
+@using ClientDependency.Core.Mvc
+@using Umbraco.Web
+@using Umbraco.Web.Models
+@using sa.gov.libgph.Models;
+@using Umbraco.Web.Controllers
+@using Umbraco.Core.Persistence;
+@{
+
+    IEnumerable<IPublishedElement> chatBotTree = Model.iePublishedContent;
+    string chatType = Model.chatType;
+    string message = Model.message != null ? Model.message : "";
+    IEnumerable<Link> vpLinks = Model.relatedLinks;
+
+    List<ChatBotModel> searchResult = Model.searchResult;
+    List<ChatBotModel> chatBotTreeList = Model.chatBotTreeList;
+
+
+    List<string> chatBotAnswers = Model.chatBotAnswer;
+    string notFoundMessage = Model.notFoundMessage;
+
+    //string sessionId = Session["SessionId"].ToString();
+
+
+
+    //UmbracoDatabase db = ApplicationContext.DatabaseContext.Database;
+
+    //ChatbotDashboard c = new ChatbotDashboard();
+
+    //c.InqueryDate = DateTime.Now.Date;
+    //c.SessionId = sessionId;
+
+    //db.Save(c);
+}
+
+
+
+@if (chatType == "Click")
+{
+    if (chatBotTree != null)
+    {
+        int idx = 1;
+
+        <li class="other a-message chat_msg">
+            <div class="list-group">
+                @if (message.Length != 0)
+                {
+                    <a class="list-group-item list-group-item-action list-group-item-title">@(message.StripHtml())</a>
+
+                }
+
+
+                @if (chatBotTree != null)
+                {
+
+                    foreach (IPublishedElement chatNode in chatBotTree.Where(x => x.IsVisible()))
+                    {
+                        string title = chatNode.HasValue("title") ? chatNode.Value<string>("title") : "";
+                        //IEnumerable<Link> links = chatNode.Value<IEnumerable<Link>>("link");
+                        Link link = chatNode.Value<Link>("link");
+                        //if (links != null)
+                        //{
+                        //    link = links.FirstOrDefault();
+                        //}
+                        if (title != "")
+                        {
+                            if (link == null)
+                            {
+                                string nodeId = "";
+                                if (Model.nodeId == "MN") { nodeId = idx.ToString(); }
+                                else if (Model.nodeId == "PRVM") { nodeId = Model.nodeId; }
+                                else { nodeId = Model.nodeId + "-" + idx; }
+                                <a class="list-group-item list-group-item-action" onclick="setSelectItem('@title', 'C',@Model.level,@idx,'@nodeId')">   @title</a>
+
+                            }
+                            else
+                            {
+                                string _target = link.Target;
+
+                                <a class="list-group-item list-group-item-action" href="@link.Url" target="@_target">  @title</a>
+
+                            }
+                        }
+                        idx++;
+                    }
+
+                    if (@Model.nodeId != "MN")
+                    {
+                        idx = idx + 1;
+                        string prvNodeId = Model.nodeId;// + "-" + idx;
+                        <a class="list-group-item list-group-item-action" onclick="setSelectItem('PRVM','C',@Model.level,0,'@prvNodeId')"> القائمة السابقة </a>
+
+                        <a class="list-group-item list-group-item-action" onclick="setSelectItem('MN','C',@Model.level,0,0)"> القائمة الرئيسية </a>
+
+                    }
+
+                }
+
+
+
+
+            </div>
+        </li>
+
+
+
+    }
+
+    else
+    {
+        if (vpLinks == null)
+        {
+            //  idx = idx + 1;
+            string prvNodeId = Model.nodeId;// + "-" + idx;
+
+            <li class="other a-message chat_msg">
+                <div class="list-group">
+                    <a class="list-group-item list-group-item-action list-group-item-title">@(message.StripHtml())</a>
+
+
+                    @if (message != "")
+                    {
+                        @Html.Raw(message)
+                    }
+                    else
+                    {
+                        <p style="text-align:center"> لا يتوفر بيانات عن هذا الإختيار </p>
+                    }
+                    <ul class="sessions">
+                        <a class="list-group-item list-group-item-action" onclick="setSelectItem('PRVM','C',@Model.level,0,'@prvNodeId')"> القائمة السابقة </a>
+                        <a class="list-group-item list-group-item-action" onclick="setSelectItem('MN','C',0,0,0)"> القائمة الرئيسية </a>
+                    </ul>
+
+                </div>
+            </li>
+        }
+        else
+        {
+            Link vpLink = vpLinks.FirstOrDefault();
+
+            <script>
+
+                window.open('@vpLink.Url');
+
+            </script>
+
+        }
+    }
+}
+else if (chatType == "Typing")
+{
+    if (searchResult != null)
+    {
+        if (searchResult.Count > 0)
+        {
+            int idx = 1;
+            <li class="other a-message chat_msg">
+                <div class="list-group">
+
+                    <a class="list-group-item list-group-item-action ">برجاء الضغط على الإختيار المناسب </a>
+
+
+
+                    <ul class="sessions">
+                        @foreach (ChatBotModel chResult in searchResult)
+                        {
+                            string title = chResult.title;
+                            IEnumerable<Link> links = chResult.links;
+                            Link link = null;
+                            if (links != null)
+                            {
+                                link = links.FirstOrDefault();
+                            }
+                            if (title != "")
+                            {
+                                if (link == null)
+                                {
+                                    string nodeId = "";
+                                    if (chResult.nodeId == "MN") { nodeId = idx.ToString(); }
+                                    else if (chResult.nodeId == "PRVM") { nodeId = chResult.nodeId; }
+                                    else { nodeId = chResult.nodeId; }
+                                    <a class="list-group-item list-group-item-action " onclick="setSelectItem('@title', 'C',@chResult.currentLevel,@idx,'@nodeId')">   @title</a>
+                                }
+                                else
+                                {
+                                    string _target = link.Target;
+
+                                    <a class="list-group-item list-group-item-action " href="@link.Url" target="@_target"> @title</a>
+
+                                }
+                            }
+                            idx++;
+                        }
+
+
+
+                        <a class="list-group-item list-group-item-action " onclick="setSelectItem('MN','C',2,0,0)"> القائمة الرئيسية </a>
+                    </ul>
+                </div>
+            </li>
+        }
+    }
+    else if (chatBotAnswers != null)
+    {
+
+
+        <li class="other a-message chat_msg">
+            <div class="list-group">
+                @foreach (string cAns in chatBotAnswers)
+                {
+                    <a class="list-group-item list-group-item-action ">@cAns </a>
+
+                }
+
+                <ul class="sessions">
+                    @*<a class="btn btn-chat btn-chat-a" onclick="setSelectItem('PRVM','C',@Model.level,0,'@prvNodeId')"> <i class="fas fa-angle-right pull-left"></i> القائمة السابقة </a>*@
+                    <a class="list-group-item list-group-item-action " onclick="setSelectItem('MN','C',0,0,0)"> القائمة الرئيسية </a>
+                </ul>
+
+            </div>
+        </li>
+
+    }
+    else if (notFoundMessage != null)
+    {
+
+
+        <li class="other a-message chat_msg">
+            <div class="list-group">
+
+
+                <a class="list-group-item list-group-item-action "> @notFoundMessage </a>
+
+
+                @*<a class="btn btn-chat btn-chat-a" onclick="setSelectItem('PRVM','C',@Model.level,0,'@prvNodeId')"> <i class="fas fa-angle-right pull-left"></i> القائمة السابقة </a>*@
+                <ul class="sessions">
+                    <a class="list-group-item list-group-item-action " onclick="setSelectItem('MN','C',0,0,0)">القائمة الرئيسية </a>
+                </ul>
+            </div>
+        </li>
+
+    }
+}
+

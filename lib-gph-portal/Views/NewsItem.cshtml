@@ -1,0 +1,185 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+
+@{
+    Layout = "_InnerPagesLayout.cshtml";
+}
+
+@{
+    var NewsItem = Umbraco.AssignedContentItem;
+    var Title = NewsItem.Value<string>("newsitemtitle");
+    var Image = ImageUrl(NewsItem, "newsItemImage");
+    var attachment = (NewsItem.HasValue("attachment") ? NewsItem.Value<IEnumerable<IPublishedElement>>("attachment") : null);
+
+    var Body = NewsItem.Value<IEnumerable<IPublishedElement>>("newsItemContentBody").ToArray();
+
+    var PublishingDate = NewsItem.Value<DateTime>("publishingDate");
+
+    var LatestNews = NewsItem.Siblings().ToArray();
+
+
+    var CurrentLangauge = NewsItem.GetCultureFromDomains();
+    var LatestNewsTitle = CurrentLangauge == "ar-SA" ? "أخر الأخبار" : "Latest News";
+    var SearchAboutNews = CurrentLangauge == "ar-SA" ? "بحث عن الأخبار" : "Search About News";
+    var Search = CurrentLangauge == "ar-SA" ? "بحث ..." : "Search ...";
+
+}
+
+<section id="blog" class="blog section-bg">
+    <div class="container" data-aos="fade-up">
+
+        <div class="row">
+
+            <div class="col-lg-8 entries">
+
+                <article class="entry entry-single">
+
+                    <div class="entry-img">
+                        <img src="@Image" alt="" class="img-fluid">
+                    </div>
+
+                    <h2 class="entry-title">
+                        <a href="">@Title</a>
+                    </h2>
+
+                    <div class="entry-meta">
+                        <ul>
+                            <li class="d-flex align-items-center"><i class="lni lni-alarm-clock"></i> <a href="#"><time datetime="2020-01-01">@PublishingDate.ToLongDateString()</time></a></li>
+                        </ul>
+                    </div>
+                    @for (int i = 0; i < Body.Length; i++)
+                    {
+                        @Html.Raw(Body[i]?.Value<string>("textbody"))
+
+                    }
+
+
+                    @if (attachment != null)
+                    {
+                        <section class="regular-news slider " dir="rtl">
+
+                            @foreach (var item in attachment)
+                            {
+                                var img = item.Value<IPublishedContent>("img");
+                                var alt = item.Value<string>("alt");
+                                <div class="col-md-6 col-lg-4 d-flex align-items-stretch">
+                                    <img src="@img.Url()" alt="@alt">
+                                </div>
+                            }
+                            <div class="col-md-6 col-lg-4 d-flex align-items-stretch">
+                                <img src="@Image" alt="">
+                            </div>
+
+                        </section>
+                    }
+
+
+
+
+
+                </article> @*End blog entry*@
+
+
+
+
+            </div> @*End blog entries list*@
+
+            <div class="col-lg-4">
+                <div class="row">
+                    <!--<div class="col-12">
+                        <div class="sidebar">
+
+
+
+
+                            <h3 class="sidebar-title">@SearchAboutNews </h3>
+                            <div class="sidebar-item recent-posts">
+                                <div class="sidebar-item search-form">
+                                    <form action="">
+                                        <input type="text" placeholder="@Search">
+                                        <button type="submit"><i class="lni lni-search-alt"></i></button>
+                                    </form>
+                                </div>-->
+                    @*End sidebar search formn*@
+
+
+
+
+                    <!--</div>--> @*End sidebar recent posts*@
+
+
+
+                    <!--</div>--> @*End sidebar*@
+                    <!--</div>-->
+
+                    <div class="col-12">
+                        <div class="sidebar">
+
+
+                            @* Latest News *@
+                            <h3 class="sidebar-title">@LatestNewsTitle</h3>
+                            <div class="sidebar-item recent-posts">
+                                @for (int i = 0; i < LatestNews.Length; i++)
+                                {
+                                    <div class="post-item clearfix">
+                                        <img src="@ImageUrl(LatestNews[i],"newsItemImage")" alt="">
+                                        <h4><a href="@(LatestNews[i]?.Url())">@(LatestNews[i]?.Value<string>("newsitemtitle"))</a></h4>
+                                        <time datetime="2020-01-01">
+                                            @(LatestNews[i]?.Value<DateTime>("publishingDate").ToLongDateString())
+                                        </time>
+                                    </div>
+                                }
+
+
+
+                            </div> @*End sidebar recent posts*@
+
+
+
+                        </div> @*End sidebar*@
+                    </div>
+                </div>
+
+            </div> @*End blog sidebar*@
+
+        </div>
+
+    </div>
+</section> @*End Blog Single Section*@
+
+
+
+
+
+@functions{
+
+    //Get Image
+    public string ImageUrl(IPublishedElement Element, string Property)
+    {
+        string ImageURL;
+        if (Element.HasValue(Property))
+
+        {
+            try
+            {
+                ImageURL = Element.Value<MediaWithCrops>(Property).Url();
+
+            }
+            catch (Exception)
+            {
+
+                ImageURL = "#";
+            }
+
+        }
+        else
+        {
+            ImageURL = "#";
+
+        }
+
+
+        return ImageURL;
+    }
+
+}

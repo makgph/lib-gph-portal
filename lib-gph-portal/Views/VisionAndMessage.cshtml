@@ -1,0 +1,51 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Web.Models;
+
+@{
+    Layout = "_InnerPagesLayout.cshtml";}
+@{ var cards = Model.Value<IEnumerable<IPublishedElement>>("Cards");}
+
+
+<section id="goals" class="goals lg-slider  mosque-goals vision-goals">
+    <div class="container" data-aos="fade-up">
+
+        <div class="row mt-20">
+            @foreach (var item in cards)
+            {
+                var title = item.Value<string>("title");
+                var description = item.Value<string>("description").StripHtml();
+                var image = item.Value<IPublishedContent>
+                    ("image");
+                var alt = item.Value<string>
+                    ("imageAlt");
+                var link = item.Value<Link>("linkTitle");
+                <div class="col-md-6 col-lg-6 d-flex align-items-stretch">
+                    <div class="icon-box">
+                        @if (image != null)
+                        {
+                            <div class="icon">
+                                <img src="@image.Url()" alt="@alt">
+                            </div>
+                        }
+                        <h4 class="title">
+                            @if (link != null)
+                            {
+                                <a href="@link.Url" target="@link.Target">
+                                    @title
+                                </a>
+                            }
+                        </h4>
+                        <p class="description">
+                            @description
+                        </p>
+                    </div>
+                </div>
+
+
+            }
+
+
+        </div>
+
+    </div>
+</section><!-- End About Section -->

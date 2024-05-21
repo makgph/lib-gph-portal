@@ -1,0 +1,172 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using ContentModels = Umbraco.Web.PublishedModels;
+@using Umbraco.Web.Models
+
+@{
+    Layout = "_InnerPagesLayout.cshtml";
+
+    var CenterPublicationsCard = Umbraco.AssignedContentItem.Value<IEnumerable<IPublishedElement>>("Researchcards");
+
+
+
+
+
+}
+
+
+@if (CenterPublicationsCard != null)
+{
+    int index = 0;
+    foreach (var item in CenterPublicationsCard.Where(x => x.IsVisible()))
+    {
+        var image = item.Value<IPublishedContent>("image");
+        var imageDescription = item.Value("imageAlt");
+
+        var description = item.Value<string>("description");
+        var textOfTitle = item.Value<string>("title");
+
+        var link = item.Value<Link>("linkTitle");
+
+
+
+        if (index % 2 == 0)
+        {
+            <section id="about" class="about">
+                <div class="container">
+                    <div class="row justify-content-between d-flex align-items-center">
+                        <div class="col-lg-5 d-flex align-items-center justify-content-center about-img">
+                            @if (image != null)
+                            {
+                                <img src="@image.Url()" alt="@(imageDescription!= null ? imageDescription : image.Name)" class="img-fluid" data-aos="zoom-in">
+                            }
+
+                        </div>
+                        <div class="col-lg-6 pt-5 pt-lg-0  ">
+                            @if (textOfTitle != null && textOfTitle != "")
+                            {
+                                <h3 data-aos="fade-up" class="line">@textOfTitle</h3>
+                            }
+                            @if (description != null && description != "")
+                            {
+                                <div class="mt-40">
+                                    <p>
+                                        @description.StripHtml()
+                                    </p>
+                                </div>
+                            }
+
+
+
+                        </div>
+                    </div>
+
+                </div>
+            </section><!-- End About Section -->
+        }
+        else
+        {
+            <section id="services" class="services section-bg ">
+                <div class="container" data-aos="fade-up">
+
+                    <div class="row justify-content-between d-flex align-items-center">
+
+                        <div class="col-lg-6 pt-5 pt-lg-0  ">
+                            <div class="section-description">
+                                @if (textOfTitle != null && textOfTitle != "")
+                                {
+                                    <h3 data-aos="fade-up" class="line">@textOfTitle</h3>
+                                }
+                                @if (description != null && description != "")
+                                {
+                                    <div class="mt-20">
+                                        <p class="">
+                                            @description.StripHtml()
+                                        </p>
+                                    </div>
+                                }
+
+                            </div>
+
+
+
+                        </div>
+                        <div class="col-lg-5 d-flex align-items-center justify-content-center about-img">
+                            @if (image != null)
+                            {
+                                <img src="@image.Url()" alt="@(imageDescription!= null ? imageDescription : image.Name)" class="img-fluid" data-aos="zoom-in">
+                            }
+
+                        </div>
+
+
+                    </div>
+                </div>
+
+            </section><!-- End Services Section -->
+        }
+        index++;
+
+
+
+
+    }
+}
+
+@{
+    var title = Umbraco.AssignedContentItem.Value("CenterPublicationstitle");
+    var descreaption = Umbraco.AssignedContentItem.Value("CenterPublicationsdescription");
+
+    var CenterPublicationsList = Umbraco.AssignedContentItem.Value<IEnumerable<IPublishedElement>>("CenterPublicationsist");
+
+
+
+}
+
+<section id="goals" class="goals  center-goals">
+    <div class="container " data-aos="fade-up">
+
+        <div class="section-description">
+            @if (title != null)
+            {
+                <h3 data-aos="fade-up" class="line text-center">@title</h3>
+            }
+            @if (descreaption != null)
+            {
+                <p class="text-center txt-last-center mb-10">@descreaption</p>
+            }
+
+
+        </div>
+
+
+        <div class=" row  goals-slider slider-lr mt-40" dir="rtl">
+
+
+            @if (CenterPublicationsList != null)
+            {
+                int num = 1;
+                foreach (var item in CenterPublicationsList.Where(x => x.IsVisible()))
+                {
+                    var desc = item.Value<string>("textBody");
+                    <div class="col-md-6 col-lg-4 d-flex align-items-stretch">
+                        <div class="icon-box">
+                            <span class="number">@num</span>
+                            @if (desc != null)
+                            {
+                                <p class="description">
+                                    @Html.Raw(desc)
+
+                                </p>
+                            }
+
+                        </div>
+                    </div>
+                    num++;
+                }
+            }
+
+        </div> <!-- new-of-library content wrapper -->
+
+
+    </div>
+</section><!-- End Services Section -->

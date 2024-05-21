@@ -1,0 +1,452 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Web.Models
+@using sa.gov.libgph.Services
+@{
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+
+    var Root = Model.Root();
+    var FooterLogo = ImageUrl(Root);
+    var MainSections = Root.Value<IEnumerable<IPublishedElement>>("mainSections").ToArray();
+    var QuickLinks = Root.Value<IEnumerable<IPublishedElement>>("quickLinks").ToArray();
+    var SocialIcons = Root.Value<IEnumerable<IPublishedElement>>("socialIcons").ToArray();
+
+    var ContactUsEmail = Root.Value<string>("contactUsEmail");
+    var FollowUs = Root.Value<string>("followUs");
+    var ContactUs = Root.Value<string>("contactUs");
+    var NewsLetter = Root.Value<string>("newsLetter");
+    var Subscribe = Root.Value<string>("subscribe");
+    var SubscribeNewsLetter = Root.Value<string>("subscription");
+    var CancelSubscription = Root.Value<string>("cancelSubscription");
+    var CopyRights = Root.Value<string>("copyRights");
+
+
+
+    var CurrentDocumentType = Umbraco.AssignedContentItem;
+
+    var CurrentLanguage = CurrentDocumentType.GetCultureFromDomains();
+
+    var SVGFillColor = "#143c32";
+    if (Root.ChildrenOfType("Home").First().Url() != CurrentDocumentType.Url())
+    {
+        SVGFillColor = "#fff";
+    }
+    string SubscriberEmailrequired;
+    string SubscriberEmailemailvalidation;
+    string reCAPTCHA = CurrentLanguage == "ar-SA" ? "مطلوب تأكيد كابتشا" : "reCAPTCHA is mandatory";
+    string OldCaptchResponse = CurrentLanguage == "ar-SA" ? " لتأكيد كابتشا مرة أخري" : "For another reCaptcha ";
+    string ClickHere = CurrentLanguage == "ar-SA" ? "اضغط هنا" : "Click Here";
+
+    if (CurrentLanguage == "ar-SA")
+    {
+        SubscriberEmailrequired = "من فصلك أدخل عنوان البريد الالكتروني ";
+        SubscriberEmailemailvalidation = "عنوان البريد الاكتروني غير صالح من فضلك تأكد من العنوان مرة أخري";
+    }
+    else
+    {
+        SubscriberEmailrequired = "Director Email is required";
+        SubscriberEmailemailvalidation = "Please Enter a valid Email Address";
+    }
+
+
+    var PropertyExceptionHandler = new PropertyExceptionHandler();
+
+}
+
+<style>
+    .underLined {
+        border-bottom: 1px solid #dc3545;
+        cursor: pointer;
+    }
+    .agreementstyle {
+        padding-bottom: 1px;
+    }
+    .heightdiv{
+        height:40px;
+    }
+    .heightdiv2 {
+        height: 80px;
+    }
+
+
+    .error {
+        color: #cbb472 !important;
+    }
+
+    #footer-preloader {
+        border: 16px solid #c3e6cb;
+        border-top: 16px solid #20c997;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        margin-left: auto;
+        margin-right: auto;
+        animation: spin 1s linear infinite;
+    }
+
+
+@("@")keyframes spin {
+          0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+        }
+
+</style>
+
+
+
+<footer id="footer">
+    <svg class="about_app-waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+         viewBox="0 24 150 28 " preserveAspectRatio="none">
+        <defs>
+            <path id="wave-path" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"></path>
+        </defs>
+        <g class="wave1">
+            <use xlink:href="#wave-path" x="50" y="3" fill="rgba(255,255,255, .1)"></use>
+        </g>
+        <g class="wave2">
+            <use xlink:href="#wave-path" x="50" y="0" fill="rgba(255,255,255, .2)"></use>
+        </g>
+        <g class="wave3">
+            <use xlink:href="#wave-path" x="50" y="9" class="wave3" fill="@SVGFillColor"></use>
+        </g>
+    </svg>
+    <div class="footer-top">
+        <div class="container">
+            <div class="row ">
+
+                <div class="col-lg-2 col-md-2 col-6 footer-links ">
+                    <h4>
+                        <a href="@Root.Url()">
+                            <img src="@(FooterLogo)" class="img-fluid  logo-img"
+                                 alt="FooterLogo">
+                        </a>
+                    </h4>
+                    @try
+                    {
+                        <p class="title">@(MainSections[0].Value("itemTitle"))</p>
+                        <ul>
+                            @for (int i = 1; i < MainSections.Length; i++)
+                            {
+                                <li> <a href="@(GetLink(MainSections[i]))">@(MainSections[i].Value("itemTitle"))</a></li>
+
+                            }
+
+                        </ul>
+
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                </div>
+                <div class="col-lg-2 col-md-2  col-6 footer-links border-be footer-quick">
+
+                    @try
+                    {
+                        <p class="title mt-30">@(QuickLinks[0].Value("itemTitle"))</p>
+
+                        for (int i = 1; i < QuickLinks.Length; i++)
+                        {
+                            <a href="@(GetLink(QuickLinks[i]))">@(QuickLinks[i].Value("itemTitle"))</a>
+
+                        }
+
+
+
+
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                </div>
+                <hr class="hr-footer">
+                <div class="col-lg-4 col-md-4 footer-links social-links text-center border-be  border-af">
+                    <p>@FollowUs</p>
+
+                    @for (int i = 0; i < SocialIcons.Length; i++)
+                    {
+                        <a href="@(PropertyExceptionHandler.GetLink(SocialIcons[i],"imageLink"))" target="@PropertyExceptionHandler.Target">
+                            <i class="@(SocialIcons[i].Value<string>("theimagetitle"))"></i>
+                        </a>
+                    }
+
+
+                    <p class="mt-40">@ContactUs</p>
+
+                    <a href="" class="contact-link">@ContactUsEmail</a>
+
+
+                </div>
+                <hr class="hr-footer">
+
+                <div class="col-lg-4 col-md-4 footer-links text-center no-border-left footer-newsletter">
+                    <p>@NewsLetter</p>
+                    <p>
+                        @Subscribe
+                    </p>
+                    <!--====== NewsLetter Subscribe Form ======-->
+                    @using (Ajax.BeginForm("Subscribe", "NewsletterSubscription", null, new AjaxOptions()
+                    {
+
+                        UpdateTargetId = "resultform",
+                        HttpMethod = "POST",
+                        InsertionMode = InsertionMode.Replace,
+
+                    }, new { id = "SubscribeForm", enctype = "multipart/form-data" }))
+
+                    {
+                        <div class="input-group heightdiv2">
+                            <i class="lni lni-envelope"></i>
+                            <input name="SubscriberEmail" id="SubscriberEmail" type="email" value="" required placeholder="البريد الإلكترونى">
+                        </div>
+
+                        <div class="g-recaptcha"
+                             id="recaptcha">
+
+                        </div>
+
+
+
+                        <div class="heightdiv">
+                            <input type="hidden" name="reCaptchavaliadtion" id="reCaptchavaliadtion" value="" />
+                            <input type="hidden" name="reCaptchavaliadtionmessage" id="reCaptchavaliadtionmessage" value="222" />
+                            <input type="hidden" id="CurrentLanguage" name="CurrentLanguage" value="@CurrentLanguage" />
+                        </div>
+                        <button class="join" id="CancelSubscription" type="submit" onclick="javascript: form.action='/umbraco/Surface/NewsletterSubscription/UnSubscribe';">  @CancelSubscription</button>
+                        <button type="submit" id="SubscribeNewsLetter" class="join " onclick="javascript: form.action='/umbraco/Surface/NewsletterSubscription/Subscribe';">@SubscribeNewsLetter</button>
+                    }
+
+                    <div style="height: 60px">
+                        <div id="resultform">
+                            <div id="footer-preloader" style="display:none"></div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="copyright">
+
+            @CopyRights.StripHtml()
+        </div>
+        <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12" style="margin-top: 5px;">
+            <a target="_blank" href="https://validator.w3.org/nu/?showsource=yes&amp;doc=http://stage-lib.cpt-it.com/">
+                <img alt="Valid HtML" src="/media/pazhim4e/w3c_xhtml.jpg">
+            </a>
+            <a target="_blank" href="https://jigsaw.w3.org/css-validator/check/referer">
+                <img style="border:0;width:88px;height:31px" src="https://jigsaw.w3.org/css-validator/images/vcss-blue" alt="Valid CSS!">
+            </a>
+        </div>
+    </div>
+
+</footer>
+@functions {
+    //Get Image
+    public string ImageUrl(IPublishedContent Element)
+    {
+        string ImageURL;
+        if (Element.HasValue("footerLogo"))
+
+        {
+            try
+            {
+                ImageURL = Element.Value<MediaWithCrops>("footerLogo").Url();
+
+            }
+            catch (Exception)
+            {
+
+                ImageURL = "#";
+            }
+
+        }
+        else
+        {
+            ImageURL = "#";
+
+        }
+
+
+        return ImageURL;
+    }
+
+    //Get Link
+
+    public string GetLink(IPublishedElement Element)
+    {
+        string ElementURL = "";
+
+        if (Element.HasValue("itemURL"))
+        {
+            try
+            {
+                ElementURL = Element.Value<Link>("itemURL").Url;
+            }
+            catch (Exception)
+            {
+
+                ElementURL = "#";
+
+            }
+
+
+        }
+        else
+        {
+            ElementURL = "#";
+
+        }
+
+        return ElementURL;
+    }
+
+}
+
+@* <!--====== reCaptcha Script    ======--> *@
+
+<script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"
+        async defer>
+</script>
+
+
+@*<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>*@
+@*<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>*@
+@*<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>*@
+
+<!--====== validate js ======-->
+
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<script src="~/Scripts/additional-methods.min.js"></script>
+
+<script>
+    // Newsletter Form Validation
+    jQuery.validator.setDefaults({
+        debug: true,
+        success: "valid"
+    });
+    $("#SubscribeForm").validate({
+        rules: {
+            SubscriberEmail: {
+                required: true,
+                pattern: /^(([^<>()[\]\.,;:\s@("@")\"]+(\.[^<>()[\]\.,;:\s@("@")\"]+)*)|(\".+\"))@("@")(([^<>()[\]\.,;:\s@("@")\"]+\.)+[^<>()[\]\.,;:\s@("@")\"]{2,})$/i,
+                email: true,
+            }
+
+        }, messages: {
+
+            SubscriberEmail: {
+                required: "@SubscriberEmailrequired",
+                pattern: "@SubscriberEmailemailvalidation",
+                email: "@SubscriberEmailemailvalidation",
+            }
+
+        }
+    });
+
+    var response = 0;
+    var widgetId;
+    var onloadCallback = function () {
+        // Renders the HTML element with id 'recaptcha' as a reCAPTCHA widget.
+        // The id of the reCAPTCHA widget is assigned to 'widgetId'.
+        widgetId = grecaptcha.render('recaptcha', {
+            'theme': 'light',
+            'expired-callback': expireCaptcha,
+            'callback': validCaptcha,
+            'error-callback': errorCaptcha,
+            'sitekey': '6Lczn_cdAAAAAKp6niX8xoCQpkqmQy4swPK1--SZ',
+        });
+
+    };
+
+    var footerform = $("#SubscribeForm");
+
+    $("#SubscribeForm").submit(() => {
+
+        //reCaptcha Validation
+        //no response
+         if (grecaptcha.getResponse(widgetId) == "")
+        {
+            if (response === 0) {
+            $("#recaptcha").addClass("agreementstyle");
+            $("#reCaptchavaliadtionmessage").replaceWith('<div id="reCaptchavaliadtionmessage"><h6 class="error">@(reCAPTCHA)</h6></div>');
+                $("#reCaptchavaliadtion").val("");
+            }
+            else {
+                errorCaptcha();
+            }
+            return false;
+        }
+
+        //responded
+        else
+        {
+
+            if (response === 0) {
+                ////new response
+                if (footerform.valid() == true) {
+                    $("#reCaptchavaliadtion").val(grecaptcha.getResponse(widgetId));
+                    $("#resultform").replaceWith('<div id="resultform"><div id="footer-preloader" style="display:block"></div></div>');
+                }
+
+                $("#recaptcha").removeClass("agreementstyle");
+                $("#reCaptchavaliadtionmessage").replaceWith('<div id="reCaptchavaliadtionmessage"><h6 class="text-danger"></h6></div>');
+                setTimeout(function () { $("#reCaptchavaliadtion").val("");  }, 1500);
+
+
+                response++;
+
+            }
+            else {
+
+                $("#reCaptchavaliadtionmessage").replaceWith('<div id="reCaptchavaliadtionmessage" class="text-danger">@(OldCaptchResponse)<a class="underLined" onclick="expireCaptcha()">&nbsp;@(ClickHere)</a></div>');
+                return false;
+
+            }
+        }
+
+    })
+
+
+//Call back Function called if the captach is valid
+    function validCaptcha() {
+    var response = grecaptcha.getResponse(widgetId);
+    $("#reCaptchavaliadtion").val(response);
+    $("#recaptcha").removeClass("agreementstyle");
+    $("#reCaptchavaliadtionmessage").hide(1000, 'swing');
+
+
+}
+//Call back Function called if the captach is expired
+function expireCaptcha() {
+    $("#reCaptchavaliadtion").val("");
+    grecaptcha.reset(widgetId);
+    response = 0;
+    $("#recaptcha").removeClass("agreementstyle");
+    $("#reCaptchavaliadtionmessage").hide(1000, 'swing');
+}
+//Call back Function called if the captach is something went wrong ==> it rests the captcha
+function errorCaptcha() {
+    $("#reCaptchavaliadtion").val("");
+    grecaptcha.reset(widgetId);
+    response = 0;
+    $("#recaptcha").removeClass("agreementstyle");
+    $("#reCaptchavaliadtionmessage").hide(1000, 'swing');
+}
+    //Reset the SubscribeForm
+    function restSubscribeForm() {
+        expireCaptcha();
+        $("#SubscriberEmail").val("");
+
+    }
+
+</script>
+

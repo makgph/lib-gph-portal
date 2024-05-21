@@ -1,0 +1,286 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Web.Models
+
+@{
+    var Root = Model.Root();
+    var CurrentLanguage = Umbraco.AssignedContentItem.GetCultureFromDomains();
+    var SectionTitle = CurrentLanguage == "ar-SA" ? "آخر الأخبار" : "Latest News";
+    var ShowAllNews = CurrentLanguage == "ar-SA" ? "عرض جميع الأخبار" : "Show All News";
+    var News = CurrentLanguage == "ar-SA" ? "الأخبار" : "News";
+    var More = CurrentLanguage == "ar-SA" ? "للمزيد ..." : "More ...";
+
+
+    var TheNews = Root.ChildrenOfType("news").FirstOrDefault();
+    var TheNewsArray = TheNews.Children().ToArray();
+
+}
+<section id="last-news" class="last-news">
+    <div class="container">
+
+        <div class="row justify-content-center">
+            <div class="col-lg-12 col-md-12 col-sm-9">
+                <div class="page">
+                    <div class="row">
+                        <div class="col-12 hp-carousel-container mt-50">
+                            <div class="row justify-content-end rtl">
+                                <div class="col-lg-6">
+                                    <div class="row rtl">
+                                        <div class="col-6">
+
+                                            <p class="title vl">@SectionTitle</p>
+                                        </div>
+                                        <div class="col-6">
+                                            <a href="@TheNews.Url()"> @ShowAllNews</a>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="slider slider-single">
+                                        @for (int i = 0; i < TheNewsArray.Length; i++)
+                                        {
+
+                                            <div>
+                                                <img class="slider-img"
+                                                     src="@ImageUrl(TheNewsArray[i])"
+                                                     alt="">
+                                                <div class="overlay-text row rtl">
+
+                                                    <div class="col-md-3 col-3">
+                                                        <h2>@News</h2>
+                                                    </div>
+                                                    <div class="col-md-9 col-9">
+                                                        @try
+                                                        {
+                                                            <p>
+                                                                @if (TheNewsArray[i].HasValue("newsItemContentBody"))
+                                                                {
+                                                                    if (TheNewsArray[i].Value<IEnumerable<IPublishedElement>>("newsItemContentBody").FirstOrDefault().HasValue("texttitle"))
+                                                                    {
+                                                                        @(TheNewsArray[i].Value<IEnumerable<IPublishedElement>>("newsItemContentBody").FirstOrDefault().Value("texttitle"))
+
+                                                                    }
+                                                                }
+                                                                <a href="@TheNewsArray[i].Url()">@More </a>
+
+                                                            </p>
+                                                            @*<a href="@GetLink(TheNewsArray[i])">@More </a>*@
+
+                                                        }
+                                                        catch (Exception)
+                                                        {
+
+                                                            <p>
+                                                                News
+                                                                <a href="@GetLink(TheNewsArray[i])">@More </a>
+                                                            </p>
+                                                        }
+
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                        }
+
+                                        <div>
+                                                <img class="slider-img"
+                                                     src="~/assets/images/portfolio/book-stack-library-room-blurred-bookshelf-background.png"
+                                                     alt="">
+                                                <div class="overlay-text row rtl">
+
+                                                    <div class="col-md-3  col-3">
+                                                        <h2>أخبار</h2>
+                                                    </div>
+                                                    <div class="col-md-9  col-9">
+                                                        <p>
+                                                            كرمت الوكالة المساعد للحشود والتفويج النسائية
+                                                            منسوباتها والبالغ عددهن (٣٠) موظفة نظير جهودهن المبذولة في
+                                                            الميدان
+                                                            <a href="#">... المزيد </a>
+
+                                                        </p>
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <img class="slider-img"
+                                                     src="~/assets/images/portfolio/front-view-desk-with-stacked-books-copy-space.png"
+                                                     alt="">
+                                                <div class="overlay-text row rtl">
+
+                                                    <div class="col-md-3  col-3">
+                                                        <h2>أخبار</h2>
+                                                    </div>
+                                                    <div class="col-md-9  col-9">
+                                                        <p>
+                                                            كرمت الوكالة المساعد للحشود والتفويج النسائية
+                                                            منسوباتها والبالغ عددهن (٣٠) موظفة نظير جهودهن المبذولة في
+                                                            الميدان
+                                                            <a href="#"> ... المزيد </a>
+
+                                                        </p>
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <img class="slider-img"
+                                                     src="~/assets/images/portfolio/new-images-kaaba-mecca-after-restoration.png"
+                                                     alt="">
+                                                <div class="overlay-text row rtl">
+
+                                                    <div class="col-md-3  col-3">
+                                                        <h2>أخبار</h2>
+                                                    </div>
+                                                    <div class="col-md-9  col-9">
+                                                        <p>
+                                                            كرمت الوكالة المساعد للحشود والتفويج النسائية
+                                                            منسوباتها والبالغ عددهن (٣٠) موظفة نظير جهودهن المبذولة في
+                                                            الميدان
+                                                            <a href="#">... المزيد </a>
+
+                                                        </p>
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <img class="slider-img"
+                                                     src="~/assets/images/portfolio/new-images-kaaba-mecca-after-restoration.png"
+                                                     alt="">
+                                                <div class="overlay-text row rtl">
+
+                                                    <div class="col-md-3  col-3">
+                                                        <h2>أخبار</h2>
+                                                    </div>
+                                                    <div class="col-md-9  col-9">
+                                                        <p>
+                                                            كرمت الوكالة المساعد للحشود والتفويج النسائية
+                                                            منسوباتها والبالغ عددهن (٣٠) موظفة نظير جهودهن المبذولة في
+                                                            الميدان
+                                                            <a href="#"> ... المزيد </a>
+
+                                                        </p>
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 mt-50">
+                                    <div class="slider slider-nav">
+                                        @for (int i = 0; i < TheNewsArray.Length; i++)
+                                        {
+
+
+                                            <div class="item-info">
+                                                @try
+                                                {
+
+
+                                                    <p>
+                                                        @if (TheNewsArray[i].HasValue("newsItemContentBody"))
+                                                        {
+                                                            if (TheNewsArray[i].Value<IEnumerable<IPublishedElement>>("newsItemContentBody").FirstOrDefault().HasValue("textbody"))
+                                                            {
+                                                                @(TheNewsArray[i].Value<IEnumerable<IPublishedElement>>("newsItemContentBody").FirstOrDefault().Value<string>("textbody").StripHtml().Substring(0,150))
+                                                            }
+                                                        }
+
+                                                        @*@(TheNewsArray[i].Value<IEnumerable<IPublishedElement>>("newsItemContentBody").FirstOrDefault().Value("texttitle"))*@
+
+                                                    </p>
+                                                    <a href="@TheNewsArray[i].Url()">@More </a>
+
+                                                }
+                                                catch (Exception)
+                                                {
+
+                                                    <p>
+                                                        News
+                                                    </p>
+                                                }
+
+
+                                            </div>
+                                        }
+
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div> <!-- row -->
+    </div> <!-- container -->
+</section>
+
+
+@functions {
+    //Get Image
+    public string ImageUrl(IPublishedContent Element)
+    {
+        string ImageURL;
+
+        if (Element.HasValue("newsItemImage"))
+        {
+            try
+            {
+                ImageURL = Element.Value<MediaWithCrops>("newsItemImage").Url();
+            }
+
+            catch (Exception)
+            {
+
+                ImageURL = "#";
+            }
+        }
+        else
+        {
+            ImageURL = "#";
+        }
+
+        return ImageURL;
+    }
+
+    //Get Link
+
+    public string GetLink(IPublishedContent Element)
+    {
+        string ElementURL = "";
+
+        if (Element.HasValue("itemURL"))
+        {
+            try
+            {
+                ElementURL = Element.Value<Link>("itemURL").Url;
+            }
+
+            catch (Exception)
+            {
+
+                ElementURL = "#";
+            }
+
+        }
+        else
+        {
+            ElementURL = "#";
+
+        }
+
+        return ElementURL;
+    }
+
+}

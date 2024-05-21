@@ -1,0 +1,79 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{
+    var Root = Model.Root();
+    var NewOfTheLibrary = Root.ChildrenOfType("newOfTheLiberary").FirstOrDefault();
+    var NewOfTheLibraryArray = NewOfTheLibrary.Children().ToArray();
+
+}
+
+<section id="new-of-library" class="new-of-library">
+    <div class="container">
+        <div class="row justify-content-between">
+            <div class="col-xl-4 col-lg-4">
+                <div class="new-of-library-content mt-80">
+                    <img src="@ImageUrl(NewOfTheLibrary,"imageOfNewOfLibraryList")">
+
+                    <h4 class="title">@NewOfTheLibrary.Name</h4>
+
+                    <p class="text">@NewOfTheLibrary.Value("serfTheNewOfTheLibrary")</p>
+                </div> <!-- new-of-library left content -->
+            </div>
+            <div class="col-lg-8">
+                <div class="new-of-library-right-content mt-50">
+
+
+                    <div class="new-of-library-content-wrapper new-of-library-active  ">
+                        @for (int i = 0; i < NewOfTheLibraryArray.Length; i++)
+                        {
+                            <div class="single-new-of-library  text-center">
+                                <div class="new-of-library-author ">
+                                    
+                                    <img src="@ImageUrl(NewOfTheLibraryArray[i],"theImage")" alt="new-of-library">
+                                    @try
+                                    {
+                                        if (NewOfTheLibraryArray[i].HasValue("description"))
+                                        {
+                                            if (NewOfTheLibraryArray[i].Value<IEnumerable<IPublishedElement>>("description").FirstOrDefault().HasValue("texttitle"))
+                                            {
+                                               <a href="@NewOfTheLibraryArray[i].Url()">
+                                                   <p>@(NewOfTheLibraryArray[i].Value<IEnumerable<IPublishedElement>>("description").FirstOrDefault().Value("texttitle"))</p>
+                                                   </a>
+
+                                            }
+                                        }
+
+                                    }
+                                    catch (Exception)
+                                    {
+
+                                    }
+                                </div>
+                            </div> <!-- single new-of-library -->
+                        }
+                    </div> <!-- new-of-library content wrapper -->
+                </div> <!-- new-of-library right content -->
+            </div>
+        </div> <!-- row -->
+    </div> <!-- container -->
+</section>
+
+@functions {
+    //Get Image
+    public string ImageUrl(IPublishedElement Element, string Property)
+    {
+        string ImageURL;
+        if (Element.HasValue(Property))
+        {
+            ImageURL = Element.Value<MediaWithCrops>(Property).Url();
+
+        }
+        else
+        {
+            ImageURL = "#";
+
+        }
+
+
+        return ImageURL;
+    }
+}

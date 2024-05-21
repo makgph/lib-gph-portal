@@ -1,0 +1,173 @@
+﻿@model sa.gov.libgph.Models.CurrentNewsPageViewModel
+@using System.Globalization;
+
+@{
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+
+    var AllLatestNews = Model.NewsList;
+
+    var CurrentLangauge = Model.CurrentLanguage;
+
+    var Search = CurrentLangauge == "ar-SA" ? "بحث ..." : "Search ...";
+    var ReadMore = CurrentLangauge == "ar-SA" ? "للمزيد من التفاصيل" : "More Details";
+
+    var LatestNews = AllLatestNews.ToArray();
+    //var active = "";
+    //int pageSize = 3;
+
+    //int PaginationCounter = LatestNews.Length % pageSize == 0 ? LatestNews.Length / pageSize : (LatestNews.Length / pageSize) + 1;
+    //int CRPageNumber = int.Parse(Model.CurrentPageNumber);
+
+    //var AppearingNews = Model.NewsList.Skip(CRPageNumber * pageSize).Take(pageSize).ToArray();
+    //pageSize = AppearingNews.Length < pageSize ? AppearingNews.Length : pageSize;
+
+    var active = "";
+    int pageSize = 3;
+    //pageSize = (Model.HasValue("numberofNewsInOnePage") ? Model.Value<int>("numberofNewsInOnePage") : 3);
+    //int PaginationCounter = LatestNews.Length % pageSize == 0 ? LatestNews.Length / pageSize : (LatestNews.Length / pageSize) + 1;
+    int PaginationCounter = Model.Pagination;
+    int CRPageNumber = int.Parse(Model.CurrentPageNumber);
+
+    //var AppearingNews = Model.NewsList.Skip(CRPageNumber * pageSize).Take(pageSize).ToArray();
+    var AppearingNews = Model.NewsList.ToArray();
+    pageSize = AppearingNews.Length < pageSize ? AppearingNews.Length : pageSize;
+    pageSize = Model.PageSize;
+}
+
+
+<div id="updatedContainer" class="row ">
+    @for (int i = 0; i < pageSize; i++)
+    {
+        <div class="col-md-4">
+            <div class="card text-white card-has-bg click-col"
+                 style="background-image:url('@ImageUrl(LatestNews[i])');">
+
+                <div class="card-img-overlay d-flex flex-column">
+                    <div class="card-body">
+
+                        <h4 class="card-title mt-0 ">
+                            <a class="text-white" herf="#">
+                                @(LatestNews[i].Value<string>("title"))
+
+                            </a>
+                        </h4>
+                        <small>
+                            <i class="far fa-clock"></i>
+                            @GetDate(LatestNews[i], "date")
+                        </small>
+
+                    </div>
+                    <div class="card-footer">
+                        <div class="media">
+
+                            <div class="media-body">
+                                <a class="my-0 text-white d-block anchor-link" href="@(LatestNews[i]?.Url())">
+                                    @ReadMore
+                                    <i class="lni lni-chevron-left"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+
+
+
+    <div class="blog-pagination raw col-12" id="pagination">
+        <ul class="justify-content-center">
+
+            @for (int i = 0; i < PaginationCounter; i++)
+            {
+                <li><button name="CurrentPageNumber" type="submit" value="@i">@(i+1)</button></li>
+
+            }
+            @*<li class="active"><a href="#">2</a></li>
+                <li><a href="#">3</a></li>*@
+        </ul>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+@functions{
+
+    //Get Image
+    public string ImageUrl(IPublishedContent Element)
+    {
+        string ImageURL;
+        if (Element.HasValue("image"))
+
+        {
+            try
+            {
+                ImageURL = Element.Value<MediaWithCrops>("image").Url();
+
+            }
+            catch (Exception)
+            {
+
+                ImageURL = "#";
+            }
+
+        }
+        else
+        {
+            ImageURL = "#";
+
+        }
+
+
+        return ImageURL;
+    }
+
+
+    //Getting Date
+    public string GetDate(IPublishedContent Element, string DateAlias)
+    {
+        string Date;
+        DateTimeFormatInfo DTFormat = new CultureInfo(Model.CurrentLanguage, false).DateTimeFormat;
+        if (Model.CurrentLanguage == "ar-sa")
+        {
+
+            DTFormat.Calendar = new UmAlQuraCalendar();
+        }
+        DTFormat.LongDatePattern = "dd/MMMM/yyyy";
+
+
+        if (Element.HasValue(DateAlias))
+
+        {
+            try
+            {
+                Date = Element.Value<DateTime>
+                    (DateAlias).ToString("D", DTFormat);
+
+            }
+            catch (Exception)
+            {
+                //Date = new DateTime().AddYears(2000).ToLongDateString();
+                Date = "";
+
+            }
+
+        }
+        else
+        {
+            Date = "";
+
+
+
+        }
+
+
+        return Date;
+    } }

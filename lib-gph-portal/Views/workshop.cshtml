@@ -1,0 +1,214 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Web.Models
+@using sa.gov.libgph.Services
+
+@{
+    Layout = "_InnerPagesLayout.cshtml";
+
+}
+
+@{
+
+    var CurrentDocumentType = Umbraco.AssignedContentItem;
+    var CurrentLanguage = CurrentDocumentType.GetCultureFromDomains();
+    var ModelStudentForm = new sa.gov.libgph.Models.StudentForm();
+    var CurrentDocumentTypeID = CurrentDocumentType.Key.ToString();
+    ModelStudentForm.ParentID = CurrentDocumentTypeID;
+
+    var PropertyExceptionHandler = new PropertyExceptionHandler();
+    var title = PropertyExceptionHandler.GetTextValue(CurrentDocumentType, "title");
+    var PublishingDate = PropertyExceptionHandler.GetDateValue(CurrentDocumentType, "date").ToLongDateString();
+    var Image = PropertyExceptionHandler.GetImageURL(CurrentDocumentType, "image");
+    var Body = PropertyExceptionHandler.GetTextValue(CurrentDocumentType, "workShopDetails");
+    var AvailableSeatsCounter = GetNumericValue(CurrentDocumentType, "availableSeats");
+    var ChildrenCounter = CurrentDocumentType.Children().Count();
+    var AvailableSeats = AvailableSeatsCounter > ChildrenCounter ? true : false;
+
+    var NewsItem = Umbraco.AssignedContentItem;
+    var Title = NewsItem.Value<string>("title");
+    //var Body = NewsItem.Value<IEnumerable<IPublishedElement>>("newsItemContentBody").ToArray();
+    var CurrentLangauge = NewsItem.GetCultureFromDomains();
+
+    var LatestNews = NewsItem.Siblings().ToArray();
+    var Availability = CurrentDocumentType.HasValue("availability") ? CurrentDocumentType.Value<bool>("availability") : false;
+    var notAvail = CurrentLangauge == "ar-SA" ? "غير متاح التسجيل" : " registration is   Unavailable ";
+    var LatestNewsTitle = CurrentLangauge == "ar-SA" ? $"أخر {NewsItem.Ancestor().Name}" : "Latest News";
+    var SearchAboutNews = CurrentLangauge == "ar-SA" ? $"بحث عن {NewsItem.Ancestor().Name}" : "Search About News";
+    var Search = CurrentLangauge == "ar-SA" ? "بحث ..." : "Search ...";
+}
+
+
+
+@*< !-- ======= Contact Us Section ======= -->*@
+<section id="blog" class="blog section-bg">
+    <div class="container" data-aos="fade-up">
+
+        <div class="row">
+
+            <div class="col-lg-8 entries">
+
+                <article class="entry entry-single">
+
+                    <div class="entry-img">
+                        <img src="@Image" alt="" class="img-fluid">
+                    </div>
+
+                    <h2 class="entry-title">
+                        <a href="">@Title</a>
+                    </h2>
+
+                    <div class="entry-meta">
+                        <ul>
+                            <li class="d-flex align-items-center"><i class="lni lni-alarm-clock"></i> <a href="#"><time datetime="2020-01-01">@PublishingDate</time></a></li>
+                        </ul>
+                    </div>
+
+                    @Html.Raw(Body)
+
+
+
+
+                </article> @*End blog entry*@
+
+
+
+
+
+            </div> @*End blog entries list*@
+
+            <div class="col-lg-4">
+                <div class="row">
+
+
+                    <!--<div class="col-12">
+                    <div class="sidebar">
+
+
+
+
+                        <h3 class="sidebar-title">@SearchAboutNews </h3>
+
+
+                        <div class="sidebar-item recent-posts">
+                            <div class="sidebar-item search-form">
+                                <form action="">
+                                    <input type="text" placeholder="@Search">
+                                    <button type="submit"><i class="lni lni-search-alt"></i></button>
+                                </form>
+                            </div>-->
+                    @*End sidebar search formn*@
+
+
+
+
+                    <!--</div>--> @*End sidebar recent posts*@
+
+
+
+                    <!--</div>--> @*End sidebar*@
+                    <!--</div>-->
+
+                    <div class="col-12">
+                        <div class="sidebar">
+
+
+                            @* Latest News *@
+                            <h3 class="sidebar-title">@LatestNewsTitle</h3>
+                            <div class="sidebar-item recent-posts">
+                                @for (int i = 0; i < LatestNews.Length; i++)
+                                {
+                                    <div class="post-item clearfix">
+                                        <img src="@PropertyExceptionHandler.GetImageURL(LatestNews[i],"image")" alt="">
+                                        <h4><a href="@(LatestNews[i]?.Url())">@PropertyExceptionHandler.GetTextValue(LatestNews[i], "title")</a></h4>
+                                        <time datetime="2020-01-01">
+                                            @PropertyExceptionHandler.GetDateValue(LatestNews[i], "date").ToLongDateString()
+                                        </time>
+                                    </div>}
+
+
+
+                            </div> @*End sidebar recent posts*@
+
+
+
+                        </div> @*End sidebar*@
+                    </div>
+                </div>
+                @if (Availability && AvailableSeats)
+                {
+                    <section id="contact" class="contact p-0 ">
+                        <div class="container" data-aos="fade-up">
+
+                            <div class="row">
+
+
+                                <div class="col-lg-12 mt-5 mt-lg-0 d-flex align-items-stretch p-0 " data-aos="fade-up" data-aos-delay="200">
+                                    @*  @Html.Partial("~/Views/Partials/workShop/_workShop", ModelStudentForm)*@
+
+                                    @Html.Partial("workShop/_workShop", ModelStudentForm)
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                }
+
+                else
+                {
+                    @*
+                        <div class="col-12">
+                            <div class="sidebar">
+
+
+                                @* Latest News *@
+                    @*<h4 class="sidebar-title">@notAvail</h4>
+                            </div>
+                        </div>
+                    *@
+
+                }
+
+
+
+
+            </div> @*End blog sidebar*@
+
+        </div>
+
+    </div>
+</section> @*End Blog Single Section*@
+
+
+
+
+@*<section id="contact" class="contact ">
+        <div class="container" data-aos="fade-up">
+            <div class="row">
+
+                <div class="col-lg-12 mt-5 mt-lg-0 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="200">
+                    @Html.Partial("workShop/_workShop", new sa.gov.libgph.Models)
+                    @Html.Partial("workShop/_workShop", ModelStudentForm)
+
+                    @Html.Partial("Partials/AskLibraryEmployees/_AskLibraryEmployees", new sa.gov.libgph.Models.AskLibraryEmployees())
+                </div>
+            </div>
+        </div>
+    </section> End Contact Us Section*@
+
+@functions{
+    public int GetNumericValue(IPublishedElement Element, string Property)
+    {
+        int Value = 0;
+        try
+        {
+            //Check if the element has the property or not
+            if (Element.HasValue(Property))
+            {
+                Value = Element.Value<int>(Property);
+            }
+        }
+        catch (Exception) { }
+
+        return Value;
+    }
+
+}

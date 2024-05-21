@@ -1,0 +1,361 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Web.Models
+@using sa.gov.libgph.MedadApi.Models.Response
+@using sa.gov.libgph.MedadApi.Services
+@{
+    Layout = "_InnerPagesLayout.cshtml";
+    var CurrentId = Request.QueryString.GetValues("id")[0];
+    var BookDetailsService = new GetInstance2Service();
+    var BookDetails = BookDetailsService.GetInstance2Response(CurrentId);
+    var GetMARCService = new GetMARCService();
+    //var MARCDetails = GetMARCService.GetMARCResponse(CurrentId);
+    var MARCDetails = GetMARCService.GetMARCResponse(CurrentId);
+    //var content = MARCDetails.parsedRecord.content.fields;
+    //var content = MARCDetails.parsedRecord.content.fields;
+
+}
+<main id="main" class="">
+    <section class="wrapper section-bg">
+        <div class="container">
+            <div class="book_details">
+                <div class="container">
+
+                    <nav>
+                        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                            <button class="nav-link active" id="nav-home-tab" data-toggle="tab" data-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">
+                                <i class="lni lni-book"></i>
+                            </button>
+                            &nbsp; &nbsp;
+                            <button class="nav-link" id="nav-profile-tab" data-toggle="tab" data-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">
+                                <i class="lni lni-indent-decrease"></i>
+                            </button>
+                        </div>
+                    </nav>
+                    <div class="tab-content" id="nav-tabContent">
+                        <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                            <div class="row align-items-center">
+                                <div class="col-sm-5">
+                                    <div class="book-image">
+                                        <img src="~/assets/images/portfolio/front-view-desk-with-stacked-books-copy-space.png"
+                                             class="float-start" alt="...">
+                                    </div>
+                                </div>
+                                <div class=" col-sm-7">
+                                    <div class="left-side">
+                                        <div class="title d-flex">
+
+                                            <img src="~/assets/images/open-book.svg" style="width: 45px;">
+                                            @BookDetails.title
+                                        </div>
+
+                                        <div class="details">
+                                            <ul>
+
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                <li>
+                                                    <h4><div class="img_box"><img src="~/assets/images/date.png" alt=""></div>تاريخ النشر</h4>
+                                                    @try
+                                                    {
+                                                        foreach (var publication in BookDetails.publication)
+                                                        {
+                                                            <p>@publication.dateOfPublication</p>
+                                                        }
+                                                    }
+                                                    catch (Exception) { }
+                                                </li>
+                                        </div>
+                                        <div class="col-6">
+                                            <li>
+                                                <h4><i class="lni lni-user"></i>المؤلف</h4>
+                                                @try
+                                                {
+                                                    foreach (var contributor in BookDetails.contributors)
+                                                    {
+                                                        <p>@contributor.name</p>
+                                                    }
+                                                }
+                                                catch (Exception) { }
+                                            </li>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <li>
+                                                <h4><div class="img_box"><img src="~/assets/images/page.png" alt=""></div>صفحة</h4>
+                                                @try
+                                                {
+                                                    foreach (var item in @BookDetails.physicalDescriptions)
+                                                    {
+                                                        <p>@item </p>
+
+                                                    }
+                                                }
+                                                catch (Exception) { }
+                                            </li>
+                                            </li>
+                                        </div>
+                                        <div class="col-6">
+                                            <li>
+                                                <h4><div class="img_box"><img src="~/assets/images/print.png" alt=""></div>الناشر</h4>
+
+                                                @try
+                                                {
+                                                    foreach (var item in BookDetails.publication)
+                                                    {
+                                                        <p>@item.publisher</p>
+
+                                                    }
+                                                }
+                                                catch (Exception) { }
+                                            </li>
+                                            </li>
+                                        </div>
+                                    </div>
+                                    <hr>
+
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <li>
+                                                <h4><div class="img_box"><img src="~/assets/images/library.png" alt=""></div>رقم الاستدعاء</h4>
+                                                @try
+                                                {
+                                                    foreach (var item in BookDetails.classifications)
+                                                    {
+
+                                                        <p>@item.classificationNumber</p>
+                                                    }
+                                                }
+                                                catch (Exception) { }
+                                            </li>
+                                        </div>
+                                        <div class="col-6">
+                                            <li>
+                                                <h4><div class="img_box"><img src="~/assets/images/page.png" alt=""></div>المواضيع</h4>
+                                                @try
+                                                {
+                                                    foreach (var item in @BookDetails.subjects)
+                                                    {
+                                                        <p>@item </p>
+
+                                                    }
+                                                }
+                                                catch (Exception) { }
+                                            </li>
+                                        </div>
+                                    </div>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+
+
+                <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                    <div class="mark-tab">
+                        <div class="title">
+                            <h4>تسجيلة مارك</h4>
+                            @*<p>@content[0]._245.subfields[0].a</p>*@
+                            @*<p> @MARCDetails </p>*@
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="mark-title">
+                                    <h4><div class="img_box"><img src="~/assets/images/user-key.png" alt=""></div>رقم الضبط</h4>
+                                    <p>@Html.Raw(MARCDetails.TuningNumber)</p>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="mark-title">
+                                    <h4><div class="img_box"><img src="~/assets/images/key (2).png" alt=""></div>محدد رقم الضبط</h4>
+                                    <p>@Html.Raw(MARCDetails.SettingNumberSpecifier)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="mark-title">
+                                    <h4><div class="img_box"><img src="~/assets/images/date.png" alt=""></div>علامة التاريخ/ الوقت</h4>
+                                    @*@try
+                                            {
+                                                <p>@content._005</p>
+
+                                            }
+                                            catch (Exception)
+                                            {
+
+                                        }*@
+                                    <p>@Html.Raw(MARCDetails.DateMark)</p>
+
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="mark-title">
+                                    <h4><div class="img_box"><img src="~/assets/images/byanat.png" alt=""></div>بيانات الحفل الثابت</h4>
+                                    @*@try
+                                        {
+                                            <p>@content._008</p>
+
+                                        }
+                                        catch (Exception)
+                                        {
+
+                                        }*@
+
+                                    <p>@Html.Raw(MARCDetails.ConstField)</p>
+
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="mark-title">
+                                    <h4><div class="img_box"><img src="~/assets/images/sys.png" alt=""></div>نظام محلي رقم:</h4>
+                                    <p>@Html.Raw(MARCDetails.LocalNumber)</p>
+
+                                </div>
+                            </div>
+                            @*<div class="col-6">
+                                    <div class="mark-title">
+                                        <h4><div class="img_box"><img src="~/assets/images/library.png" alt=""></div>رقم طلب مكتبة الكونجرس المحلي:</h4>
+                                        <p>2732001</p>
+                                    </div>
+                                </div>*@
+                            <div class="col-6">
+                                <div class="mark-title">
+                                    <h4><i class="add-icon lni lni-library"></i>رقم تصنيف ديوي العشري:</h4>
+                                    @*@try
+                                        {
+                                            <p>@(content._082.subfields[0].a+ content._082.subfields[0].b + content._082.subfields[0].q )</p>
+
+                                        }
+                                        catch (Exception)
+                                        {
+
+                                        }*@
+                                    <p>@Html.Raw(MARCDetails.DyweeNumber)</p>
+
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        @* <div class="row">
+                                <div class="col-6">
+                                    <div class="mark-title">
+                                        <h4><i class="add-icon lni lni-library"></i>رقم تصنيف ديوي العشري:</h4>
+                                        @try
+                                            {
+                                                <p>@(content._082.subfields[0].a+ content._082.subfields[0].b + content._082.subfields[0].q )</p>
+
+                                            }
+                                            catch (Exception)
+                                            {
+
+                                            }
+                                        <p>@Html.Raw(MARCDetails.DyweeNumber)</p>
+
+                                    </div>
+                                </div>
+                                <!--<div class="col-6">
+                                    <div class="mark-title">
+                                        <h4><i class="lni lni-user"></i>المؤلف الشخصي:</h4>-->
+                                @try
+                                    {
+                                        foreach (var item in content._245.subfields)
+                                        {
+                                            <p> @item.c </p>
+
+                                        }
+                                    }
+                                    catch (Exception)
+                                    {
+
+                                    }
+
+                                                <!--</div>
+                            </div>-->
+                                            </div>
+                                                <hr>*@
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="mark-title">
+                                    <h4><div class="img_box"><img src="~/assets/images/page.png" alt=""></div>العنوان:</h4>
+                                    @*<p><a href="">نظرية العقد فى قوانين البلاد العربية</a></p>*@
+                                    <p>@Html.Raw(MARCDetails.Author)</p>
+
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="mark-title">
+                                    <h4><div class="img_box"><img src="~/assets/images/print.png" alt=""></div>بيانات النشر:</h4>
+                                    @*@try
+                                        {
+                                            foreach (var item in content._260.subfields)
+                                            {
+                                                <p>@item.a @item.b @item.c </p>
+
+                                            }
+                                        }
+                                        catch (Exception)
+                                        {
+
+                                        }*@
+                                    <p>@Html.Raw(MARCDetails.Publisher)</p>
+
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="mark-title">
+                                    <h4><div class="img_box"><img src="~/assets/images/desc.png" alt=""></div>الوصف العادي:</h4>
+                                    @*@try
+                                        {
+                                            foreach (var item in content._300.subfields)
+                                            {
+                                                <p>@item.a @item.c </p>
+
+                                            }
+                                        }
+                                        catch (Exception)
+                                        {
+
+                                        }*@
+                                    <p>@Html.Raw(MARCDetails.OrdinaryDescription)</p>
+
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="mark-title">
+                                    <h4><i class="lni lni-link"></i>مصطلح موضوعي:</h4>
+                                    @*<p><a href="">العقود(قانون مدني)</a></p>*@
+                                    <p>@Html.Raw(MARCDetails.ObjectiveConcept)</p>
+
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        @*<div class="row">
+                                <div class="col-6">
+                                    <div class="mark-title">
+                                        <h4><i class=" add-icon lni lni-book"></i>مقتناه في:</h4>
+                                        <p>IEI</p>
+                                    </div>
+                                </div>
+                            </div>*@
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        </div>
+        </div>
+    </section>
+</main>

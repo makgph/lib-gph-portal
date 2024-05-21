@@ -1,0 +1,330 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Web.Models
+
+@using sa.gov.libgph.Services
+
+
+@{
+    var CurrentLangauge = Umbraco.AssignedContentItem.GetCultureFromDomains();
+    string SwitchLangauge = "";
+    string LanguageType = "";
+
+
+    foreach (var (culture, infos) in Model.Cultures)
+    {
+        if (CurrentLangauge.ToLower() != culture.ToLower())
+        {
+            SwitchLangauge = Model.Url(culture, UrlMode.Auto);
+
+            if (CurrentLangauge.ToLower().Contains("ar"))
+            {
+                LanguageType = "<span class=\"lang-p\">EN</span>العربية";
+            }
+            else
+            {
+                LanguageType = "<span class=\"lang-p\">عربي</span>English";
+            }
+        }
+
+    }
+    var PropertyExceptionHandler = new PropertyExceptionHandler();
+
+    var Root = Model.Root();
+    var HeaderLogo = ImageUrl(Root);
+    var HeaderMenu = Root.ChildrenOfType("headermenu").FirstOrDefault().Value<IEnumerable<IPublishedElement>>("headerNestedMenu").ToArray();
+
+    var SearchAction = Model.Root().ChildrenOfType("searchResult").FirstOrDefault().Url();
+
+    var SignIn = PropertyExceptionHandler.GetTextValue(Root, "signIn");
+    var SignInImage = PropertyExceptionHandler.GetImageURL(Root, "signInImage");
+    var SignInURL = PropertyExceptionHandler.GetLink(Root, "signInURL");
+
+
+    var SignOut = CurrentLangauge == "ar-SA" ? "تسجيل خروج" : "Sign Out";
+    var Profile = CurrentLangauge == "ar-SA" ? "الملف الشخصي" : "Profile";
+    var ProfileURL = PropertyExceptionHandler.GetLink(Root, "profileURL");
+
+
+
+
+}
+
+
+<header id="header" class="header fixed-top">
+
+    <div class="card-ribbon">
+        <span> الإصدار الأول </span>
+    </div>
+    <div class="container-fluid   d-flex align-items-center justify-content-around">
+
+
+        <div class="container-fluid d-flex align-items-center justify-content-around">
+            <div class="d-flex align-items-end">
+                <a href="@Root.Url()" class="logo">
+
+                    <img src="@HeaderLogo" class="image-logo" alt="" />
+                </a>
+            </div>
+            <div class="d-flex align-items-end flex-column">
+                <div class="row row-top">
+                    <ul class="d-flex align-items-center">
+                        <li>
+                            <form action="@SearchAction" method="get" id="searchForm" novalidate="">
+
+                                <div class="Hotbg">
+
+                                    <input type="search" name="SearchInput" class="Hotbg-txt" placeholder="بحث عن">
+                                    <button class="Hotbg-btn" onclick="SubmitSearchForm()">
+                                        <i class="lni lni-search-alt"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </li>
+
+                        <!--<li>
+                            <a class="solid" href="@SignInURL" id="signinBTN">-->
+                        @*<img src="~/assets/images/login.svg" /> تسجيل الدخول*@
+                        <!--<img src="@SignInImage" /> @SignIn
+                            </a>
+
+                        </li>-->
+
+                        <li class="dropdown ">
+                            <div class="dropdown show " id="dropDownContainer">
+                                <a class="solid dropdown-toggle" href="@SignInURL" id="dropdownMenuLink">
+                                    <img src="@SignInImage" alt="" /> @SignIn
+                                </a>
+
+                                @*<div class="dropdown-menu user-dropdown" aria-labelledby="dropdownMenuLink">
+                                        <button class="dropdown-item"  role="button" onclick="signout()" >@SignOut</button>
+                                        <a class="dropdown-item" href="@ProfileURL">@Profile</a>
+                                    </div>*@
+                            </div>
+                        </li>
+                        @*<li>
+                                <a class="solid" href="@SwitchLangauge">
+                                    @Html.Raw(LanguageType)
+                                </a>
+                            </li>*@
+
+                    </ul>
+                </div>
+
+                <div class="row">
+                    <nav id="navbar" class="navbar">
+                        <ul>
+                            @for (int i = 0; i < HeaderMenu.Length; i++)
+                            {
+                                var ListIcon = HeaderMenu[i].HasValue("Icon") ? HeaderMenu[i].Value<string>("Icon") : "laptop-phone";
+                                if (hasDropDownMenu(HeaderMenu[i]) > 0)
+                                {
+
+                                    var InnerMenu = HeaderMenu[i].Value<IEnumerable<IPublishedElement>>("nestedMenu").ToArray();
+                                    var FullMenu = InnerMenu.Length >= 10 ? "full-menu" : "";
+                                    //var AddIcon = InnerMenu.Length >= 10 ? "add-icon" : "";
+
+
+                                    <li class="dropdown @FullMenu">
+                                        <a class="nav-link scrollto" href="@GetLink(HeaderMenu[i],"menuLink")">
+                                            <i class="add-icon lni lni-@ListIcon"></i>
+                                            @HeaderMenu[i].Value("menuTitle")
+                                            <i class="lni lni-chevron-down"></i>
+                                        </a>
+                                        @if (InnerMenu.Length < 10)
+                                        {
+                                            <ul>
+                                                @for (int a = 0; a < InnerMenu.Length; a++)
+                                                {
+                                                    <li><a href="@GetLink(InnerMenu[a],"itemURL")">@(InnerMenu[a].Value<string>("itemTitle"))</a></li>
+                                                }
+
+                                            </ul>
+                                        }
+                                        else
+                                        {
+                                            var ItemsCounter = 5;
+                                            string LineAfter = "";
+                                            int y = 0;
+                                            <ul>
+                                                <div class="service-flex">
+                                                    @for (int s = 0; s < InnerMenu.Length / ItemsCounter + 1; s++)
+                                                    {
+                                                        LineAfter = s != 0 ? "line-after" : "";
+                                                        <div class="align-self-start @LineAfter">
+                                                            @for (int x = 0; x < InnerMenu.Skip(s * ItemsCounter).Take(ItemsCounter).ToArray().Length; x++)
+                                                            {
+
+                                                        <li><a href="@GetLink(InnerMenu[y],"itemURL")">@(InnerMenu[y].Value<string>("itemTitle"))</a></li>
+                                                        y++;
+                                                    }
+
+                                        </div>
+
+                                    }
+
+                                                </div>
+                                                </ul>
+                                            }
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li>
+                                            <a class="nav-link scrollto" href="@GetLink(HeaderMenu[i],"menuLink")">
+                                                <i class="add-icon lni lni-@ListIcon"></i>
+                                                @HeaderMenu[i].Value("menuTitle")
+                                            </a>
+                                        </li>
+
+                                    }
+                                }
+
+                            <li>
+                                <form action="@SearchAction" method="get" id="searchForm2" novalidate="">
+
+                                    <div class="Hotbg mob">
+                                        <input type="text" name="SearchInput" class="Hotbg-txt" placeholder="بحث عن">
+                                        <button class="Hotbg-btn">
+                                            <i class="lni lni-search-alt"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                            </li>
+                            </ul>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-end flex-column">
+                        <i class="lni lni-list mobile-nav-toggle"></i>
+                    </div>
+                    </div>
+                </header>
+
+
+
+
+                @functions {
+                    //Get Image
+                    public string ImageUrl(IPublishedContent Element)
+                    {
+                        string ImageURL;
+                        if (Element.HasValue("libraryLogo"))
+                        {
+                            try
+                            {
+                                ImageURL = Element.Value<MediaWithCrops>("libraryLogo").Url();
+
+                            }
+                            catch (Exception)
+                            {
+
+                                ImageURL = "#";
+                            }
+
+                        }
+                        else
+                        {
+                            ImageURL = "#";
+
+                        }
+
+
+                        return ImageURL;
+                    }
+
+                    //Get Link
+
+                    public string GetLink(IPublishedElement Element, string Property)
+                    {
+                        string ElementURL;
+                        try
+                        {
+                            if (Element.HasValue(Property))
+                            {
+                                ElementURL = Element.Value<Link>(Property) != null ? Element.Value<Link>(Property).Url : "#";
+
+                            }
+                            else
+                            {
+                                ElementURL = "#";
+
+                            }
+
+                        }
+                        catch (Exception)
+                        {
+
+                            ElementURL = "#";
+                        }
+
+
+                        return ElementURL;
+                    }
+                    //Has DropDown Menu
+
+                    public int hasDropDownMenu(IPublishedElement Element)
+                    {
+                        var Count = Element.Value<IEnumerable<IPublishedElement>>("nestedMenu").Count();
+
+                        return Count;
+                    }
+
+                }
+                <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+                <script>
+
+
+                    function SubmitSearchForm() {
+                        var e = document.getElementById("searchForm");
+                        if (e != '') {
+                            e.submit();
+                        }
+                    }
+                </script>
+                <script>
+                    $(document).ready(function () {
+
+                        var isLogin = false;
+                        var loginUserName = "";
+                        var lib_LocalStorage = "";
+                        var json_LocalStorage = "";
+                        var signinBTN = document.getElementById("dropdownMenuLink");
+
+
+
+                        try {
+                            lib_LocalStorage = localStorage.getItem('LIB_USER');
+                            json_LocalStorage = JSON.parse(lib_LocalStorage);
+                            if (json_LocalStorage === null) { }
+                            else {
+                            isLogin = true;
+                            loginUserName = json_LocalStorage.firstName + " " + json_LocalStorage.lastName;
+                            }
+
+                        } catch (e) {
+
+                        }
+
+
+
+                        if (isLogin) {
+                            $('#dropDownContainer').replaceWith(`<div class="dropdown show " id="dropDownContainer"><a class="solid dropdown-toggle" href="@SignInURL"  id="dropdownMenuLink" ><img src="@SignInImage" />${loginUserName.toLowerCase()} </a><div class="dropdown-menu user-dropdown" aria-labelledby="dropdownMenuLink"><button class="dropdown-item"  role="button" onclick="signout()" >@SignOut</button><a class="dropdown-item" href="@ProfileURL">@Profile</a></div></div >`);
+                        }
+                    else {
+                        $("#dropDownContainer").replaceWith('<div class="dropdown show " id="dropDownContainer"><a class="solid " href="@SignInURL"  id="dropdownMenuLink" ><img src="@SignInImage" /> @SignIn</a></div >');
+                        signinBTN.textContent = "@SignIn";
+
+                    }
+
+
+                    });
+
+                    function signout() {
+                        localStorage.removeItem('LIB_USER');
+
+                        document.location.reload(true);
+                    }
+                </script>
+
+
+

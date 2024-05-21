@@ -1,0 +1,312 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<sa.gov.libgph.Models.BuyABookServiceModel>
+@using sa.gov.libgph.Services
+@*@model sa.gov.libgph.Models.ContactUsModel*@
+@{
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+
+
+    var CurrentLanguage = System.Threading.Thread.CurrentThread.CurrentCulture.Name;
+    //var CurrentDocument = Umbraco.AssignedContentItem;
+    //var CurrentLanguage = CurrentDocument.GetCultureFromDomains().ToString();
+    var PropertyExceptionHandler = new PropertyExceptionHandler();
+
+
+    string reCAPTCHA = CurrentLanguage == "ar-SA" ? "مطلوب تأكيد كابتشا" : "reCAPTCHA is mandatory";
+    string OldCaptchResponse = CurrentLanguage == "ar-SA" ? " يرجي تأكيد كابتشا مرة أخري" : "For another reCaptcha ";
+    string ClickHere = CurrentLanguage == "ar-SA" ? "اضغط هنا" : "Click Here";
+    string SendMessage = CurrentLanguage == "ar-SA" ? "طلب خدمة" : "Ask for a Service";
+
+    var SuggestingBuyingABookID = Guid.Parse("810c0715-9feb-4044-915d-fc0b062b91cb").ToString();
+    var SuggestingBuyingABookServiceDT = Umbraco.Content(SuggestingBuyingABookID);
+    var BooksTypes = PropertyExceptionHandler.GetElementsArray(SuggestingBuyingABookServiceDT, "BooksTypes");
+
+}
+
+
+<style>
+/*loader*/
+    .field-validation-valid, .field-validation-error, #reCaptchamessageContainer {
+        height: 20px;
+    }
+    #preloader-container {
+        height: 50px;
+    }
+    .underLined {
+        border-bottom: 1px solid #dc3545;
+        cursor: pointer;
+    }
+    #contact-us-preloader {
+        border: 16px solid #f3f3f3;
+        border-top: 16px solid #b19556;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        margin-left: auto;
+        margin-right: auto;
+        animation: spin 2s linear infinite;
+    }
+
+
+@("@")keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+    .agreementstyle {
+        line-height: 1.5;
+        font-size: 1rem;
+        text-align: right !important;
+    }
+
+
+    .error {
+        color: #dc3545 !important;
+    }
+
+
+</style>
+@using (Ajax.BeginForm("SuggestABook", "SuggestingBuyingABook", null, new AjaxOptions()
+{
+
+    UpdateTargetId = "preloader-container",
+    HttpMethod = "POST",
+    InsertionMode = InsertionMode.Replace,
+
+}, new { id = "ContactUsForm", @class = "email-form", enctype = "multipart/form-data" }))
+
+{
+    <div class="row">
+        <div class="form-group col-md-4 mt-1 mt-md-0">
+            @Html.LabelFor(model => model.VisitorName, htmlAttributes: new { @class = "control-label col-md-10" })
+            @Html.EditorFor(model => model.VisitorName, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.VisitorName) } })
+            @Html.ValidationMessageFor(model => model.VisitorName, "", new { @class = "text-danger" })
+
+        </div>
+        <div class="form-group col-md-4 mt-1 mt-md-0">
+            @Html.LabelFor(model => model.VisitorEmail, htmlAttributes: new { @class = "control-label col-md-10" })
+            @Html.EditorFor(model => model.VisitorEmail, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.VisitorEmail) } })
+            @Html.ValidationMessageFor(model => model.VisitorEmail, "", new { @class = "text-danger" })
+
+        </div>
+        <div class="form-group col-md-4 mt-1 mt-md-0">
+            @Html.LabelFor(model => model.VisitorMobile, htmlAttributes: new { @class = "control-label col-md-10" })
+            @Html.EditorFor(model => model.VisitorMobile, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.VisitorMobile) } })
+            @Html.ValidationMessageFor(model => model.VisitorMobile, "", new { @class = "text-danger" })
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-md-4 mt-1 mt-md-0">
+            @Html.LabelFor(model => model.Qualifications, htmlAttributes: new { @class = "control-label col-md-10" })
+            @Html.EditorFor(model => model.Qualifications, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.Qualifications) } })
+            @Html.ValidationMessageFor(model => model.Qualifications, "", new { @class = "text-danger" })
+
+        </div>
+        <div class="form-group col-md-4 mt-1 mt-md-0">
+            @Html.LabelFor(model => model.SuggestedBookTitle, htmlAttributes: new { @class = "control-label col-md-10" })
+            @Html.EditorFor(model => model.SuggestedBookTitle, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.SuggestedBookTitle) } })
+            @Html.ValidationMessageFor(model => model.SuggestedBookTitle, "", new { @class = "text-danger" })
+
+        </div>
+        <div class="form-group col-md-4 mt-1 mt-md-0">
+            @Html.LabelFor(model => model.AuthorName, htmlAttributes: new { @class = "control-label col-md-10" })
+            @Html.EditorFor(model => model.AuthorName, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.AuthorName) } })
+            @Html.ValidationMessageFor(model => model.AuthorName, "", new { @class = "text-danger" })
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-4 mt-1 mt-md-0">
+            @Html.LabelFor(model => model.PublisherName, htmlAttributes: new { @class = "control-label col-md-10" })
+            @Html.EditorFor(model => model.PublisherName, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.PublisherName) } })
+            @Html.ValidationMessageFor(model => model.PublisherName, "", new { @class = "text-danger" })
+
+        </div>
+        <div class="form-group col-md-4 mt-1 mt-md-0">
+            @Html.LabelFor(model => model.PlaceOfPublication, htmlAttributes: new { @class = "control-label col-md-10" })
+            @Html.EditorFor(model => model.PlaceOfPublication, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.PlaceOfPublication) } })
+            @Html.ValidationMessageFor(model => model.PlaceOfPublication, "", new { @class = "text-danger" })
+
+        </div>
+        <div class="form-group col-md-4 mt-1 mt-md-0">
+            @Html.LabelFor(model => model.YearOfPublication, htmlAttributes: new { @class = "control-label col-md-10" })
+            @Html.EditorFor(model => model.YearOfPublication, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.YearOfPublication) } })
+            @Html.ValidationMessageFor(model => model.YearOfPublication, "", new { @class = "text-danger" })
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-8 mt-1 mt-md-0">
+            @Html.LabelFor(model => model.StandardBookNumber, htmlAttributes: new { @class = "control-label col-md-10" })
+            @Html.EditorFor(model => model.StandardBookNumber, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.StandardBookNumber) } })
+            @Html.ValidationMessageFor(model => model.StandardBookNumber, "", new { @class = "text-danger" })
+
+        </div>
+        <div class="form-group col-md-4 mt-1 mt-md-0">
+            <label for="BookTypeId"> @PropertyExceptionHandler.GetTextValue(SuggestingBuyingABookServiceDT, "title")</label>
+
+            <select name="BookTypeId" class="form-control">
+                @foreach (var item in BooksTypes)
+                {
+
+                    <option value="@PropertyExceptionHandler.GetTextValue(item,"value")">@PropertyExceptionHandler.GetTextValue(item, "bookType")</option>
+                }
+            </select>
+
+        </div>
+
+    </div>
+
+
+    <div class="row">
+        <div class="form-group col-md-4 mt-1 mt-md-0">
+
+
+            <div class="g-recaptcha"
+                 id="re_cap_tcha"
+                 data-theme="light"
+                 data-expired-callback="expire_Captcha"
+                 data-callback="valid_Captcha"
+                 data-error-callback="error_Captcha"
+                 data-sitekey="6Lczn_cdAAAAAKp6niX8xoCQpkqmQy4swPK1--SZ">
+
+
+            </div>
+        </div>
+        <div class="form-group col-md-8 mt-1 mt-md-0">
+            @*@Html.LabelFor(model => model.AdditionalInformation, htmlAttributes: new { @class = "control-label col-md-10" })*@
+            @Html.TextAreaFor(model => model.AdditionalInformation, new { @class = "form-control", rows = "2", placeholder = Html.DisplayNameFor(m => m.AdditionalInformation) })
+            @Html.ValidationMessageFor(model => model.AdditionalInformation, "", new { @class = "text-danger" })
+
+        </div>
+    </div>
+    <div id="reCaptchamessageContainer">
+        <input type="hidden" name="reCap_valiadtion" id="reCap_valiadtion" value="" />
+        <input type="hidden" name="reCap_val_message" id="reCap_val_message" value="" />
+        <input type="hidden" name="CurrentLanguage" value="@CurrentLanguage" />
+    </div>
+
+    <div id="preloader-container">
+        <div id="contact-us-preloader" style="display:none"></div>
+    </div>
+
+    <div class="text-center"><button id="submitContactForm" @*disabled*@ type="submit">@SendMessage</button></div>
+}
+
+
+@*
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+*@
+
+
+
+@* <!--====== reCaptch Script ======--> *@
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+@* <!--====== Validation JQ ======--> *@
+<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
+@*<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>*@
+
+
+<script>
+    var language = "@CurrentLanguage";
+    $(document).ready(function () {
+
+    if (language === "ar-SA") {
+
+        $("#visitorName").attr("data-val-regex-pattern", "^[\u0621-\u064A ]+$");
+
+        }
+    });
+    var className = "input-validation-error";
+
+
+    var form = $("#ContactUsForm");
+     var old_response = 0;
+    var isFormValid = false;
+    function CheckFormValidity() {
+
+        if ($("#StandardBookNumber").val() === "" || $("#StandardBookNumber").hasClass("input-validation-error") || $("#YearOfPublication").val() === "" || $("#YearOfPublication").hasClass("input-validation-error") || $("#PlaceOfPublication").val() === "" || $("#PlaceOfPublication").hasClass("input-validation-error") || $("#PublisherName").val() === "" || $("#PublisherName").hasClass("input-validation-error") || $("#AuthorName").val() === "" || $("#AuthorName").hasClass("input-validation-error") || $("#SuggestedBookTitle").val() === "" || $("#SuggestedBookTitle").hasClass("input-validation-error") || $("#Qualifications").val() === "" || $("#Qualifications").hasClass("input-validation-error") || $("#VisitorMobile").val() === "" || $("#VisitorMobile").hasClass("input-validation-error") || $("#VisitorEmail").val() === "" || $("#VisitorEmail").hasClass("input-validation-error") || $("#VisitorName").val() === "" || $("#VisitorName").hasClass("input-validation-error")|| grecaptcha.getResponse() === "") {
+        //    $('#submitContactForm').attr("disabled", true);
+            isFormValid = false;
+
+        }
+        else {
+            //$('#submitContactForm').attr("disabled", false);
+            isFormValid = true;
+
+        }
+    }
+    form.mouseover(() => { CheckFormValidity(); })
+    form.keydown(() => { CheckFormValidity(); })
+
+     $("#ContactUsForm").submit(() => {
+
+        //reCaptcha Validation
+        //no response
+        if (grecaptcha.getResponse() == "") {
+            $("#re_cap_tcha").addClass("agreementstyle");
+            $("#reCap_val_message").replaceWith('<div id="reCap_val_message"><span class="text-danger">@(reCAPTCHA)</span></div>');
+            $("#reCap_valiadtion").val("");
+            return false;
+        }
+
+        //responded
+        else {
+            // old response
+            if (old_response === 0) {
+                //new response
+                //if (form.valid() == true) {
+                if (isFormValid == true) {
+                $("#preloader-container").replaceWith('<div id="preloader-container"><div id="contact-us-preloader" style="display:block"></div></div>');
+                }
+
+                $("#re_cap_tcha").removeClass("agreementstyle");
+                $("#reCap_val_message").replaceWith('<div id="reCap_val_message"><span class="text-danger"></span></div>');
+                setTimeout(function () { $("#reCap_valiadtion").val(""); }, 1500);
+                old_response++;
+
+            }
+            else {
+                @*$("#reCap_val_message").replaceWith('<div id="reCap_val_message" class="text-danger">@(OldCaptchResponse)<button type="button"class="btn btn-info" onclick="expire_Captcha()"> @(ClickHere)</button></div>');*@
+                $("#reCap_val_message").replaceWith('<div id="reCap_val_message" class="text-danger">@(OldCaptchResponse)<a class="underLined" onclick="expire_Captcha()">&nbsp;@(ClickHere)</a></div>');
+                return false;
+
+            }
+        }
+
+    });
+
+
+
+//Call back Function called if the captach is valid
+function valid_Captcha() {
+    $("#reCap_valiadtion").val("valid");
+    $("#re_cap_tcha").removeClass("agreementstyle");
+    $("#reCap_val_message").hide(1000, 'swing');
+}
+//Call back Function called if the captach is expired
+function expire_Captcha() {
+    $("#reCap_valiadtion").val("");
+    grecaptcha.reset();
+    old_response = 0;
+    $("#re_cap_tcha").removeClass("agreementstyle");
+    $("#reCap_val_message").hide(1000, 'swing');
+}
+//Call back Function called if the captach is something went wrong ==> it rests the captcha
+function error_Captcha() {
+    grecaptcha.reset();
+    old_response = 0;
+    $("#reCap_val_message").replaceWith('<div id="reCap_val_message"><span class="text-danger"></span></div>');
+
+}
+
+
+
+</script>

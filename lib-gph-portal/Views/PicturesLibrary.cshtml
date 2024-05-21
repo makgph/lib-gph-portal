@@ -1,0 +1,133 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using ContentModels = Umbraco.Web.PublishedModels;
+@using Umbraco.Web.Models
+@{
+    Layout = "_InnerPagesLayout.cshtml";
+}
+
+@{
+
+    var Langauge = Umbraco.AssignedContentItem.GetCultureFromDomains();
+
+    var imagelist = Umbraco.AssignedContentItem.Value<IEnumerable<IPublishedElement>>("imagesList").Where(x => x.IsVisible());
+
+    var pageSize = 6;
+
+    if (Model.HasValue("numberOfPage"))
+    {
+        pageSize = Model.Value<int>("numberOfPage");
+    }
+
+
+
+    var page = 1;
+
+    int.TryParse(Request.QueryString["page"], out page);
+
+    var totalPages = (int)Math.Ceiling((double)imagelist.Count() / (double)pageSize);
+
+    if (page > totalPages)
+    {
+        page = totalPages;
+    }
+    else if (page < 1)
+    {
+        page = 1;
+    }
+}
+
+<section class="wrapper">
+    <div class="container">
+
+        <div class="row">
+            @if (imagelist != null)
+            {
+                foreach (var item in imagelist.Skip((page - 1) * pageSize).Take(pageSize))
+                {
+                    var image = item.Value<IPublishedContent>("image");
+                    var dateimg = item.Value<DateTime>("date").ToString("dd MMMM yyyy");
+                    var link = item.Value<Link>("linkTitle");
+                    var titleimage = item.Value<string>("title");
+                    var desc = item.Value<string>("imageAlt");
+
+                    if (image != null)
+                    {
+                        <div class="col-md-4">
+                            <div class="card text-white card-has-bg click-col"
+                                 style="background-image:url('@image.Url()');">
+                                <img class="card-img d-none"
+                                     src="@image.Url()"
+                                     alt="@(desc != "" || desc != null ? desc : "" )">
+                                <div class="card-img-overlay d-flex flex-column">
+                                    <div class="card-body">
+
+                                        <h4 class="card-title mt-0 ">
+
+                                            <a class="text-white" herf="#">@(titleimage != null || titleimage != "" ? titleimage : "")</a>
+
+                                        </h4>
+                                        @if (dateimg != null)
+                                        {
+                                            <small><i class="far fa-clock"></i> @dateimg</small>
+                                        }
+
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="media">
+                                            <a class="image-popup"
+                                               href="@image.Url()">
+                                                <i class="lni lni-zoom-in  rounded-circle"></i>
+                                            </a>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                }
+            }
+
+        </div>
+
+
+
+        @if (totalPages > 1)
+        {
+            <nav class="page">
+
+                <ol class="pagination">
+                    @if (page > 1)
+                    {
+                        <li>
+                            <a aria-label="Previous" href="?page=@(page - 1)"><span aria-hidden="true">«</span></a>
+                        </li>
+                    }
+                    @for (int p = 1; p < totalPages + 1; p++)
+                    {
+                        <li class="@(p == page ? "active" : string.Empty)">
+                            <a href="?page=@p">@p </a>
+                        </li>
+
+
+                    }
+                    @if (page < totalPages)
+                    {
+                        <li>
+                            <a aria-label="Next" href="?page=@(page + 1)"><span aria-hidden="true">»</span></a>
+                        </li>
+                    }
+                </ol>
+            </nav>
+        }
+
+
+
+
+    </div>
+</section>
+
+
+
+

@@ -1,0 +1,401 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using sa.gov.libgph.Models;
+@using System.Web.Mvc.Html
+@using ClientDependency.Core.Mvc
+@using Umbraco.Web
+@using Umbraco.Web.Models
+@using Umbraco.Web.Controllers
+@{
+
+    //HtmlHelper.UnobtrusiveJavaScriptEnabled = true;
+
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+
+    IPublishedContent home = Umbraco.ContentQuery.Content(2518); //home id
+    string chatBotWelcome = home.HasValue("welcomeMessage") ? home.Value<string>("welcomeMessage") : "";
+    IEnumerable<IPublishedElement> chatBotTree = home.Value<IEnumerable<IPublishedElement>>("chatBotTree");
+    List<ChatBotModel> chatBotTreeList = (List<ChatBotModel>)Session["chatBotTreeList"];
+    var language = Umbraco.AssignedContentItem.GetCultureFromDomains();
+    string sendMessage = (language == "ar-SA") ? "اكتب الرسالة" : "Write Message";
+    string centerName = (language == "ar-SA") ? " مكتبة الحرم المكي " : "The Great Mosque of Mecca";
+    string SmartAssistant = (language == "ar-SA") ? " المساعد الذكي " : "Smart Assistant";
+
+}
+
+
+<div class="floating-chat">
+    <i class="lni lni-wechat" aria-hidden="true"></i>
+    <div class="chat">
+        <div class="header">
+            <img class="support-img" alt="CustomerSupport" src="~/assets/images/CustomerSupport.png">
+            <span class="title">
+                @SmartAssistant
+            </span>
+
+            <button>
+                <i class="lni lni-close" aria-hidden="true"></i>
+
+            </button>
+
+        </div>
+
+        @using (Ajax.BeginForm("SubmitChatbot", "Chat", new { }, new AjaxOptions()
+        {
+
+
+            UpdateTargetId = "chatBotDiv",
+            HttpMethod = "POST",
+
+            InsertionMode = InsertionMode.InsertAfter
+
+        }, new { id = "chatbot-form", @class = "messages" }))
+        {
+
+            int idx = 1;
+            <ul id="chatBotDiv">
+
+                <li class="other chat_msg a-message">
+                    <div class="list-group">
+                        <a class="list-group-item list-group-item-action list-group-item-title">@chatBotWelcome</a>
+
+
+                        @*<a href="#" class="list-group-item list-group-item-action " aria-current="true">
+                                The current link item
+                                <span class="icon-inline"><i class="lni lni-chevron-down"></i></span>
+                            </a>*@
+
+                        @foreach (IPublishedElement chatNode in chatBotTree.Where(x => x.IsVisible()))
+                        {
+                            string title = chatNode.HasValue("title") ? chatNode.Value<string>("title") : "";
+                            //var links = chatNode.Value<Link>("link");
+                            Link link = chatNode.Value<Link>("link");
+                            //if (links != null)
+                            //{
+                            //    link = links.FirstOrDefault();
+                            //}
+                            if (title != "")
+                            {
+                                if (link == null)
+                                {
+                                    <a onclick="setSelectItem('@title','C',2,@idx,@idx)" class="list-group-item list-group-item-action">@title <span class="icon-inline"><i class="lni lni-chevron-down"></i></span></a>
+                                }
+                                else
+                                {
+                                    string _target = link.Target;
+
+                                    <a href="@link.Url" target="@_target" class="list-group-item list-group-item-action">@title <span class="icon-inline"><i class="lni lni-chevron-down"></i></span></a>
+
+                                }
+                            }
+                            idx++;
+                        }
+
+
+                    </div>
+                </li>
+
+
+                @*<a href="#" class="list-group-item list-group-item-action">A third link item  <span class="icon-inline"><i class="lni lni-chevron-down"></i></span></a>
+                        <a href="#" class="list-group-item list-group-item-action">A fourth link item  <span class="icon-inline"><i class="lni lni-chevron-down"></i></span></a>
+                                    @*<li class="self">ايبسوم ابيسوم يسوووم</li>
+                    <li class="other">لوريم ؟؟؟؟؟؟؟؟؟؟؟</li>
+                    <li class="self">نعم.... -___-</li>
+                    <li class="other">لوريم لوريم ايبسووووووووووووم</li>
+                    <li class="self">لوريم ايبسوم </li>
+                    <li class="other">لوووووريم ابيبوم ابيسوم </li>
+                    <li class="self">......... -___-</li>*@
+            </ul>
+            <input type="hidden" id="selectedNode" name="selectedNode" />
+            <input type="hidden" id="selectedLevel" name="selectedLevel" />
+            <input type="hidden" id="selectedIndex" name="selectedIndex" />
+            <input type="hidden" id="nodeId" name="nodeId" />
+            <input type="hidden" id="chatType" name="chatType" />
+
+        }
+
+        @*<div class="footer">
+                <div class="text-box" contenteditable="true" id="chat_message" disabled="true" autofocus onkeydown="search(this)"></div>
+                <button onclick="setSelectItem('','S',2,0,0)" id="sendMessage"><svg id="ic_send" fill="#21927e" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path><path d="M0 0h24v24H0z" fill="none"></path></svg></button>
+            </div>*@
+
+
+
+        <div class="footer">
+
+            <footer class="chatbox-popup__footer d-flex bd-highlight">
+
+                <aside class=" w-100 bd-highlight" dir="rtl">
+                    <textarea class="text-box"
+                              placeholder="@sendMessage"
+                              autofocus id="chat_message"
+                              name="chat_message"
+                              onkeydown="search(this)"></textarea>
+                </aside>
+                <aside class=" flex-shrink-1 bd-highlight d-flex align-items-center">
+                    <i aria-hidden="true"
+                       onclick="setSelectItem('','S',2,0,0)">
+                        <svg id="ic_send"
+                             fill="#21927e"
+                             height="24"
+                             viewBox="0 0 24 24"
+                             width="24"
+                             xmlns="http://www.w3.org/2000/svg"
+                             aria-hidden="true">
+                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
+                            <path d="M0 0h24v24H0z" fill="none"></path>
+                        </svg>
+                    </i>
+                </aside>
+            </footer>
+            <br>
+            <!-- <div class="text-box" contenteditable="true" disabled="true"></div>
+            <button id="sendMessage"><svg id="ic_send" fill="#21927e" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path><path d="M0 0h24v24H0z" fill="none"></path></svg></button> -->
+        </div>
+        @*<footer class="chatbox-popup__footer">
+
+                <aside style="flex:10">
+                    <textarea type="text" placeholder="@sendMessage" autofocus id="chat_message" name="chat_message" onkeydown="search(this)"></textarea>
+                </aside>
+                <aside style="flex:1;color:#888;text-align:center;">
+                    <i class="fa fa-paper-plane" aria-hidden="true" onclick="setSelectItem('','S',2,0,0)"></i>
+                </aside>
+            </footer>*@
+    </div>
+</div>
+
+
+
+
+@*<script src="/js/jquery.min.js"></script>*@
+<script>
+
+    function search(ele) {
+        if (event.key === 'Enter') {
+            //alert(ele.value);
+            if (ele.value.trim().length > 0) {
+                setSelectItem('', 'S', 2, 0, 0);
+            }
+        }
+    }
+
+
+    function setSelectItem(selectedItem, type, level, idx, nodeId) {
+        // alert(type);
+        var element = document.getElementById('chatBotDiv');
+        let chatbotForm = document.getElementById('chatbot-form');
+
+        var chatSelectDiv = document.createElement("li");
+        // var span = document.createElement("span");
+        var anchor = document.createElement("a");
+        chatSelectDiv.appendChild(anchor);
+        //anchor.TEXT_NODE("anchor");
+        anchor.classList.add("chat_select");
+        chatSelectDiv.classList.add("self");
+        chatSelectDiv.classList.add("a-message");
+        chatSelectDiv.classList.add("chatStyle");
+        anchor.classList.add("self");
+        chatSelectDiv.style.display = "block";
+        chatSelectDiv.style.maxWidth = "fit-content";
+        chatSelectDiv.style.float = "none";
+        chatSelectDiv.style.marginLeft = "auto";
+
+        // chatSelectDiv.classList.add("a-message ");
+
+
+
+
+        //var msgDiv = document.createElement("div");
+        //var wrapperDiv = document.createElement("div");
+        //var imgDiv = document.createElement("div");
+        //var img = document.createElement("img");
+        //var paragraph = document.createElement("p");
+        //msgDiv.id = "msgDiv";
+        //msgDiv.name = "msgDiv";
+        //msgDiv.classList.add("chat_msg");
+        //wrapperDiv.classList.add("wrapper");
+        //imgDiv.classList.add("chat_img");
+        //img.src = "~/images/chat.png";
+        //paragraph.innerText = selectedItem;
+        ////msgDiv.classList.add("chat_user");
+        //msgDiv.appendChild(wrapperDiv);
+        //wrapperDiv.appendChild(imgDiv);
+        //wrapperDiv.appendChild(paragraph);
+        //imgDiv.appendChild(img);
+
+
+
+        if (type === 'S') {
+            var sentText = document.getElementById('chat_message');
+            if (sentText.value === 'القائمة الرئيسية') { selectedItem = 'MN'; }
+            else { selectedItem = sentText.value; }
+
+            if (sentText.value === 'القائمة السابقة') { selectedItem = 'PRVM'; }
+            else { selectedItem = sentText.value; }
+
+
+
+            if (selectedItem === 'MN') { anchor.innerHTML = 'القائمة الرئيسية'; }
+            else if (selectedItem === 'PRVM') { anchor.innerHTML = 'القائمة السابقة'; }
+            else { anchor.innerHTML = selectedItem; }
+
+
+            //  else { msgDiv.innerHTML = selectedItem; }
+            //  alert(msgDiv.innerHTML);
+            if (selectedItem != '') {
+                element.appendChild(chatSelectDiv);
+                //element.appendChild(msgDiv);
+            }
+
+
+
+
+
+            var selectedLevel = document.getElementById('selectedLevel');
+            var selectedIdx = document.getElementById('selectedIndex');
+            var nodeIdInput = document.getElementById('nodeId');
+
+
+
+            selectedLevel.value = level;
+            selectedIdx.value = idx;
+            nodeIdInput.value = nodeId;
+
+
+            var selectedNode = document.getElementById('selectedNode');
+            var chatTypeInput = document.getElementById('chatType');
+            selectedNode.value = selectedItem;
+            chatTypeInput.value = 'Typing';
+
+            sentText.value = "";
+            /*  console.log(last_msg);
+              console.log(child);*/
+        }
+        else {
+
+            //var msgDiv = document.createElement("div");
+            //msgDiv.id = "msgDiv";
+            //msgDiv.name = "msgDiv";
+            //msgDiv.classList.add("chat_msg");
+            //msgDiv.classList.add("chat_msg_user");
+            if (selectedItem === 'MN') { anchor.innerHTML = 'القائمة الرئيسية'; }
+            else if (selectedItem === 'PRVM') { anchor.innerHTML = 'القائمة السابقة'; }
+            else { anchor.innerHTML = selectedItem; }
+
+
+            //  else { msgDiv.innerHTML = selectedItem; }
+            //  alert(msgDiv.innerHTML);
+
+
+
+
+            var selectedNode = document.getElementById('selectedNode');
+            var selectedLevel = document.getElementById('selectedLevel');
+            var selectedIdx = document.getElementById('selectedIndex');
+            var nodeIdInput = document.getElementById('nodeId');
+            var chatTypeInput = document.getElementById('chatType');
+
+            selectedNode.value = selectedItem;
+            selectedLevel.value = level;
+            selectedIdx.value = idx;
+            nodeIdInput.value = nodeId;
+            chatTypeInput.value = 'Click';
+        }
+        if (selectedItem != '') {
+            element.appendChild(chatSelectDiv);
+            //element.appendChild(msgDiv);
+        }
+
+        var catBotTypingDiv = document.createElement("div");
+        //var span1 = document.createElement("span");
+        //var span2 = document.createElement("span");
+        //var span3 = document.createElement("span");
+        catBotTypingDiv.id = "catBotTypingDiv";
+        catBotTypingDiv.name = "catBotTypingDiv";
+        catBotTypingDiv.classList.add("typing");
+
+        //span1.classList.add("circle");
+        //span1.classList.add("scaling");
+        //span2.classList.add("circle");
+        //span2.classList.add("scaling");
+        //span3.classList.add("circle");
+        //span3.classList.add("scaling");
+
+        //catBotTypingDiv.appendChild(span1);
+        //catBotTypingDiv.appendChild(span2);
+        //catBotTypingDiv.appendChild(span3);
+
+        // var loader_anchor = document.createElement("a");
+        catBotTypingDiv.classList.add("a-message");
+        catBotTypingDiv.classList.add("other");
+        catBotTypingDiv.classList.add("loading-bubble");
+
+        var loader_spiner = document.createElement("div");
+        loader_spiner.classList.add("spinner");
+
+        var loader_bounce1 = document.createElement("div");
+        loader_bounce1.classList.add("bounce1");
+
+        var loader_bounce2 = document.createElement("div");
+        loader_bounce2.classList.add("bounce2");
+
+        var loader_bounce3 = document.createElement("div");
+        loader_bounce3.classList.add("bounce3");
+
+        loader_spiner.appendChild(loader_bounce1);
+        loader_spiner.appendChild(loader_bounce2);
+        loader_spiner.appendChild(loader_bounce3);
+
+        catBotTypingDiv.appendChild(loader_spiner);
+
+
+
+        element.appendChild(catBotTypingDiv);
+        var getCatBotTypingDiv = document.getElementById('catBotTypingDiv');
+        getCatBotTypingDiv.scrollIntoView();
+        setTimeout(function () { submitChatBot(chatbotForm); }, 2000);
+
+
+    }
+
+    function submitChatBot(theForm) {
+        $.ajax({ // create an AJAX call...
+            data: $(theForm).serialize(), // get the form data
+            type: $(theForm).attr('method'), // GET or POST
+            url: $(theForm).attr('action'), // the file to call
+            success: function (response) { // on success..
+                //  $($(theForm).attr('data-ajax-update')).html(response); // update the DIV
+
+                var getCatBotTypingDiv = document.getElementById('catBotTypingDiv');
+
+                var element = document.getElementById('chatBotDiv');
+
+                element.removeChild(getCatBotTypingDiv);
+                /* var retDiv = document.createElement('div');
+                  retDiv.classList.add("chat_msg");
+         retDiv.classList.add("chat_msg_admin");
+                 retDiv.innerHTML = response;
+
+                 element.appendChild(retDiv);*/
+
+
+                element.innerHTML = element.innerHTML + response;
+                //console.log(element.innerHTML);
+                //element.scrollIntoView();
+                //element.scrollDown = element.scrollHeight;
+
+                var chat_msg_user = element.getElementsByClassName('self');
+                var last_user_msg = chat_msg_user[chat_msg_user.length - 2];
+                last_user_msg.scrollIntoView({ alignToTop: "true", behavior: "smooth", block: "start", inline: "start" });
+
+
+                //last_user_msg.scrollTop = last_user_msg.scrollHeight;
+                //element.scrollTop = element.scrollHeight;
+            }
+        });
+
+
+    }
+
+
+</script>

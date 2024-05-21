@@ -1,0 +1,77 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Web.Models
+@{
+    var CurrentSection = Umbraco.AssignedContentItem;
+
+    var title = CurrentSection.Value<string>("pageTitle", fallback: Fallback.ToDefaultValue, defaultValue: CurrentSection.Name);
+    var name = CurrentSection.Value<string>("metaName", fallback: Fallback.ToDefaultValue, defaultValue: CurrentSection.Name);
+    var description = CurrentSection.Value<string>("metaDescription", fallback: Fallback.ToDefaultValue, defaultValue: CurrentSection.Name);
+    var CurrentHost = Request.Url.Host;
+
+    var keys = CurrentSection.Value<string[]>("metaKeywords");
+    var Keywords = "";
+    var url = Request.Url.AbsoluteUri;
+    if (keys != null)
+    {
+        Keywords = CurrentSection.HasValue("metaKeywords") ? string.Join(",", CurrentSection.Value<string[]>("metaKeywords")) : CurrentSection.Name;
+    }
+    string metaImage = CurrentSection.HasValue("metaImage") ? CurrentSection.Value<IPublishedContent>("metaImage").Url() : "";
+    if (metaImage != "")
+    {
+
+        metaImage = CurrentHost + metaImage;
+    }
+    else
+    {
+
+        metaImage = CurrentHost + "/images/Group 3350.png";
+    }
+
+    //var PageURL = Request.Url.Scheme + "://" + Request.Url.Host;
+}
+
+<script type="application/ld+json">
+    {
+        "@@context" : "http://schema.org",
+        "@@type" : "Organization",
+        "name" : "مكتبة الحرم المكي الشريف",
+        "logo" : @(CurrentHost + "/images/Group 3350.png"),
+        "url" : "@(CurrentHost)",
+        "sameAs" : [
+            "https://twitter.com/SeecSaudi",
+            "https://www.youtube.com/channel/UCBGbkPfrnSVb90-ar4gzk7A/feed",
+            "https://www.linkedin.com/company/saudi-energy-efficiency-program/?originalSubdomain=sa"
+
+        ]
+    }
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+@*<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">*@
+
+<title>@title</title>
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="theme-color" content="#ffffff">
+<meta name="name" content="@name" />
+<meta name="description" content="@description" />
+<meta name="keywords" content="@Keywords" />
+
+<meta property="og:title" content="@title" />
+<meta name="og:description" content="@description" />
+@*<meta property="og:type"  content="article" />*@
+<meta property="og:type" content="website">
+<meta property="og:locale" content="@CurrentSection.GetCultureFromDomains()">
+<meta property="og:url" content="@url" />
+<meta property="og:image" content="@metaImage" />
+
+
+
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:description" content="@description" />
+<meta name="twitter:title" content="@title" />
+<meta name="twitter:image" content="@metaImage" />
+<meta name="twitter:url" content="@url">
+
+

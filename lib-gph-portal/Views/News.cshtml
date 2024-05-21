@@ -1,0 +1,208 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Web.Models;
+@{
+    Layout = "_InnerPagesLayout.cshtml";
+}
+
+@{
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+
+    var AllLatestNews = Model.Root().ChildrenOfType("News").FirstOrDefault().ChildrenOfType("newsitem").ToArray();
+
+
+    var CurrentLangauge = Umbraco.AssignedContentItem.GetCultureFromDomains();
+    var LatestNewsTitle = CurrentLangauge == "ar-SA" ? "أخر الأخبار" : "Latest News";
+    var SearchAboutNews = CurrentLangauge == "ar-SA" ? "بحث عن الأخبار" : "Search About News";
+    var Search = CurrentLangauge == "ar-SA" ? "بحث ..." : "Search ...";
+    var ReadMore = CurrentLangauge == "ar-SA" ? " إقرأ المزيد ..." : "Read More ...";
+    var pageSize = 0;
+    //pageSize = (Model.HasValue("numberofNewsInOnePage") ? Model.Value<int>("numberofNewsInOnePage") : 3);
+    pageSize = 3;
+
+    //var page = 1;
+
+    //int.TryParse(Request.QueryString["page"], out page);
+    //var totalPages = (int)Math.Ceiling((double)AllLatestNews.Length / pageSize);
+    //var LatestNews = AllLatestNews.Skip((page - 1) * pageSize).Take(pageSize).ToArray();
+    var LatestNews = AllLatestNews.OrderByDescending(x => x.SortOrder).ToArray();
+    //if (page > totalPages)
+    //{
+    //    page = totalPages;
+    //}
+    //else if (page < 1)
+    //{
+    //    page = 1;
+    //}
+    int PaginationCounter = LatestNews.Length % pageSize == 0 ? LatestNews.Length / pageSize : (LatestNews.Length / pageSize) + 1;
+}
+
+<section class="wrapper blog section-bg">
+    @using (Ajax.BeginForm("GetNewsSearchResult", "News", null, new AjaxOptions
+    {
+        UpdateTargetId = "updatedContainer",
+        HttpMethod = "POST",
+        InsertionMode = InsertionMode.ReplaceWith
+
+    }))
+    {
+        <input type="hidden" value="@CurrentLangauge" name="CurrentLanguage" />
+        <input type="hidden" value="@pageSize" name="pageSize" />
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 sidebar">
+                    <h3 class="sidebar-title">@SearchAboutNews</h3>
+                    <div class="sidebar-item recent-posts">
+                        <div class="sidebar-item search-form">
+
+
+                            <input type="text" name="SearchTarget" id="searchinput" placeholder="@Search">
+                            <button class="btn-close-search" type="submit" id="removeSearch"><i class="lni lni-close"></i> </button>
+                            <button type="submit"><i class="lni lni-search-alt"></i></button>
+
+
+                        </div>
+                        <!-- End sidebar search form-->
+                    </div>
+
+                </div>
+            </div>
+            @*<button type="submit" id="removeSearch"><i class="lni lni-trash"></i></button>*@
+
+            <div id="updatedContainer" class="row ">
+                @for (int i = 0; i < pageSize; i++)
+                {
+                    <div class="col-md-4">
+                        <div class="card text-white card-has-bg click-col"
+                             style="background-image:url('@ImageUrl(LatestNews[i])');">
+
+                            <div class="card-img-overlay d-flex flex-column">
+                                <div class="card-body">
+
+                                    <h4 class="card-title mt-0 ">
+                                        <a class="text-white" herf="#">
+                                            @(LatestNews[i].Value<string>("newsitemtitle"))
+
+                                        </a>
+                                    </h4>
+                                    <small>
+                                        <i class="far fa-clock"></i>
+                                        @GetDate(LatestNews[i], "publishingDate")
+                                    </small>
+
+                                </div>
+                                <div class="card-footer">
+                                    <div class="media">
+
+                                        <div class="media-body">
+                                            <a class="my-0 text-white d-block anchor-link" href="@(LatestNews[i]?.Url())">
+                                                @ReadMore
+                                                <i class="lni lni-chevron-left"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+
+
+
+                <div class="blog-pagination raw col-12" id="pagination">
+                    <ul class="justify-content-center">
+
+                        @for (int i = 0; i < PaginationCounter; i++)
+                        {
+                            <li><button name="CurrentPageNumber" type="submit" value="@i">@(i+1)</button></li>
+
+                        }
+                        @*<li class="active"><a href="#">2</a></li>
+                            <li><a href="#">3</a></li>*@
+                    </ul>
+                </div>
+            </div>
+        </div>
+    }
+</section>
+
+
+
+
+
+<script>
+    $("#removeSearch").click(function () {
+        $('#searchinput').val('');
+
+    });
+</script>
+
+
+
+@functions{
+
+    //Get Image
+    public string ImageUrl(IPublishedContent Element)
+    {
+        string ImageURL;
+        if (Element.HasValue("newsItemImage"))
+
+        {
+            try
+            {
+                ImageURL = Element.Value<MediaWithCrops>
+    ("newsItemImage").Url();
+
+            }
+            catch (Exception)
+            {
+
+                ImageURL = "#";
+            }
+
+        }
+        else
+        {
+            ImageURL = "#";
+
+        }
+
+
+        return ImageURL;
+    }
+
+
+    //Getting Date
+    public string GetDate(IPublishedContent Element, string DateAlias)
+    {
+        string Date;
+
+        if (Element.HasValue(DateAlias))
+
+        {
+            try
+            {
+                Date = Element.Value<DateTime>
+                    (DateAlias).ToLongDateString();
+
+            }
+            catch (Exception)
+            {
+                //Date = new DateTime().AddYears(2000).ToLongDateString();
+                Date = "";
+
+            }
+
+        }
+        else
+        {
+            Date = "";
+
+
+
+        }
+
+
+        return Date;
+    } }

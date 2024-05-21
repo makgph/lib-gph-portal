@@ -1,0 +1,393 @@
+/*
+ * Font size style declarations for each variation.
+ *
+ * Observation: Note that the amount of classes here
+ * rely on how many variations you set on $.rvFontsize() call.
+ * 
+ * This classes are required to make rv font size jquery plugin works.
+ */
+
+ /* .rvfs-1  body,
+ .rvfs-1  p,
+ .rvfs-1  h1,
+ .rvfs-1  h2,
+ .rvfs-1  h3
+ .rvfs-1  span
+
+ {font-size: 93%}
+ .rvfs-2  body,
+ .rvfs-2  p,
+ .rvfs-2  h1,
+ .rvfs-2  h2,
+ .rvfs-2  h3
+ .rvfs-2  span
+ {font-size: 95%}
+ .rvfs-3  body,
+ .rvfs-3  p,
+ .rvfs-3  h1,
+ .rvfs-3  h2,
+ .rvfs-3  h3
+ .rvfs-3  span
+ {font-size: 98%}
+ .rvfs-4  body,
+ .rvfs-4  p,
+ .rvfs-4  h1,
+ .rvfs-4  h2,
+ .rvfs-4  h3
+ .rvfs-4  span
+ {font-size: 100%}
+ .rvfs-5  body,
+ .rvfs-5  p,
+ .rvfs-5  h1,
+ .rvfs-5  h2,
+ .rvfs-5  h3
+ .rvfs-5  span
+ {font-size: 110%}
+ .rvfs-6  body,
+ .rvfs-6  p,
+ .rvfs-6  h1,
+ .rvfs-6  h2,
+ .rvfs-6  h3
+ .rvfs-6  span
+ {font-size: 120%}
+ .rvfs-7  body,
+ .rvfs-7  p,
+ .rvfs-7  h1,
+ .rvfs-7  h2,
+ .rvfs-7  h3
+ .rvfs-7  span
+ {font-size: 130%} */
+
+
+
+
+
+
+.rvfs-4  h2,
+.rvfs-4  h4,
+.rvfs-4  h6,
+.rvfs-4  h1,
+.rvfs-4  h3,
+.rvfs-4  h5,
+.rvfs-4  p,
+.rvfs-4  input,
+.rvfs-4  select,
+.rvfs-4  textarea,
+.rvfs-4  .container .content span,
+.rvfs-4 .btn,
+.rvfs-4 .item span,
+.rvfs-4 strong,
+.rvfs-4 .single-box,
+.rvfs-4 .path-tab li,
+.rvfs-4 .condations p span,
+.rvfs-4 .condations p #title
+{
+     font-size: 100%
+}
+.rvfs-5  h2,
+.rvfs-5  h4,
+.rvfs-5  h6,
+.rvfs-5  h1,
+.rvfs-5  h3,
+.rvfs-5  h5,
+.rvfs-5  p,
+.rvfs-5  input,
+.rvfs-5  select,
+.rvfs-5  textarea,
+.rvfs-5  .container .content span,
+.rvfs-5  .btn,
+.rvfs-5 .item span,
+.rvfs-5 strong,
+.rvfs-5 .single-box,
+.rvfs-5 .path-tab li,
+.rvfs-5 .condations p span,
+.rvfs-5 .condations p #title
+
+{
+    font-size: 110% !important
+}
+.rvfs-6  h2,
+.rvfs-6  h4,
+.rvfs-6  h6,
+.rvfs-6  h1,
+.rvfs-6  h3,
+.rvfs-6  h5,
+.rvfs-6  p,
+.rvfs-6  input,
+.rvfs-6  select,
+.rvfs-6  textarea,
+.rvfs-6  .container .content span,
+.rvfs-6 .btn,
+.rvfs-6 .item span,
+.rvfs-6 strong,
+.rvfs-6 .single-box,
+.rvfs-6 .path-tab li,
+.rvfs-6 .condations p span,
+.rvfs-6 .condations p #title
+{
+    font-size: 115% !important
+}
+.rvfs-7  h2,
+.rvfs-7  h4,
+.rvfs-7  h6,
+.rvfs-7  h1,
+.rvfs-7  h3,
+.rvfs-7  h5,
+.rvfs-7  p,
+.rvfs-7  input,
+.rvfs-7  select,
+.rvfs-7  textarea,
+.rvfs-7  .container .content span,
+.rvfs-7 .btn,
+.rvfs-7 .item span,
+.rvfs-7 strong,
+.rvfs-7 .single-box,
+.rvfs-7 .path-tab li,
+.rvfs-7 .condations p span,
+.rvfs-7 .condations p #title
+{
+    font-size: 120% !important
+}
+
+
+.rvfs-4 h1{ font-size: 48px}
+.rvfs-5 h1{ font-size:49px !important}
+.rvfs-6 h1{ font-size: 50px !important}
+.rvfs-7 h1{ font-size: 52px !important}
+
+.rvfs-4 .about h3{ font-size: 34px}
+.rvfs-5 .about h3{ font-size:35px !important}
+.rvfs-6 .about h3{ font-size: 36px !important}
+.rvfs-7 .about h3{ font-size: 37px !important}
+
+
+.rvfs-4 .slider-content .title{ font-size: 35px}
+.rvfs-5 .slider-content .title{ font-size: 36px !important}
+.rvfs-6 .slider-content .title{ font-size: 37px !important}
+.rvfs-7 .slider-content .title{ font-size: 38px !important}
+
+.rvfs-4 .slider-content .text{ font-size:23px}
+.rvfs-5 .slider-content .text{ font-size: 23.5px !important}
+.rvfs-6 .slider-content .text{ font-size: 24px !important}
+.rvfs-7 .slider-content .text{ font-size: 24.5px !important}
+
+.rvfs-4 .carousel-indicators li p{ font-size:16px}
+.rvfs-5 .carousel-indicators li p{ font-size: 16.5px !important}
+.rvfs-6 .carousel-indicators li p{ font-size: 17px !important}
+.rvfs-7 .carousel-indicators li p{ font-size: 17.5px !important}
+
+.rvfs-4 .section-title .title{ font-size: 43px}
+.rvfs-5 .section-title .title{ font-size: 44px !important}
+.rvfs-6 .section-title .title{ font-size: 45px !important}
+.rvfs-7 .section-title .title{ font-size: 46px !important}
+
+
+.rvfs-4 .slick-slide p{ font-size: 13px}
+.rvfs-5 .slick-slide p{ font-size: 13.5px !important}
+.rvfs-6 .slick-slide p{ font-size: 14px !important}
+.rvfs-7 .slick-slide p{ font-size: 14.5px !important}
+
+.rvfs-4 .goals .description{ font-size: 15px}
+.rvfs-5 .goals .description{ font-size: 16px !important}
+.rvfs-6 .goals .description{ font-size: 17px !important}
+.rvfs-7 .goals .description{ font-size: 18px !important}
+
+
+.rvfs-4 .slick-track .slick-slide .overlay-text h2{ font-size: 33px;}
+.rvfs-5 .slick-track .slick-slide .overlay-text h2{ font-size: 34px !important}
+.rvfs-6 .slick-track .slick-slide .overlay-text h2{ font-size: 35px !important}
+.rvfs-7 .slick-track .slick-slide .overlay-text h2{ font-size: 35.5px !important}
+
+.rvfs-4 .slick-track .slick-slide a{  font-size: 15px;}
+.rvfs-5 .slick-track .slick-slide a{ font-size: 15.5px !important}
+.rvfs-6 .slick-track .slick-slide a{ font-size: 16px !important}
+.rvfs-7 .slick-track .slick-slide a{ font-size: 16.5px !important}
+
+.rvfs-4 .twitter-section .features-title-icon .features-title a{  font-size: 17px;}
+.rvfs-5 .twitter-section .features-title-icon .features-title a{ font-size: 17.5px !important}
+.rvfs-6 .twitter-section .features-title-icon .features-title a{ font-size: 18px !important}
+.rvfs-7 .twitter-section .features-title-icon .features-title a{ font-size: 18.5px !important}
+
+
+.rvfs-4 .vision-goals p{ font-size: 23px}
+.rvfs-5 .vision-goals p{ font-size: 23.5px !important}
+.rvfs-6 .vision-goals p{ font-size: 24px !important}
+.rvfs-7 .vision-goals p{ font-size: 24.5px !important}
+
+.rvfs-4 .mosque-goals .title{ font-size: 34px}
+.rvfs-5 .mosque-goals .title{ font-size: 34.5px !important}
+.rvfs-6 .mosque-goals .title{ font-size: 35px !important}
+.rvfs-7 .mosque-goals .title{ font-size: 36.5px !important}
+
+
+.rvfs-4 .goals .description{ font-size: 15px}
+.rvfs-5 .goals .description{ font-size: 15.5px !important}
+.rvfs-6 .goals .description{ font-size: 16px !important}
+.rvfs-7 .goals .description{ font-size: 16.5px !important}
+
+
+.rvfs-4 .faq #accordion .card-body{ font-size: 15px}
+.rvfs-5 .faq #accordion .card-body{ font-size: 15.5px !important}
+.rvfs-6 .faq #accordion .card-body{ font-size: 16px !important}
+.rvfs-7 .faq #accordion .card-body{ font-size: 16.5px !important}
+
+.rvfs-4 .faq #accordion .btn-link{ font-size: 18px}
+.rvfs-5 .faq #accordion .btn-link{ font-size: 18.5px !important}
+.rvfs-6 .faq #accordion .btn-link{ font-size: 19px !important}
+.rvfs-7 .faq #accordion .btn-link{ font-size: 19.5px !important}
+
+.rvfs-4 .goals .title{ font-size:18px}
+.rvfs-5 .goals .title{ font-size: 18.5px !important}
+.rvfs-6 .goals .title{ font-size: 19px !important}
+.rvfs-7 .goals .title{ font-size: 19.5px !important}
+
+
+.rvfs-4 .about p{ font-size: 20px}
+.rvfs-5 .about p{ font-size: 20.5px !important}
+.rvfs-6 .about p{ font-size: 21px !important}
+.rvfs-7 .about p{ font-size: 21.5px !important}
+
+.rvfs-4 .vision-goals .title{ font-size: 40px}
+.rvfs-5 .vision-goals .title{ font-size: 40.5px !important}
+.rvfs-6 .vision-goals .title{ font-size: 41px !important}
+.rvfs-7 .vision-goals .title{ font-size: 41.5px !important}
+
+.rvfs-4 tbody{ font-size: 15px}
+.rvfs-5 tbody{ font-size: 15.5px !important}
+.rvfs-6 tbody{ font-size: 16px !important}
+.rvfs-7 tbody{ font-size: 16.5px !important}
+
+
+
+.rvfs-4 #footer .footer-top .footer-links ul a{ font-size: 15px}
+.rvfs-5 #footer .footer-top .footer-links ul a{ font-size: 15.5px !important}
+.rvfs-6 #footer .footer-top .footer-links ul a{ font-size: 16px !important}
+.rvfs-7 #footer .footer-top .footer-links ul a{ font-size: 16.5px !important}
+
+.rvfs-4 .small-box h5{ font-size: 18px}
+.rvfs-5 .small-box h5{ font-size: 19px !important}
+.rvfs-6 .small-box h5{ font-size: 20px !important}
+.rvfs-7 .small-box h5{ font-size: 21px !important}
+/* 
+.rvfs-4 .rvfs-reset{ font-size: 20px}
+.rvfs-5 .rvfs-reset{ font-size: 22px !important}
+.rvfs-6 .rvfs-reset{ font-size: 24px !important}
+.rvfs-7 .rvfs-reset{ font-size: 25px !important} */
+
+.rvfs-4 .background-image h2,
+.rvfs-4 .background-image h1,
+.rvfs-4 .swiper-slide .cover .header-content h2
+{ font-size: 40px}
+.rvfs-5 .background-image h2,
+.rvfs-5 .background-image h1,
+.rvfs-5 .swiper-slide .cover .header-content h2
+{ font-size: 55px !important}
+.rvfs-6 .background-image h2,
+.rvfs-6 .background-image h1,
+.rvfs-6 .swiper-slide .cover .header-content h2
+{ font-size: 60px !important}
+.rvfs-7 .background-image h2,
+.rvfs-7 .background-image h1,
+.rvfs-7 .swiper-slide .cover .header-content h2
+{ font-size: 70px !important}
+
+.rvfs-4 .p-header,
+.rvfs-4 .swiper-slide .header-content h6,
+.rvfs-4 .footer .container .Important_links h4
+{ font-size: 28px}
+.rvfs-5 .p-header,
+.rvfs-5 .swiper-slide .header-content h6,
+.rvfs-5 .footer .container .Important_links h4
+{ font-size: 30px !important}
+.rvfs-6 .p-header,
+.rvfs-6 .swiper-slide .header-content h6,
+.rvfs-6 .footer .container .Important_links h4
+{ font-size: 32px !important}
+.rvfs-7 .p-header,
+.rvfs-7 .swiper-slide .header-content h6,
+.rvfs-7 .footer .container .Important_links h4
+{ font-size: 33px !important}
+
+@media (max-width: 767px)
+{
+    .rvfs-4 .section-title .title{ font-size:30px}
+    .rvfs-5 .section-title .title{ font-size: 31px !important}
+    .rvfs-6 .section-title .title{ font-size: 32px !important}
+    .rvfs-7 .section-title .title{ font-size: 33px !important}
+
+}
+
+
+.rvfs-4 .about_center .container .top-image1 h4,
+.rvfs-4 .about_center .container .top-image2 h4
+{ font-size: 33px}
+
+.rvfs-5 .about_center .container .top-image1 h4,
+.rvfs-5 .about_center .container .top-image2 h4
+{ font-size: 35px !important}
+
+.rvfs-6 .about_center .container .top-image1 h4,
+.rvfs-6 .about_center .container .top-image2 h4
+{ font-size: 37px !important}
+
+.rvfs-7 .about_center .container .top-image1 h4,
+.rvfs-7 .about_center .container .top-image2 h4
+{ font-size: 40px !important}
+
+
+.rvfs-4 .nav-pills .nav-link,
+.rvfs-4 .Centertrainingpolicies h4
+
+{ font-size: 22px}
+
+.rvfs-5 .nav-pills .nav-link,
+.rvfs-5 .Centertrainingpolicies h4
+
+{ font-size: 25px !important}
+
+.rvfs-6 .nav-pills .nav-link,
+.rvfs-6 .Centertrainingpolicies h4
+
+{ font-size: 28px !important}
+
+.rvfs-7 .nav-pills .nav-link,
+.rvfs-7 .Centertrainingpolicies h4
+
+{ font-size: 30px !important}
+
+
+
+@media (max-width: 767px){
+    .slider-content .text {
+        line-height: 18px !important;
+    }
+.rvfs-4 .slider-content .title{ font-size: 25px;}
+    .rvfs-5 .slider-content .title{ font-size: 26px !important}
+    .rvfs-6 .slider-content .title{ font-size: 27px !important}
+    .rvfs-7 .slider-content .title{ font-size: 28px !important}
+
+    .rvfs-4 .slider-content .text { font-size: 14px; }
+    .rvfs-5 .slider-content .text { font-size: 14.3px !important ; }
+    .rvfs-6 .slider-content .text { font-size: 14.6px !important; }
+    .rvfs-7 .slider-content .text { font-size: 15px !important; }
+
+    .rvfs-4 .wrapper .search_box .dropdown .default_option {font-size: 12px;}
+    .rvfs-5 .wrapper .search_box .dropdown .default_option {font-size: 13px !important;}
+    .rvfs-6 .wrapper .search_box .dropdown .default_option {font-size: 14px !important;}
+    .rvfs-7 .wrapper .search_box .dropdown .default_option {font-size: 15px !important;}
+
+    .rvfs-4 .slick-track .slick-slide .overlay-text h2 {font-size: 20px; }
+    .rvfs-5 .slick-track .slick-slide .overlay-text h2 {font-size: 20.5px !important; }
+    .rvfs-6 .slick-track .slick-slide .overlay-text h2 {font-size: 21px !important; }
+    .rvfs-7 .slick-track .slick-slide .overlay-text h2 {font-size: 21.5px !important;  }
+
+    .rvfs-4 .slick-track .slick-slide a {font-size: 12px !important;}
+    .rvfs-5 .slick-track .slick-slide a {font-size: 12.5px !important;}
+    .rvfs-6 .slick-track .slick-slide a {font-size: 13px !important;}
+    .rvfs-7 .slick-track .slick-slide a {font-size: 13.5px !important;}
+
+    .rvfs-4 .last-news .hp-carousel-container .slick-slide p { font-size: 10px !important; }
+    .rvfs-5 .last-news .hp-carousel-container .slick-slide p { font-size: 10.3px !important; }
+    .rvfs-6 .last-news .hp-carousel-container .slick-slide p { font-size: 10.6px !important; }
+    .rvfs-7 .last-news .hp-carousel-container .slick-slide p { font-size: 11px !important; }
+}

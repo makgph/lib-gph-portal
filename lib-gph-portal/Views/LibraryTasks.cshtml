@@ -1,0 +1,80 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using ContentModels = Umbraco.Web.PublishedModels;
+@{
+    Layout = "_InnerPagesLayout.cshtml";
+
+
+    var intro = Umbraco.AssignedContentItem.Value<string>("stringTitle");
+
+    var slider = Umbraco.AssignedContentItem.Value<IEnumerable<IPublishedElement>>("tasks");
+}
+
+<section id="about" class="about">
+    <!-- /* Please ❤ this if you like it! 😊 */ -->
+    <!-- Page wrapper/Container Section -->
+    <div class="container">
+
+        @if (intro != null && intro != "")
+        {
+            <p>@intro.StripHtml()</p>
+        }
+
+        @if (slider != null)
+        {
+
+            <!-- Responsive Table Section -->
+            <div class="accordion">
+
+
+                @foreach (var item in slider.Where(x => x.IsVisible()))
+                {
+                    var title = item.Value<string>("stringTitle");
+                    var list = item.Value<string[]>("list");
+                    int num = 1;
+
+
+                    <div class="accordion-item">
+                        @if (title != null && title != "")
+                        {
+                            <div class="accordion-title">
+                                <p>  @title </p>
+                                <i class="lni lni-angle-double-up"></i>
+                            </div>
+                        }
+                        @if (list != null)
+                        {
+                            <div class="accordion-content">
+                                <div class="table-responsive">
+                                    <table class=" table  styled-table table-hover">
+
+                                        <tbody>
+                                            @foreach (var textInItem in list)
+                                            {
+
+
+                                                <tr class="active-row">
+                                                    <td>@num</td>
+                                                    <td>@textInItem</td>
+                                                </tr>
+                                                num++;
+                                            }
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        }
+
+
+                    </div>
+
+
+                }
+
+
+            </div>
+        }
+
+
+
+</section><!-- End About Section -->

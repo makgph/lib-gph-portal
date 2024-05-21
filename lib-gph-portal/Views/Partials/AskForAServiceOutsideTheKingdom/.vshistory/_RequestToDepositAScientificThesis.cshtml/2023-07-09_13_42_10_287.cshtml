@@ -1,0 +1,605 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<sa.gov.libgph.Models.RequestToDepositAScientificThesisFormModel>
+@using sa.gov.libgph.Resources
+@using sa.gov.libgph.Services
+
+@{
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+
+
+    var CurrentLanguage = System.Threading.Thread.CurrentThread.CurrentCulture.Name;
+    //var CurrentDocument = Umbraco.AssignedContentItem;
+    //var CurrentLanguage = CurrentDocument.GetCultureFromDomains().ToString();
+
+
+    string reCAPTCHA = CurrentLanguage == "ar-SA" ? "مطلوب تأكيد كابتشا" : "reCAPTCHA is mandatory";
+    string OldCaptchResponse = CurrentLanguage == "ar-SA" ? " يرجي تأكيد كابتشا مرة أخري" : "For another reCaptcha ";
+    string ClickHere = CurrentLanguage == "ar-SA" ? "اضغط هنا" : "Click Here";
+    string SendMessage = CurrentLanguage == "ar-SA" ? "طلب خدمة" : "Ask for a Service";
+    string selectCountry = CurrentLanguage == "ar-SA" ? "البلد" : "Select Country";
+
+    Model.GetCountries();
+
+    string availType1 = RequestToDepositAScientificThesis.availType1;
+    string availType2 = RequestToDepositAScientificThesis.availType2;
+    string availType3 = RequestToDepositAScientificThesis.availType3;
+    string availType4 = RequestToDepositAScientificThesis.availType4;
+
+    string AvailableWithChains = RequestToDepositAScientificThesis.available;
+    string NotAvailableWithChains = RequestToDepositAScientificThesis.notavailable;
+
+}
+
+
+<style>
+/*loader*/
+    .field-validation-valid, .field-validation-error, #reCaptchamessageContainer_ScientificThesis {
+        height: 20px;
+    }
+    #preloader-container_ScientificThesis {
+        height: 50px;
+    }
+    .underLined {
+        border-bottom: 1px solid #dc3545;
+        cursor: pointer;
+    }
+    #contact-us-preloader {
+        border: 16px solid #f3f3f3;
+        border-top: 16px solid #b19556;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        margin-left: auto;
+        margin-right: auto;
+        animation: spin 2s linear infinite;
+    }
+
+
+@("@")keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+    .agreementstyle {
+        line-height: 1.5;
+        font-size: 1rem;
+        text-align: right !important;
+    }
+
+
+    .error {
+        color: #dc3545 !important;
+    }
+
+
+    .custom-checkbox .custom-control-label {
+        padding-right: 30px
+    }
+    .custom-checkbox .custom-control-label:before {
+        background-color: #f9f9f9;
+        width: 25px;
+        height: 25px;
+        right: 0px;
+        top: 0px;
+    }
+    .custom-checkbox .custom-control-label::after {
+        top: 2px;
+        right: 2px;
+        width: 20px;
+        height: 20px;
+    }
+        .custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {
+        background-color: #a78d51;
+        border-color: #a78d51;
+    }
+    .custom-radio .custom-control-label {
+        padding-right: 50px
+    }
+    .custom-radio .custom-control-label::before {
+        border-radius: 50%;
+        width: 22px;
+        height: 22px;
+        right: 20px;
+        left: auto;
+        top: 2px;
+    }
+    .custom-control-input:checked ~ .custom-control-label::before {
+        color: #fff;
+        border-color: #a78d51;
+        background-color: #a78d51;
+        width: 22px;
+        height: 22px;
+    }
+    .custom-radio .custom-control-label::after {
+        position: absolute;
+        top: 1px;
+        right: 19px;
+        left:auto;
+        display: block;
+        width: 24px;
+        height: 24px;
+    }
+        input[type=file]::file-selector-button {
+        border: 2px solid #a78d51;
+        padding: 5px 20px;
+        border-radius: .2em;
+        background-color: #a78d51;
+        transition: 1s;
+        height: 40px;
+        color: #fff;
+        cursor: pointer
+    }
+    .pd-1{
+        padding:1px
+    }
+.requiredField:after {
+        content: " *";
+        color: #dc3545;
+    }
+</style>
+@using (Ajax.BeginForm("RequestToDepositAScientificThesis", "AskForAServiceOutsideTheKingdom", null, new AjaxOptions()
+{
+
+    UpdateTargetId = "preloader-container_ScientificThesis",
+    HttpMethod = "POST",
+    InsertionMode = InsertionMode.Replace,
+
+}, new { id = "ScientificThesisForm", @class = "email-form", enctype = "multipart/form-data" }))
+{
+
+    <div class="row">
+        <div class="form-group col-md-6 mt-1 mt-md-0">
+            @Html.LabelFor(model => model.ApplicantName, htmlAttributes: new { @class = "requiredField control-label col-md-10" })
+            @Html.EditorFor(model => model.ApplicantName, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.ApplicantName) } })
+            @Html.ValidationMessageFor(model => model.ApplicantName, "", new { @class = "text-danger" })
+
+        </div>
+        <div class="form-group col-md-6 mt-1 mt-md-0">
+            @Html.LabelFor(model => model.UniversityNameOutsideKingdom, htmlAttributes: new { @class = "requiredField control-label col-md-10" })
+            @Html.EditorFor(model => model.UniversityNameOutsideKingdom, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.UniversityNameOutsideKingdom) } })
+            @Html.ValidationMessageFor(model => model.UniversityNameOutsideKingdom, "", new { @class = "text-danger" })
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-md-6 mt-1 mt-md-0">
+            @Html.LabelFor(model => model.Faculty, htmlAttributes: new { @class = "requiredField control-label col-md-10" })
+            @Html.EditorFor(model => model.Faculty, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.Faculty) } })
+            @Html.ValidationMessageFor(model => model.Faculty, "", new { @class = "text-danger" })
+
+        </div>
+        <div class="form-group col-md-6 mt-1 mt-md-0">
+            @Html.LabelFor(model => model.Department, htmlAttributes: new { @class = "requiredField control-label col-md-10" })
+            @Html.EditorFor(model => model.Department, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.Department) } })
+            @Html.ValidationMessageFor(model => model.Department, "", new { @class = "text-danger" })
+
+        </div>
+        <div class="form-group col-md-6 mt-1 mt-md-0">
+            @Html.LabelFor(model => model.Country, htmlAttributes: new { @class = "requiredField control-label col-md-10" })
+
+            <select name="Country" id="Country" class="form-control">
+                <option value="" hidden disabled selected> @Html.DisplayNameFor(m => m.Country) </option>
+                @try
+                {
+                    foreach (var country in Model.Countries.data)
+                    {
+                        var name = CurrentLanguage == "ar-SA" ? country.nameAr : country.nameEn;
+                        <option value="@country.id">@name</option>
+                    }
+                }
+                catch (Exception) { }
+
+
+            </select>
+
+        </div>
+        <div class="form-group col-md-6 mt-1 mt-md-0">
+            @Html.LabelFor(model => model.Mobile, htmlAttributes: new { @class = "requiredField control-label col-md-10" })
+            @Html.EditorFor(model => model.Mobile, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.Mobile) } })
+            @Html.ValidationMessageFor(model => model.Mobile, "", new { @class = "text-danger" })
+
+        </div>
+        <div class="form-group col-md-6 mt-1 mt-md-0">
+            @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "requiredField control-label col-md-10" })
+            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.Email) } })
+            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+
+        </div>
+        <div class="form-group col-md-6 mt-1 mt-md-0">
+            @Html.LabelFor(model => model.ScientificDegree, htmlAttributes: new { @class = "requiredField control-label col-md-10" })
+            @Html.EditorFor(model => model.ScientificDegree, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.ScientificDegree) } })
+            @Html.ValidationMessageFor(model => model.ScientificDegree, "", new { @class = "text-danger" })
+
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="row">
+        @*<div class="form-group col-md-6 mt-1 mt-md-0">
+                @Html.LabelFor(model => model.ThesisData, htmlAttributes: new { @class = "requiredField control-label col-md-10" })
+                @Html.EditorFor(model => model.ThesisData, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.ThesisData) } })
+                @Html.ValidationMessageFor(model => model.ThesisData, "", new { @class = "text-danger" })
+
+            </div>*@
+        <div class="form-group col-md-6 mt-1 mt-md-0">
+            @Html.LabelFor(model => model.ThesisTitle, htmlAttributes: new { @class = "requiredField control-label col-md-10" })
+            @Html.EditorFor(model => model.ThesisTitle, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.ThesisTitle) } })
+            @Html.ValidationMessageFor(model => model.ThesisTitle, "", new { @class = "text-danger" })
+
+        </div>
+
+
+        <div class="form-group col-md-6 mt-1 mt-md-0">
+            @Html.LabelFor(model => model.YearOfDiscussion, htmlAttributes: new { @class = "requiredField control-label col-md-10" })
+            @Html.EditorFor(model => model.YearOfDiscussion, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.YearOfDiscussion) } })
+            @Html.ValidationMessageFor(model => model.YearOfDiscussion, "", new { @class = "text-danger" })
+
+        </div>
+
+        <div class="form-group col-md-6 mt-1 mt-md-0">
+            @Html.LabelFor(model => model.NumberOfPages, htmlAttributes: new { @class = "requiredField control-label col-md-10" })
+            @Html.EditorFor(model => model.NumberOfPages, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.NumberOfPages), @min = 1 } })
+            @Html.ValidationMessageFor(model => model.NumberOfPages, "", new { @class = "text-danger" })
+
+        </div>
+        <div class="form-group col-md-6 mt-1 mt-md-0">
+            @Html.LabelFor(model => model.NumberOfParts, htmlAttributes: new { @class = "requiredField control-label col-md-10" })
+            @Html.EditorFor(model => model.NumberOfParts, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.NumberOfParts), @min = 1 } })
+            @Html.ValidationMessageFor(model => model.NumberOfParts, "", new { @class = "text-danger" })
+
+        </div>
+    </div>
+    <hr />
+
+
+    <div class="row">
+        <div class="form-group col-md-6 mt-1 mt-md-0 d-flex align-items-center custom-checkbox">
+            @*<input type="checkbox" class="form-check custom-control-input" onchange="onChangeIsAvailable(event)" name="IsAvailable" id="IsAvailable" />*@
+            @Html.EditorFor(model => model.IsAvailable, new { htmlAttributes = new { @class = "requiredField form-check custom-control-input", onchange = "onChangeIsAvailable(event)", placeholder = Html.DisplayNameFor(m => m.IsAvailable) } })
+            @Html.LabelFor(model => model.IsAvailable, htmlAttributes: new { @class = " control-label custom-control-label " })
+            @Html.ValidationMessageFor(model => model.IsAvailable, "", new { @class = "text-danger" })
+
+        </div>
+
+        <div id="IsAvailableWarning" class="col-md-12">
+            <p class="text-warning">عزيزي الباحث / الباحثة :أنشأت مكتبة الحرم المكي الشريف موقع المكتبة لنشر وإتاحة الانتاج الفكري لديها وعرضه إلكترونيا لمجتمع أكبر من المستفيدين وذلك ضمن موافقتكم لنوع الاتاحة ونقدر لكم انجازاتكم وجهودكم ونود إحاطتكم بضرورة إيداع نسخة من الرسالة بمكتبة الملك فهد الوطنية وذلك لحماية حقوق الملكية الفكرية.</p>
+        </div>
+        <div id="AvailabilityTypeContainer">
+
+            @*<div class=" custom-control custom-radio">
+                    @Html.RadioButtonFor(model => model.IsAvailableWithChains, false, new { htmlAttributes = new { id = "customRadio1", @class = "custom-control-input" } })
+                     <label class=" col-md-10 custom-control-label" for="customRadio1"> @AvailableWithChains</label>
+                    @Html.LabelFor(model => model.IsAvailableWithChains, htmlAttributes: new { @class = "requiredField control-label col-md-10  " })
+
+                </div>*@
+            <div class="custom-control custom-radio mb-3 m-sm-2">
+                <input type="radio" id="IsAvailableWithChainsFalse" checked onclick="requireThiesFileOnly()" value=false name="IsAvailableWithChains" onchange="onAvailabilityTypeChange(true)" class="custom-control-input">
+                <label class="custom-control-label" for="IsAvailableWithChainsFalse">@AvailableWithChains</label>
+            </div>
+            <div class="custom-control custom-radio mb-3  m-sm-2">
+                <input type="radio" id="IsAvailableWithChainsTrue" onclick="requireQuerterOnly()" value=true name="IsAvailableWithChains" onchange="onAvailabilityTypeChange(true)" class="custom-control-input">
+                <label class="custom-control-label" for="IsAvailableWithChainsTrue">@NotAvailableWithChains</label>
+            </div>
+            <br />
+            @*<div class="   custom-control custom-radio">
+                    @Html.RadioButtonFor(model => model.IsAvailableWithChains, true, new { htmlAttributes = new { @class = "custom-control-input" } })
+                    <label class="custom-control-label "> @NotAvailableWithChains</label>
+                    @Html.LabelFor(model => model.IsAvailableWithChains, htmlAttributes: new { @class = "requiredField control-label  col-md-10 " })
+
+                    @Html.ValidationMessageFor(model => model.IsAvailableWithChains, "", new { @class = "text-danger" })
+
+                </div>*@
+            @*<div class="form-group col-md-12 mt-1 mt-md-0" id="AvailabilityTypeDropDownMenuContainer">
+                    @Html.LabelFor(model => model.AvailabilityType, htmlAttributes: new { @class = "requiredField control-label col-md-10" })
+
+                    <select name="AvailabilityType" id="AvailabilityType" onchange="onSelectType(event.target.value)" class="form-control">
+                         <option value="1" selected>@availType1</option>
+                        <option value="2">@availType2</option>
+                        <option value="3">@availType3</option>
+                        <option value="4">@availType4</option>
+                    </select>
+
+                    @Html.ValidationMessageFor(model => model.AvailabilityType, "", new { @class = "text-danger" })
+
+                </div>*@
+
+        </div>
+
+    </div>
+
+    <hr />
+    <div class="row" id="FilesContainer">
+        <div class="form-group col-md-6 mt-1 mt-md-0 AvailabilityType1">
+            @Html.LabelFor(model => model.thesisFile, htmlAttributes: new { @class = "requiredField control-label col-md-10" })
+            @Html.TextBox("thesisFile", "", new { type = "file", @class = "form-control pd-1 " })
+            @Html.ValidationMessageFor(model => model.thesisFile, "", new { @class = "text-danger" })
+
+        </div>
+
+        @*<div class="form-group col-md-6 mt-1 mt-md-0 AvailabilityType1">
+                @Html.LabelFor(model => model.thesisTitleFile, htmlAttributes: new { @class = "requiredField control-label col-md-10" })
+                @Html.TextBox("thesisTitleFile", "", new { type = "file", @class = "form-control pd-1  " })
+                @Html.ValidationMessageFor(model => model.thesisTitleFile, "", new { @class = "text-danger" })
+
+            </div>
+
+            <div class="form-group col-md-6 mt-1 mt-md-0 AvailabilityType1">
+                @Html.LabelFor(model => model.subjectsIndexFile, htmlAttributes: new { @class = "requiredField control-label col-md-10" })
+                @Html.TextBox("subjectsIndexFile", "", new { type = "file", @class = "form-control pd-1  " })
+                @Html.ValidationMessageFor(model => model.subjectsIndexFile, "", new { @class = "text-danger" })
+
+            </div>
+
+            <div class="form-group col-md-6 mt-1 mt-md-0 AvailabilityType2">
+                @Html.LabelFor(model => model.arabicExtractFile, htmlAttributes: new { @class = "requiredField control-label col-md-10 " })
+                @Html.TextBox("arabicExtractFile", "", new { type = "file", @class = "form-control pd-1 " })
+                @Html.ValidationMessageFor(model => model.arabicExtractFile, "", new { @class = "text-danger" })
+
+            </div>
+
+            <div class="form-group col-md-6 mt-1 mt-md-0 AvailabilityType2">
+                @Html.LabelFor(model => model.englishExtractFile, htmlAttributes: new { @class = "requiredField control-label col-md-10" })
+                @Html.TextBox("englishExtractFile", "", new { type = "file", @class = "form-control pd-1  " })
+                @Html.ValidationMessageFor(model => model.englishExtractFile, "", new { @class = "text-danger" })
+
+            </div>
+
+            <div class="form-group col-md-6 mt-1 mt-md-0 AvailabilityType3">
+                @Html.LabelFor(model => model.introFile, htmlAttributes: new { @class = "requiredField control-label col-md-10" })
+                @Html.TextBox("introFile", "", new { type = "file", @class = "form-control pd-1 " })
+                @Html.ValidationMessageFor(model => model.introFile, "", new { @class = "text-danger" })
+
+            </div>
+
+            <div class="form-group col-md-6 mt-1 mt-md-0 AvailabilityType3">
+                @Html.LabelFor(model => model.collectionFile, htmlAttributes: new { @class = "requiredField control-label col-md-10" })
+                @Html.TextBox("collectionFile", "", new { type = "file", @class = "form-control pd-1  " })
+                @Html.ValidationMessageFor(model => model.collectionFile, "", new { @class = "text-danger" })
+
+            </div>*@
+        <div class="form-group col-md-6 mt-1 mt-md-0 AvailabilityType4">
+            @Html.LabelFor(model => model.quarterCollectionFile, htmlAttributes: new { @class = "requiredField control-label col-md-10" })
+            @Html.TextBox("quarterCollectionFile", "", new { type = "file", @class = "form-control pd-1 " })
+            @Html.ValidationMessageFor(model => model.quarterCollectionFile, "", new { @class = "text-danger" })
+
+        </div>
+
+    </div>
+
+
+
+
+
+
+
+
+    <div class="g-recaptcha"
+         id="re_cap_tcha_ScientificThesis">
+
+    </div>
+    <div id="reCaptchamessageContainer_ScientificThesis">
+        <input type="hidden" name="reCap_valiadtion_ScientificThesis" id="reCap_valiadtion_ScientificThesis" value="" />
+        <input type="hidden" name="reCap_val_message_ScientificThesis" id="reCap_val_message_ScientificThesis" value="" />
+        <input type="hidden" name="CurrentLanguage" value="@CurrentLanguage" />
+        <input type="hidden" name="FormId" value="ScientificThesisForm" />
+    </div>
+
+    <div id="preloader-container_ScientificThesis">
+        <div id="contact-us-preloader" style="display:none"></div>
+    </div>
+
+    <div class="text-center"><button id="submitContactForm" disabled type="submit">@SendMessage</button></div>
+}
+
+
+@* <!--====== Validation JQ ======--> *@
+@*<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>*@
+
+
+<script>
+
+    var response = 0;
+    var widgetScientificThesis;
+    $(document).ready(function () {
+        setTimeout(() => {
+        widgetScientificThesis = grecaptcha.render('re_cap_tcha_ScientificThesis', {
+            'theme': 'light',
+            'expired-callback': expire_Captcha_ScientificThesis,
+            'callback': valid_Captcha_ScientificThesis,
+            'error-callback': error_Captcha_ScientificThesis,
+            'sitekey': '6Lczn_cdAAAAAKp6niX8xoCQpkqmQy4swPK1--SZ',
+        });
+        }, 1000);
+
+    });
+
+    var language = "@CurrentLanguage";
+    $(document).ready(function () {
+
+    if (language === "ar-SA") {
+
+        $("#visitorName").attr("data-val-regex-pattern", "^[\u0621-\u064A ]+$");
+
+        }
+    });
+    var className = "input-validation-error";
+
+
+    var form = $("#ScientificThesisForm");
+     var old_response = 0;
+    var isFormValid = false;
+    function CheckFormValidityScientificThesis() {
+
+        if ($("#visitorName").val() === "" || $("#visitorName").hasClass("input-validation-error") || $("#visitorEmail").val() === "" || $("#visitorEmail").hasClass("input-validation-error") || $("#visitorMobile").val() === "" || $("#visitorMobile").hasClass("input-validation-error") || $("#visitorMessage").val() === "" || $("#visitorMessage").hasClass("input-validation-error") || grecaptcha.getResponse(widgetScientificThesis) === "") {
+            isFormValid = false;
+        }
+        else {
+            isFormValid = true;
+        }
+    }
+    form.mouseover(() => { CheckFormValidityScientificThesis(); })
+    form.keydown(() => { CheckFormValidityScientificThesis(); })
+
+     $("#ScientificThesisForm").submit(() => {
+
+        //reCaptcha Validation
+        //no response
+         if (grecaptcha.getResponse(widgetScientificThesis) == "") {
+            $("#re_cap_tcha_ScientificThesis").addClass("agreementstyle");
+            $("#reCap_val_message_ScientificThesis").replaceWith('<div id="reCap_val_message_ScientificThesis"><span class="text-danger">@(reCAPTCHA)</span></div>');
+            $("#reCap_valiadtion_ScientificThesis").val("");
+            return false;
+        }
+
+        //responded
+        else {
+            // old response
+            if (old_response === 0) {
+                //new response
+                if (isFormValid == true) {
+                $("#preloader-container_ScientificThesis").replaceWith('<div id="preloader-container_ScientificThesis"><div id="contact-us-preloader" style="display:block"></div></div>');
+                }
+
+                $("#re_cap_tcha_ScientificThesis").removeClass("agreementstyle");
+                $("#reCap_val_message_ScientificThesis").replaceWith('<div id="reCap_val_message_ScientificThesis"><span class="text-danger"></span></div>');
+                setTimeout(function () { $("#reCap_valiadtion_ScientificThesis").val(""); }, 1500);
+                old_response++;
+            }
+            else {
+                $("#reCap_val_message_ScientificThesis").replaceWith('<div id="reCap_val_message_ScientificThesis" class="text-danger">@(OldCaptchResponse)<a class="underLined" onclick="expire_Captcha_ScientificThesis()">&nbsp;@(ClickHere)</a></div>');
+                return false;
+            }
+        }
+    });
+
+
+//Call back Function called if the captach is valid
+function valid_Captcha_ScientificThesis() {
+    $("#reCap_valiadtion_ScientificThesis").val(grecaptcha.getResponse(widgetScientificThesis));
+    $("#re_cap_tcha_ScientificThesis").removeClass("agreementstyle");
+    $("#reCap_val_message_ScientificThesis").hide(1000, 'swing');
+}
+//Call back Function called if the captach is expired
+function expire_Captcha_ScientificThesis() {
+    $("#reCap_valiadtion_ScientificThesis").val("");
+    grecaptcha.reset(widgetScientificThesis);
+    old_response = 0;
+    $("#re_cap_tcha_ScientificThesis").removeClass("agreementstyle");
+    $("#reCap_val_message_ScientificThesis").hide(1000, 'swing');
+}
+//Call back Function called if the captach is something went wrong ==> it rests the captcha
+function error_Captcha_ScientificThesis() {
+    grecaptcha.reset(widgetScientificThesis);
+    old_response = 0;
+    $("#reCap_val_message_ScientificThesis").replaceWith('<div id="reCap_val_message_ScientificThesis"><span class="text-danger"></span></div>');
+    }
+
+
+
+
+
+
+    //validation
+    $('#AvailabilityTypeContainer').hide();
+    $('#FilesContainer').hide();
+    $('#IsAvailableWarning').hide();
+    //$('#submitContactForm').prop("disabled", false);
+    //$('#IsAvailable').prop('checked', false);
+
+    function onChangeIsAvailable(event) {
+         if (!event.target.checked) {
+             $('#AvailabilityTypeContainer').hide();
+             $('#FilesContainer').hide();
+             $('#IsAvailableWarning').show();
+             $('#AvailabilityType').attr("required", "required");
+             $('#submitContactForm').prop('disabled', true);
+
+        } else {
+             $('#AvailabilityTypeContainer').show();
+             $('#FilesContainer').show();
+             $('#IsAvailableWarning').hide();
+             $('#AvailabilityType').removeAttr("required");
+             $('#submitContactForm').prop('disabled', false );
+        }
+    }
+    function IsAvailableWithChainsFn(value) {
+        console.log(value)
+        if (value) {
+            $('#AvailabilityType').prop('disabled', false);
+            $('#AvailabilityType').val('1');
+            onSelectType(1);
+            //$('#AvailabilityTypeDropDownMenuContainer').show();
+
+        }
+        else {
+            $('#AvailabilityType').prop('disabled', true);
+            $('#AvailabilityType').val('4');
+            onSelectType(4);
+            //$('#AvailabilityTypeDropDownMenuContainer').hide();
+
+        }
+    }
+
+    //$('.AvailabilityType4').hide();
+    //$('.AvailabilityType3').hide();
+    //$('.AvailabilityType2').hide();
+    //$('.AvailabilityType1').show();
+
+    onSelectType(1);
+
+    function onSelectType(event) {
+        let typeSelectedValue = event ;
+        if (typeSelectedValue == "1" ) {
+            $('.AvailabilityType4').hide();
+            $('.AvailabilityType3').hide();
+            $('.AvailabilityType2').hide();
+            $('.AvailabilityType1').show();
+        }
+        if ( typeSelectedValue == "2" ) {
+            $('.AvailabilityType4').hide();
+            $('.AvailabilityType3').hide();
+            $('.AvailabilityType2').show();
+            $('.AvailabilityType1').show();
+        }
+        if ( typeSelectedValue == "3") {
+            $('.AvailabilityType4').hide();
+            $('.AvailabilityType3').show();
+            $('.AvailabilityType2').show();
+            $('.AvailabilityType1').show();
+        }
+        if ( typeSelectedValue == "4") {
+            $('.AvailabilityType4').show();
+            $('.AvailabilityType3').show();
+            $('.AvailabilityType2').show();
+            $('.AvailabilityType1').show();
+        }
+    }
+
+   function requireThiesFileOnly(){
+        $('.AvailabilityType1').show();
+        $('.AvailabilityType4').hide();
+
+    }
+
+  function  requireQuerterOnly(){
+        $('.AvailabilityType1').hide();
+        $('.AvailabilityType4').show();
+
+    }
+
+    function onAvailabilityTypeChange(value) {
+        if (value) { }
+        else {
+
+        }
+    }
+    try {
+        $('#ScientificThesisForm')[0].reset();
+    } catch (e) {
+
+    }
+</script>

@@ -1,0 +1,32 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using ContentModels = Umbraco.Web.PublishedModels;
+@{
+    Layout = "_InnerPagesLayout.cshtml";
+}
+
+@{
+    var Langauge = Umbraco.AssignedContentItem.GetCultureFromDomains();
+
+    var imageorg = Umbraco.AssignedContentItem.Value<IPublishedContent>("image");
+
+    var desc = Umbraco.AssignedContentItem.Value<string>("description");
+}
+
+ 
+    <section id="goals" class="goals lg-slider  mosque-goals">
+        <div class="container" data-aos="fade-up">
+
+            <div class="row mt-20">
+                <div class="col-md-12 col-lg-12 d-flex align-items-stretch">
+                    @if (imageorg != null)
+                    {
+                        <img src="@imageorg.Url()" alt="@desc">
+                    }
+
+
+                </div>
+
+            </div>
+
+        </div>
+    </section><!-- End About Section -->

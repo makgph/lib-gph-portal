@@ -1,0 +1,68 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using Umbraco.Web.Models
+@{
+    Layout = "_InnerPagesLayout.cshtml";
+}
+@{
+    var CurrentDocumentType = Umbraco.AssignedContentItem;
+    var CurrentLanguage = CurrentDocumentType.GetCultureFromDomains();
+    var selectService = CurrentLanguage == "ar-SA" ? "اختر الخدمة" : "Select Service";
+    var potPhotographyRequest = CurrentLanguage == "ar-SA" ? "طلب تصوير وعاء" : "Pot Photography Request";
+    var requestToDepositAScientificThesis = CurrentLanguage == "ar-SA" ? "طلب ايداع رسالة علمية" : "Request to Deposit a Scientific Thesis";
+}
+
+<section id="contact" class="contact">
+    <div class="container" data-aos="fade-up">
+
+        <div class="row">
+            <div class="form-group col-md-4 m-1 mt-md-0">
+                <select name="TypeId" id="servicesDropDownMenu" class="form-control mb-3" onchange="submitServiceForm(event)">
+                    <option value="1" selected>@requestToDepositAScientificThesis</option>
+                    @*<option value="selectService" disabled hidden selected>@selectService</option>*@
+                    <option value="2">@potPhotographyRequest</option>
+                </select>
+            </div>
+
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-lg-12 mt-5 mt-lg-0 d-flex align-items-stretch" id="thesis-form-container" data-aos="fade-up" data-aos-delay="200">
+                @Html.Partial("Partials/AskForAServiceOutsideTheKingdom/_RequestToDepositAScientificThesis", new sa.gov.libgph.Models.RequestToDepositAScientificThesisFormModel())
+            </div>
+            <div class="col-lg-12 mt-5 mt-lg-0 d-flex align-items-stretch" id="pot-form-container" data-aos="fade-up" data-aos-delay="200">
+                @Html.Partial("Partials/AskForAServiceOutsideTheKingdom/_PotPhotographyRequest", new sa.gov.libgph.Models.PotPhotographyRequestModel())
+            </div>
+        </div>
+    </div>
+</section><!-- End Contact Us Section -->
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<script src="~/Scripts/additional-methods.min.js"></script>
+<script>
+    $(document).ready(() => {
+        $("#servicesDropDownMenu").val('1');
+        $('#pot-form-container').children().hide();
+    });
+
+    function submitServiceForm(event) {
+        var selectedType = event.target.value;
+        if (selectedType == 1) {
+            $('#thesis-form-container').children().show();
+            $('#pot-form-container').children().hide();
+
+        }
+        if (selectedType == 2) {
+            $('#thesis-form-container').children().hide();
+            $('#pot-form-container').children().show();
+
+        }
+
+
+    }
+</script>
+
+

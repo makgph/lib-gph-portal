@@ -1,0 +1,115 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@{
+    var Root = Model.Root();
+    var EServices = Root.ChildrenOfType("eServices").FirstOrDefault();
+    var EServicesArray = EServices.ChildrenOfType("service").ToArray();
+    var CurrentLanguage = Umbraco.AssignedContentItem.GetCultureFromDomains();
+    var ShowAllServices = CurrentLanguage == "ar-SA" ? "عرض جميع الخدمات" : "Show All Services";
+    var MoreAboutTheSevice = CurrentLanguage == "ar-SA" ? "عرض المزيد عن الخدمة" : "More About The Sevice";
+
+}
+
+<style>
+    .E-services {
+        background-image: url(../assets/images/eservice.png);
+    }
+        .E-services .regular .service-div .title {
+            color: #fff;
+        }
+        .E-services  .title {
+            color: #fff;
+        }
+        .E-services .regular .service-div .more-details {
+            background: rgb(255 255 255 / 81%);
+            color: #B19556
+        }
+        .E-services .arrow {
+            color: #f5f5f5;
+            border: 2px solid #f5f5f5;
+
+        }
+        .E-services .arrow:hover {
+            color: #f1f1f1;
+            border: 2px solid #f1f1f1;
+        }
+        .E-services .regular .service-div img {
+            filter: sepia(1);
+        }
+</style>
+
+<section id="E-services" class="E-services">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-10">
+                <div class="section-title text-center pb-25">
+                    <h3 class="title" >@EServices.Name</h3>
+                    <p class="underline"></p>
+                </div> <!-- section title -->
+            </div>
+        </div> <!-- row -->
+        <div class="row justify-content-center">
+            <div class="col-lg-12 ">
+                <section class="regular slider">
+                    @for (int i = 0; i < EServicesArray.Length; i++)
+                    {
+                        var icon = EServicesArray[i].Value<IPublishedContent>("iconimage");
+                        <div class="col-lg-3 service-div">
+
+                            @if (icon != null)
+                            {
+
+                                <img src="@icon.Url()" alt="@icon.Name">
+
+                            }
+                            else
+                            {
+
+                                <img alt="Book Icon" src="~/assets/images/BookIcon.svg">
+
+                            }
+
+                            <p class="title" >@(EServicesArray[i].Value("title"))</p>
+                            <a href="@EServicesArray[i].Url()" class="more-details"><i class="lni lni-chevron-left"></i>@MoreAboutTheSevice </a>
+                        </div>
+
+                    }
+
+                </section>
+            </div>
+
+
+        </div> <!-- row -->
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-10">
+                <div class="section-title text-center pb-10">
+
+
+                    <a class="arrow" href="@EServices.Url()" >@ShowAllServices</a>
+
+                </div> <!-- section title -->
+            </div>
+        </div> <!-- row -->
+    </div> <!-- container -->
+</section>
+
+
+@functions {
+    //Get Image
+    public string ImageUrl(IPublishedElement Element, string Property)
+    {
+        string ImageURL;
+
+        if (Element.HasValue(Property))
+        {
+            ImageURL = Element.Value<MediaWithCrops>(Property).Url();
+        }
+        else
+        {
+            ImageURL = "#";
+
+        }
+        return ImageURL;
+    }
+}
+
+

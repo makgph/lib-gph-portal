@@ -1,0 +1,97 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<ServerResponse>
+@using sa.gov.libgph.Models
+
+@{
+    var response = Model;
+    var CurrentLangauge = response.CurrentLangauge;
+    var Response = response.Type;
+    var Style = "";
+
+    // Responded Good
+    if (Response == ServerResponseType.Ok)
+    {
+        response.Messages.Add("<i class='lni lni-checkmark-circle'></i> ");
+        Style = "success";
+    }
+    else if (Response == ServerResponseType.Warning)
+    {
+        response.Messages.Add("<i class='lni lni-warning'></i>");
+        Style = "warning";
+    }
+    // Responded Error
+    else
+    {
+        response.Messages.Add("<i class='lni lni-cross-circle'></i>");
+        Style = "danger";
+    }
+
+
+    //Arabic Message
+    if (CurrentLangauge == "ar-SA")
+    {
+        <div class="col-sm-12" id="serverResponse">
+            <div class="alert alert-@Style">
+
+                @foreach (var message in response.Messages)
+                {
+                    @Html.Raw(message)
+                    <br />
+                }
+                <button type="button"
+                        class="close "
+                        data-dismiss="alert"
+                        aria-label="Close"
+                        style="position: relative; left: -90%;"
+                        onclick="closeAlert()">
+                    <span aria-hidden="true"
+                          class="@Style">
+                        &times;
+                    </span>
+                </button>
+            </div>
+        </div>
+    }
+    //Other Languages ==> English Message
+    else
+    {
+        <div class="col-sm-12" id="serverResponse">
+            <div class="alert alert-@Style"
+                 style="text-align:left">
+                @foreach (var message in response.Messages)
+                {
+                    @Html.Raw(message)
+                    <br />
+                }
+                <button type="button"
+                        class="close"
+                        data-dismiss="alert"
+                        aria-label="Close"
+                        onclick="closeAlert()">
+                    <span aria-hidden="true" class="@Style">
+                        &times;
+                    </span>
+                </button>
+            </div>
+        </div>
+    }
+}
+
+@if (Response == ServerResponseType.Ok)
+{
+    <script>
+        // resetting Form
+        try {
+            $("#@response.FormId :input").val("");
+            $("textarea").val("");
+            error_Captcha_ScientificThesis();
+
+        } catch (e) { }
+
+
+        setTimeout(function () {
+            $("#serverResponse").hide(1000, 'swing');
+        }, 2500);
+    </script>
+}
+
+

@@ -1,0 +1,112 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<string>
+@*
+    Getting Message as a string Model from the action and split it to [Message+ Response Result + Language]
+    [Your Rrquest is accepted * Good * ar-SA] ==> "Your Rrquest is accepted" , "Good" , "ar-SA"
+*@
+@{
+    var Message = Model.Split('*').First();
+    var CurrentLangauge = Model.Split('*').Last();
+    var Response = Model.Split('*').Skip(1).First();
+    var Style = "";
+
+    // Responded Good
+    if (Response == "Good")
+    {
+        Message = PrependCustomeString(Message, "<i class='lni lni-checkmark-circle'></i> ");
+        Style = "success";
+    }
+    // Responded Warning
+    else if (Response == "Warning")
+    {
+        Message = PrependCustomeString(Message, "<i class='lni lni-warning'></i>");
+        Style = "warning";
+    }
+    // Responded Error
+    else
+    {
+
+        Message = Message != null ? PrependCustomeString(Message, "<i class='lni lni-cross-circle'></i>") : "Some thing went wrong";
+        Style = "danger";
+    }
+
+
+    //Arabic Message
+    if (CurrentLangauge == "ar-SA")
+    {
+        <div class="col-sm-12" id="serverResponse">
+            <div class="alert alert-@Style">
+                @Html.Raw(Message)
+                <button type="button"
+                        class="close "
+                        data-dismiss="alert"
+                        aria-label="Close"
+                        style="position: relative; left: -90%;"
+                        onclick="closeAlert()">
+                    <span aria-hidden="true"
+                          class="@Style">
+                        &times;
+                    </span>
+                </button>
+            </div>
+        </div>
+    }
+    //Other Languages ==> English Message
+    else
+    {
+        <div class="col-sm-12" id="serverResponse">
+            <div class="alert alert-@Style"
+                 style="text-align:left">
+                @Html.Raw(Message)
+                <button type="button"
+                        class="close"
+                        data-dismiss="alert"
+                        aria-label="Close"
+                        onclick="closeAlert()">
+                    <span aria-hidden="true" class="@Style">
+                        &times;
+                    </span>
+                </button>
+            </div>
+        </div>
+    }
+}
+
+@if (Response == "Good")
+{
+    <script>
+        //Deleting Values after Submition
+        try {
+            $("#ContactUsForm :input[type=text]").val("");
+            $("textarea").val("");
+            expire_Captcha();
+
+        } catch (e) {
+
+        }
+
+        if (response > 0) {
+            $("#SubscriberEmail").val("");
+            expireCaptcha();
+        }
+
+        setTimeout(function () {
+            $("#serverResponse").hide(1000, 'swing');
+        }, 2500);
+    </script>
+}
+
+
+@functions{
+    /// <summary>
+    ///This Function take two string and swap them
+    /// </summary>
+    /// <param name="x">The First Parameter ==> will be in the end </param>
+    /// <param name="y">The Second Parameter ==> will be in the begining</param>
+    /// <returns></returns>
+    public string PrependCustomeString(string x, string y)
+    {
+
+        return y + " " + x;
+    }
+
+}

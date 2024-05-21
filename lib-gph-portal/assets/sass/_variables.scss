@@ -1,0 +1,73 @@
+:root {
+ 
+    --nav-button-color:#fff;
+    --nav-a-color:#fff;
+    --basic-color:#fff;
+    --basic-x-color:#000;
+   --search-input-color:#6f768d;
+   --search-dropdown-color:#9fa3b1;
+   --text-color: #6c6c6c;
+   --header-scroll-bk-color: rgba(228, 228, 228, 0.95);
+    --body-bg: #fff;
+    --Active:#c1a02e;
+    --basic-bk-color:white;
+    --anchor-green-color: #178BA4;
+    --section-bk-image: url("../images/background_catalog.svg");
+    --svg-work-time: url("../images/Parayer-Card.svg");
+    --contact-color: #7a6960;
+    --bk-div-color: white;
+    --about-h3-color: #4e4039;
+    --about-p-color: #5a6570;
+    --section-bg-color: #fcfaf7;
+    --nav-mob-color:#000;
+    
+  }
+  
+  body.dark {
+    --nav-button-color:#fff;
+    --nav-a-color:#101010;
+    --basic-color:#101010;
+    --basic-x-color:#fff;
+    --search-input-color:#fff;
+    --search-dropdown-color:#f2f2f2;
+    --header-scroll-bk-color: rgba(16, 16, 16, 0.95);
+
+    --basic-bk-color:#333131;
+    --section-bk-image: url("../images/bk-dark.svg");
+    --text-color: white;
+    --anchor-green-color: white;
+    --svg-work-time: url("../images/Parayer-Card-dark.svg");
+    --contact-color: white;
+    --bk-div-color: #1d1c1c;
+    --about-h3-color: white;
+    --about-p-color: white;
+    --section-bg-color:#333333;
+    --nav-mob-color:#000;
+  }
+  
+  body.other{
+    --nav-button-color:#fff;
+    --nav-a-color:#c0c0c0;
+    --basic-color: #4E4E4E;
+    --basic-x-color:#fff;
+    --nav-bg: #4E4E4E;
+    --search-input-color:#fff;
+    --search-dropdown-color:#f2f2f2;
+    --header-scroll-bk-color: rgba(78, 78, 78, 0.95);
+    --nav-mob-color:#4E4E4E;
+
+    --basic-bk-color:#a09e9e;
+    --section-bk-image: url("../images/bk-dark.svg");
+    --text-color: white;
+    --anchor-green-color: white;
+
+    --svg-work-time: url("../images/Parayer-Card-grey.svg");
+    --contact-color: white;
+    --bk-div-color: #747373;
+    
+    --about-h3-color: white;
+    --about-p-color: white;
+    --section-bg-color: #9e9e9e;
+  }
+ 
+ 
